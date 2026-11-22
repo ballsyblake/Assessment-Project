@@ -1,0 +1,31 @@
+{
+  "name": "club-assessment-platform",
+  "version": "1.0.0",
+  "description": "Prototype club development assessment platform",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "reset": "rm -rf data/pgdata && echo Database reset. It will be re-seeded on next start.",
+    "test": "node --test test/access.test.js",
+    "e2e": "node test/e2e.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ballsyblake/Assessment-Project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ballsyblake/Assessment-Project/issues"
+  },
+  "homepage": "https://github.com/ballsyblake/Assessment-Project#readme",
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.17",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.3.0",
+    "multer": "^2.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true
+}
