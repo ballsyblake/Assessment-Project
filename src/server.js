@@ -30,7 +30,8 @@ export async function createApp(opts = {}) {
 
   // Optional site-wide password (set SITE_PASSWORD). Required for any public demo:
   // without it anyone with the address could use the demo mailbox to sign in as the admin.
-  const SITE_PASSWORD = process.env.SITE_PASSWORD;
+  // Trimmed so a stray space or line break pasted into the hosting dashboard doesn't lock everyone out.
+  const SITE_PASSWORD = process.env.SITE_PASSWORD?.trim();
   if (SITE_PASSWORD) {
     const GATE = 'cap_site';
     const token = crypto.createHmac('sha256', SITE_PASSWORD).update('site-access-v1').digest('hex');
@@ -43,7 +44,7 @@ export async function createApp(opts = {}) {
       <button>Continue</button></form></div></main></body></html>`;
     app.post('/site-access', express.urlencoded({ extended: false }), async (req, res) => {
       const given = crypto.createHmac('sha256', SITE_PASSWORD).update('site-access-v1').digest('hex');
-      const candidate = crypto.createHmac('sha256', String(req.body.password ?? '')).update('site-access-v1').digest('hex');
+      const candidate = crypto.createHmac('sha256', String(req.body.password ?? '').trim()).update('site-access-v1').digest('hex');
       if (!crypto.timingSafeEqual(Buffer.from(given), Buffer.from(candidate))) {
         await new Promise((r) => setTimeout(r, 800)); // slow down guessing
         return res.status(401).send(page(true));
