@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { openDb, sys, asUser } from './db.js';
-import { seed } from './seed.js';
+import { seed, autoComplete } from './seed.js';
 import { layout, html, NAV, fmtDate } from './html.js';
 import { linkValid, requestCode, verifyCode, userForSession, endSession, issueLink } from './auth.js';
 import clubRoutes from './routes/club.js';
@@ -121,10 +121,19 @@ export async function createApp(opts = {}) {
         ${users.map((u) => html`<tr><td>${u.name}</td><td>${u.role}${u.club ? html` · ${u.club}` : ''}</td><td class="mono">${u.email}</td>
           <td><form method="post" action="/dev/send/${u.id}"><button class="small">Send sign-in link</button></form></td></tr>`)}
         </table></div>
+        <div class="card"><strong>Demo shortcut</strong>
+          <p class="small muted">Completes every open phase with dummy scores, third assessments and lead comments, so the release and the
+          club results page can be shown. Use it only after walking through the parts you want to demonstrate by hand.</p>
+          <form method="post" action="/dev/fast-forward" onsubmit="return confirm('Complete all open phases with dummy data?')"><button class="small secondary">Fast-forward to release</button></form></div>
         <h2>Outbox (latest 30)</h2>
         ${mail.map((m) => html`<div class="card"><div class="row"><strong>${m.subject}</strong><span class="spacer"></span>
           <span class="muted small">to ${m.to_addr} · ${fmtDate(m.created_at)}</span></div>
           <div class="mail">${linkify(m.body)}</div></div>`)}`, { active: '/dev' });
+    });
+    app.post('/dev/fast-forward', async (req, res) => {
+      const { rows } = await sys().query('select id from phases where closed_at is null order by sort');
+      await autoComplete({ phases: rows.map((r) => r.id), seed: 99 });
+      res.redirect('/dev?msg=' + encodeURIComponent('All phases completed and closed. Sign in as the admin to release results.'));
     });
     app.post('/dev/send/:id', async (req, res) => {
       await issueLink(Number(req.params.id));
@@ -159,7 +168,8 @@ export async function createApp(opts = {}) {
   app.use((err, req, res, next) => {
     const msg = String(err?.message ?? err);
     const denied = /row-level security|permission denied/i.test(msg);
-    if (!denied && !err?.code && !/exception|exceeds|locked|assessor|moderator|Clubs|mandatory|Choose|Score|Only|Both|Invalid|This/.test(msg)) console.error(err);
+    // P0001 = raised by our own triggers: a business-rule message meant for the user.
+    if (!denied && err?.code !== 'P0001' && !(err instanceof Error && err.constructor === Error)) console.error(err);
     const text = denied ? 'You do not have access to do that.' : msg.replace(/^error: /i, '');
     const back = req.get('referer');
     if (req.method === 'POST' && back) {

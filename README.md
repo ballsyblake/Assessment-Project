@@ -1,10 +1,10 @@
 # Club Assessment Platform (prototype)
 
-A working prototype that replaces the Excel and SharePoint club development assessment process. It covers the user flow spec end to end: club submission, evidence review, blind double scoring, reconciliation and moderation, gated results release, and an audit log. Line items, score ranges and weightings come from the FQ 2027 Tier 1 info pack (Appendix 7 and 9). All clubs, people and evidence are fictional.
+A working prototype that replaces the Excel and SharePoint club development assessment process. It covers club submission, evidence review, blind double scoring by tick criteria, third assessments, club leads (CDAs) and their feedback, phases with deadlines, an admin-only leaderboard, the gated results release, and an audit log. All clubs, people and evidence are fictional.
 
 ## Run it
 
-Requires Node 20 or later. There is no database server to install: it uses PGlite, a full Postgres engine that runs inside Node, so row level security works exactly as it would on a hosted Postgres.
+Requires Node 20 or later. There is no database server to install: it uses PGlite, a full Postgres engine running inside Node, so row level security works exactly as on hosted Postgres.
 
 ```bash
 npm install
@@ -14,56 +14,88 @@ npm install
 npm start
 ```
 
-Open http://localhost:3000/dev. Emails are not sent. The demo mailbox stands in for email: send a sign-in link to any demo user, open it, confirm the email address, then copy the 6 digit code from the mailbox.
+Open http://localhost:3000/dev. Emails are not sent; the demo mailbox stands in for email. Send a sign-in link to any demo user, open it, confirm the email address, then copy the 6 digit code from the mailbox.
 
 ```bash
 npm run reset
 ```
 
-Wipes the database. The next start re-seeds it.
+Wipes the database (stop the app first). The next start re-seeds it.
 
-## Demo path
+## Demo state
 
-| Step | Sign in as | What to do |
-|---|---|---|
-| 1 | `td@riverside-rovers.example` (club) | Upload evidence under Planning, fix the returned P3, add a staff row with a certificate |
-| 2 | `sam.reid@fq-assess.example` (first assessor) | Open Riverside, verify or return evidence, enter scores, lock in |
-| 3 | `jordan.lee@fq-assess.example` (second assessor) | Score Riverside blind (Sam's scores are not visible), lock in |
-| 4 | `admin@fq-assess.example` (admin) | Reconciliation: resolve disputes or assign a moderator; then Release |
-| 5 | Club again | Results page with shield, totals, line items, print to PDF |
+Six fictional clubs, eight assessors, one data officer and one admin. Each club has a lead.
 
-Seeded state so every screen has something to show:
+| Phase | State |
+|---|---|
+| Planning | Finished and closed. Its leaderboard is visible to the admin |
+| Staff Qualifications | Scored and locked. Two Riverside items differ and need a third assessor |
+| Non-negotiables | All final. Ready for the admin to close |
+| Delivery | Submission period: clubs uploading, assessors can review evidence. Scoring opens after the deadline |
+| Outcomes | Submission period |
 
-| Club | Pool / shield | State |
-|---|---|---|
-| Riverside Rovers FC | B / Silver | Early: a few submissions, one returned item. Demo club |
-| Coastal United SC | A / Gold | All evidence verified, both assessors locked, 3 disputes open, D8 with moderator (Sam) |
-| Highland Park FC | C / Bronze | Partly submitted, first assessor part way through scoring |
-| Northgate Athletic | B / Silver | Fully reconciled, ready for release |
+Suggested walkthrough:
 
-## How the spec is enforced
+| Sign in as | Try |
+|---|---|
+| `td@riverside-rovers.example` (club) | Planning is locked after its deadline; upload Delivery evidence; fix the returned D3 |
+| `admin@fq-assess.example` | Reconciliation > Riverside > Staff: assign a third assessor. Phases: move the Delivery deadline to yesterday to open scoring |
+| The third assessor | My work > Third assessments: see both scores and comments, decide |
+| An assessor with Delivery items | My work > club: mark criteria Yes, Partial or No, save, lock |
+| `sam.reid@fq-assess.example` (Riverside's lead) | Clubs you lead: final scores per reconciled section, write feedback |
+| Admin | Close Non-negotiables, see the Planning leaderboard and the assessor statistics |
 
-Access control is in the database, not just hidden in the UI (`src/schema.sql`):
+To show the release without scoring everything by hand, use **Fast-forward to release** on `/dev`. It completes the open phases with dummy data. Then release as the admin and view the club's results.
 
-- Each request runs in a transaction as one of three Postgres roles (`app_club`, `app_assessor`, `app_admin`) with the user id set, so row level security policies apply to every query.
-- Clubs have no grant at all on criteria, scores, assignments, moderation, resolutions, settings or the audit log, and only column-level access to item tables (no verification columns). Results rows are readable only after release.
-- Blind scoring: an assessor's queries return only their own scores and lock. Admin and the moderator of an item see both scores only after both assessors lock in. Score entries in the audit log are sealed the same way.
-- Moderators see only the items they were asked to moderate, and the database refuses a moderator who is first or second assessor on that club. Same person as first and second is blocked by a check constraint.
-- Admin has no write permission on scores. Admin resolutions are recorded separately.
-- Triggers enforce the club item state machine (submit only; approved items lock; reopen needs a reason), score maximums, locked scores, the Pool A/C planning rules and the two-contact limit.
-- Every score, verification, moderation, reopening, resolution and release is written to the audit log by triggers, with the actor and reason.
+## How it works
 
-Login (`src/auth.js`): one link per person, stored as a SHA-256 hash with expiry and revocation. Opening a link asks for the email address, then sends a 6 digit code, so a forwarded link alone is not enough. Issuing a new link revokes the old one. Club sessions last 7 days, assessor and admin sessions 8 hours.
+**Framework file.** All FQ-specific content lives in `data/frameworks/fq-tier1-2027.json`: line items, weightings, score ranges, tick criteria, outcome bands, thresholds, phases, the partial-planning rule and the O8/O12 rule. The code has no FQ item codes in it. Point `FRAMEWORK_FILE` at a file outside the repo to keep FQ material out of the codebase.
 
-## Scoring (`src/scoring.js`)
+The tick criteria in that file are **placeholders** drafted from the 2027 descriptors, until FQ supplies the final 2027 criteria. The criteria counts follow 2026. Outcome bands come from the 2027 descriptors for O10, O11, O13 and O15, and from the 2026 workbooks for O1 to O7.
 
-- Points = item score x weighting. Decimal scores to one place (new in 2027).
-- 2027 Tier 1 thresholds: Gold 75%, Silver 60%, Bronze 45%, Development Committed 35%.
-- Maximum 1,340 points for a non-Gold club: staff 330, planning 254, delivery 498, outcomes 258.
-- Gold clubs are scored on O12, all others on O8.
-- Pool A/C: P2 and P5 plus up to three items the club chooses; other planning items carry forward last cycle's score.
-- Non-negotiables are Met or Not met and add no points. If any is not met, the rating cannot rise above the club's current shield.
-- Reconciliation: differences above the threshold (default 0.5) are disputed. Smaller differences resolve automatically (average, higher or lower; set by the admin). Non-negotiables always need agreement.
+**Scoring** (computed by the database, not the browser):
+- Tick items: Yes = 1, Partial = 0.5, No = 0. Score = criteria met ÷ number of criteria × item maximum, to one decimal. This is the proportional method, chosen deliberately.
+- Outcome value items: the assessor enters the number (players, %, NPS) and the band gives the score.
+- Staff items: direct score entry. Non-negotiables: Met or Not met.
+- Outcomes have one assessor (data based). Everything else has a first and a second assessor.
+- Points = score × weighting. 2027 thresholds: Gold 75%, Silver 60%, Bronze 45%, Development Committed 35%. Failing a non-negotiable caps the rating at the current shield.
+
+**Assignment.** One row per club × item × slot. There are no fixed pairs. Bulk tools assign one item across a pool (evidence items) or several items at one club (a visit). The database blocks the same person holding both slots on an item, and blocks a second slot on single-assessor items. A club's lead may score their own club.
+
+**Reconciliation.**
+- An assessor locks a phase at a club once all their items there are scored.
+- When both assessors on an item have locked, equal scores become final automatically.
+- Any difference needs a third assessor, who can be anyone except the two who scored the item. The third assessor sees both scores, both comments and the criteria marks, checks the evidence, and their score is final.
+- Items with equal scores but different criteria marks are flagged to the admin.
+- The admin can override with a reason. The admin never scores.
+
+**Phases.** Each section is a phase with its own submission deadline. After the deadline, club uploads lock unless the admin grants an extension (per club and phase) or reopens an item with upload allowed for 7 days. The admin closes a phase once every item at every club is final.
+
+**Leads (CDAs).**
+- A lead sees their clubs' submission progress, and final scores once a section is reconciled.
+- A lead never sees individual assessors' scores.
+- A lead writes one comment per section once that section is reconciled, plus an overall comment once everything is reconciled.
+- Clubs see the comments only after release.
+
+**Leaderboard and statistics (admin only).**
+- A phase's ranking appears once the phase is closed. The full ranking appears when every phase is closed.
+- Only final items count.
+- Assessor statistics show each assessor's average score, their bias against the final scores on the same items, how often their items went to a third assessor, and their tick differences.
+
+**Release.** One action releases results to every club. It is blocked until the internal deadline has passed, every phase is closed, and every lead comment is written. Clubs see the rating and badge first, then the overall comment, then each section with its comment and line-item table. The page prints to PDF.
+
+**Access control is in the database** (`src/schema.sql`):
+- Each request runs as `app_club`, `app_assessor` or `app_admin`, with row level security and column grants.
+- Clubs have no access to criteria, assignments, scores, leads, resolutions or the audit log.
+- Assessors see only their own slots and scores, and evidence only for items they hold.
+- Third assessors see the first and second scores for their item only after both have locked.
+- The admin sees score values only on locked items. Score entries in the audit log are sealed the same way.
+- Triggers compute scores, enforce deadlines and locks, create final scores, and write the audit log.
+
+**Sign-in.**
+- A magic link plus a code emailed to the confirmed address, so a forwarded link alone is not enough.
+- Only hashed tokens are stored. A new link revokes the old one.
+- Club sessions last 7 days; assessor and admin sessions last 8 hours.
 
 ## Tests
 
@@ -71,7 +103,7 @@ Login (`src/auth.js`): one link per person, stored as a SHA-256 hash with expiry
 npm test
 ```
 
-14 tests that query the database directly as each role to prove the access rules (no UI involved).
+14 database-level tests run as each role, with no UI involved: access, blind scoring, tick and value scoring maths, assignment rules, the lock and third-assessor flow, deadlines and extensions, lead visibility, comment and phase-close gates.
 
 ```bash
 npm run reset && npm start
@@ -81,30 +113,35 @@ npm run reset && npm start
 BASE=http://localhost:3000 npm run e2e
 ```
 
-Browser walkthrough of the whole demo path, including release, using Playwright (needs a Playwright install).
+Browser walkthrough of the whole cycle through to release, using Playwright.
 
-## Assumptions and gaps to decide
+## Moving to hosted Postgres
 
-- **FQ material in the repo.** Spec section 8 says no real FQ material; this build uses the real line items, weightings and the Appendix 7 rubric text (in `data/rubric.json`, shown to assessors only) because that was requested. Settle the IP position (spec section 9) before this repo is shared. Swapping in dummy text only means editing that one file.
-- **Sections.** The spec's club dashboard lists Planning, Staff and Delivery. The rubric also requires club submissions for Outcomes and Non-negotiables, so both are included.
-- **Rejected evidence.** The spec gives assessors "rejected" but gives clubs no matching status. Clubs see "Closed" (locked, counts as complete). Confirm wording.
-- **Link reuse.** Links work for repeat sign-ins until they expire or are replaced; each sign-in needs a fresh emailed code. The spec mentions a "used" flag, which could instead mean single use.
-- **Planning rolling average.** The info pack says both "three" and "five" selected items and does not define the averaging formula. The prototype carries forward the previous score for items not chosen and does not average the assessed ones.
-- **Info pack inconsistencies to raise with FQ:** Silver "60% to 74%" against Gold ">75%" leaves 74 to 75% undefined (treated as Silver); Development Committed is 35% in one place and 55% (Tier 2) in another; "Coaches experience" (0-3 x1 = 30) and "Technical Leads" (0-6 x1 = 24) are modelled as 0-30 and 0-24 scales.
-- **Tier 2** is not built. The catalogue structure supports it.
-- **Production gaps:** PGlite is a single process; production would use hosted Postgres (the schema runs unchanged). Email goes to an outbox table: plug a provider into `src/mail.js` and set `DEMO_MODE=0` to remove `/dev`. File storage is in the database; production would use object storage. Automatic resolutions are recorded when an admin opens progress or reconciliation pages.
+- Replace PGlite in `src/db.js` with a `pg` connection pool, about 40 lines.
+- `asUser()` already wraps each request in a transaction with `set local role` and `set_config`.
+- The schema, policies and triggers run unchanged.
+- The app must connect as a login role that is a member of `app_club`, `app_assessor` and `app_admin` but does not own the tables, because the owner bypasses row level security. Seeding and migrations use a separate owner connection.
+- Evidence files are stored in the database today. For production, keep the `files` row (name, size, storage key) and put the bytes in S3 or Azure Blob. Downloads would check the row under RLS, then hand out a short-lived signed URL. This changes the upload routes in `src/routes/club.js` and the download route in `src/server.js`.
+- Email: plug a provider into `src/mail.js` and set `DEMO_MODE=0` to remove `/dev`.
+
+## Open items
+
+- **2027 criteria:** replace the placeholder criteria and confirm the O1 to O7 bands when FQ finalises them.
+- **Real past club check:** needs one club's final 2026 report, including Staff Qualifications and Non-negotiables.
+- **Not built:** the review and appeal process, Tier 2, and the CDA club visit tracker.
+- **Leaderboard and results layouts:** waiting on FQ's reference templates.
 
 ## Layout
 
 ```
-src/schema.sql        tables, roles, grants, RLS policies, guard and audit triggers
-src/db.js             PGlite setup and the per-request role switch (asUser)
-src/auth.js           magic link + emailed code
-src/catalog.js        requirement catalogue and applicability rules
-src/guidance.js       club-facing guidance (separate from assessor criteria)
-src/scoring.js        scoring engine and reconciliation rule
-src/model.js          shared queries (progress, reconciliation, results)
-src/routes/*.js       club, review (shared), assessor, admin pages
-data/rubric.json      line items, scales, weightings, assessor criteria
-test/                 database access tests and browser walkthrough
+data/frameworks/       framework file: items, criteria, bands, thresholds, rules
+src/schema.sql         roles, grants, RLS policies, scoring and workflow triggers, audit
+src/db.js              PGlite setup and the per-request role switch (asUser)
+src/auth.js            magic link + emailed code
+src/catalog.js         framework loader
+src/scoring.js         points, percentage, rating
+src/model.js           shared queries (progress, reconciliation, leaderboard, statistics)
+src/seed.js            fictional demo data and the fast-forward helper
+src/routes/*.js        club, assessor (incl. third and lead), admin, shared review
+test/                  database tests and browser walkthrough
 ```

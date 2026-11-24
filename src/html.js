@@ -16,7 +16,7 @@ export function html(strings, ...vals) {
 }
 
 export const STATUS_LABEL = {
-  not_started: 'Not started', submitted: 'Submitted', approved: 'Approved', returned: 'Returned with comment', closed: 'Closed',
+  not_started: 'Not started', submitted: 'Submitted', approved: 'Approved', returned: 'Returned with comment', not_accepted: 'Not accepted',
 };
 export const statusBadge = (s, kind) => {
   if (kind === 'onfield' || kind === 'fq') {
@@ -24,7 +24,8 @@ export const statusBadge = (s, kind) => {
   }
   return html`<span class="badge b-${s}">${STATUS_LABEL[s] ?? s}</span>`;
 };
-export const VERIF_LABEL = { verified: 'Verified', rejected: 'Rejected', returned: 'Returned', observed: 'Observed' };
+export const VERIF_LABEL = { verified: 'Verified', not_accepted: 'Not accepted', returned: 'Returned', observed: 'Observed' };
+export const TICK_LABEL = { y: 'Yes', p: 'Partial', n: 'No' };
 
 export const fmtDate = (d) => (d ? new Date(d).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Australia/Brisbane' }) : '');
 export const fmtDay = (d) => (d ? new Date(d).toLocaleDateString('en-AU', { dateStyle: 'medium', timeZone: 'Australia/Brisbane' }) : '');
@@ -72,7 +73,8 @@ export function layout({ title, user, nav = [], active = '', body, flash, error 
 export const NAV = {
   club: [['/club', 'Dashboard'], ['/club/s/planning', 'Planning'], ['/club/staff', 'Staff'], ['/club/s/delivery', 'Delivery'],
     ['/club/s/outcomes', 'Outcomes'], ['/club/s/nn', 'Non-negotiables'], ['/club/results', 'Results'], ['/club/team', 'Contacts']],
-  assessor: [['/assessor', 'My clubs']],
-  admin: [['/admin', 'Progress'], ['/admin/assignments', 'Assignments'], ['/admin/reconcile', 'Reconciliation'],
-    ['/admin/release', 'Release'], ['/admin/users', 'People'], ['/admin/settings', 'Settings'], ['/admin/audit', 'Audit log']],
+  assessor: [['/assessor', 'My work']],
+  admin: [['/admin', 'Overview'], ['/admin/phases', 'Phases'], ['/admin/assignments', 'Assignments'], ['/admin/reconcile', 'Reconciliation'],
+    ['/admin/leaderboard', 'Leaderboard'], ['/admin/assessors', 'Assessors'], ['/admin/release', 'Release'], ['/admin/users', 'People'],
+    ['/admin/audit', 'Audit log']],
 };

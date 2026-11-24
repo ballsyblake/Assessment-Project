@@ -1,0 +1,1890 @@
+{
+ "id": "fq-tier1-2027",
+ "name": "FQ Club Development Assessment, Tier 1, 2027",
+ "notes": [
+  "Line items, scales and weightings: FQ Info Pack 2027 Appendix 7 and 9.",
+  "PLACEHOLDER criteria: tick criteria are drafted from the 2027 descriptors until FQ supplies the final 2027 criteria. Criteria counts follow 2026.",
+  "Outcome value bands: 2027 descriptors for O10, O11, O13, O15; 2026 assessment bands for O1-O7 until confirmed."
+ ],
+ "scoring": {
+  "partialValue": 0.5,
+  "method": "proportional",
+  "decimals": 1
+ },
+ "thresholds": [
+  {
+   "rating": "Gold",
+   "min": 75
+  },
+  {
+   "rating": "Silver",
+   "min": 60
+  },
+  {
+   "rating": "Bronze",
+   "min": 45
+  },
+  {
+   "rating": "Development Committed",
+   "min": 35
+  }
+ ],
+ "phases": [
+  {
+   "id": "planning",
+   "label": "Planning"
+  },
+  {
+   "id": "staff",
+   "label": "Staff Qualifications"
+  },
+  {
+   "id": "delivery",
+   "label": "Delivery"
+  },
+  {
+   "id": "outcomes",
+   "label": "Outcomes"
+  },
+  {
+   "id": "nn",
+   "label": "Non-negotiables"
+  }
+ ],
+ "partialPlanning": {
+  "pools": [
+   "A",
+   "C"
+  ],
+  "maxOptional": 3
+ },
+ "nnCapsRating": true,
+ "items": [
+  {
+   "id": "T01",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "Technical Director",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 10,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Technical Director details and current qualification certificate.",
+   "descriptor": "The following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n#1 Female Technical Lead – In line with the Football Australia and FQ strategic target of achieving 50/50 gender parity clubs are encouraged to create and fill a position of responsibility to be known as the Female Technical Lead. A Female Technical Lead is a female (coach), experienced or inexperienced, who has been identified by the club as someone with the potential to develop into a technical leadership role in the medium to long term.\n\n#2 Head of Sports Science and Medicine:- Formal non-tertiary Qualifications (Level 1/2/3 Strength and Conditioning or Sports Science Certificate, experience as a personal trainer)- Formal Tertiary Qualifications - Sports Science\n\nMedicine bachelor’s degree with relevant additional Post Graduation Courses- S&C Qualification acquired, experience or currently studying Bachelor degree.\n\n* An average score will be applied to age groups where there are boys and girls academy team, or multiple teams within the same age group.",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T02",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "Head of Youth Academy",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head of Youth Academy (U14-U18) details and qualification certificate.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T03",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "Head of Junior Academy",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head of Junior Academy (U9-U13) details and qualification certificate.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T04",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "Head of Girls Academy",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head of Girls Academy details and qualification certificate.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T05",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "Head of Goalkeeping",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head of Goalkeeping details and qualification certificate.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T06",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "Female Technical Lead",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Your nominated Female Technical Lead and her current qualification.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T07",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "Head of Sports Science and Medicine",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head of Sports Science and Medicine details and qualification evidence.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T08",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "u18 Boys Coach and u18 Girls Coach",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head coaches for the U18 boys and girls teams.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T09",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "u16 Boys Coach and u16 Girls Coach",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head coaches for the U16 boys and girls teams.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T10",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "u15 Boys Coach and u15 Girls Coach",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head coaches for the U15 boys and girls teams.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T11",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "u14 Boys Coach and u14 Girls Coach",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head coaches for the U14 boys and girls teams.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T12",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "u13 Boys Coach and u13 Girls Coach",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head coaches for the U13 boys and girls teams.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T13",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "u12 Boys Coach and u12 Girls Coach",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head coaches for the U12 boys and girls teams.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T14",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "u11 Boys Coach and u11 Girls Coach",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head coaches for the U11 boys and girls teams.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T15",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "u10 Boys Coach and u10 Girls Coach",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head coaches for the U10 boys and girls teams.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T16",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "u9 Boys Coach",
+   "kind": "staff",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Head coach for the U9 boys team.",
+   "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T17",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "Coaches experience",
+   "kind": "staff",
+   "maxScore": 30,
+   "weight": 1,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Coaching background and years in current qualification for each academy coach.",
+   "descriptor": "Clubs are required to list the coaching background, history, and number of years of the current valid qualifications for all academy coaches and academy goalkeeping coaches. This may also include relevant past experiences and/or significant relevant tertiary education. Coaches operating across multiple age groups will be scored per age group. Age groups where there are boys' and girls' coaches identified with an asterisk (i.e., u11 Boys coach and u11 Girls coach, u18 Boys coach and u18 Girls coach, etc.) will take an average score across the two programs. Technical Lead positions do not score in this area.",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "T18",
+   "section": "staff",
+   "group": "Technical Staff Qualification",
+   "name": "Technical Leads (PT / FT)",
+   "kind": "staff",
+   "maxScore": 24,
+   "weight": 1,
+   "evidence": "Technical Staff Qualification template",
+   "guidance": "Employment type (full time, part time, casual) for each Technical Lead.",
+   "descriptor": "Technical Lead staff will also be scored based on whether they are Full Time or Part Time within the club’s program. Clubs will be rewarded for employing a higher number of Full Time Technical Leads. Position Descriptions must be uploaded as part of the club’s NN07 submission to receive points in this area.",
+   "type": "direct",
+   "assessors": 2
+  },
+  {
+   "id": "P1",
+   "section": "planning",
+   "group": "Youth Development Plan",
+   "name": "Club Values, Mission, Vision and Philosophy",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Your club values, mission, vision and philosophy document.",
+   "descriptor": "The club's values, mission, vision, and philosophy are clearly articulated, with a high level of detail and explanation regarding how they are implemented throughout the club.\n\nThe club’s values are clearly articulated and explained in detail, outlining their meaning and purpose. They are directly connected to the club’s player development processes and are supported through evidence in planning and delivery documentation. They align with the local football community and are reflected in the club's member’s behaviours.\n\nThe club's mission encompasses its role within the community and its service to members. It appropriately aligns its current service delivery with its place in the football ecosystem while demonstrating potential for future growth and development.\n\nThe club’s vision provides a clear pathway for future progress, supported by a multi-year plan that details technical, operational, and financial goals. The vision demonstrates strategic foresight, highlighting opportunities for innovation and adaptability to the evolving football landscape.\n\nThe club's philosophy appropriately represents its members, community, and historical background. It aims to promote a clear set of guiding principles and beliefs that will influence future behaviours. The philosophy should also include information that establishes a solid foundation to ensure that player development remains the primary focus (for the club and the wider academy). It encourages innovation, enabling goal setting and the creation of pathways to success.\n\nThe overall content of the values, mission, vision, and philosophy, from a technical perspective, reflects the growth of the game and the club, with departmental growth supported by a multidisciplinary approach.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club's values, mission, vision, and philosophy are clearly articulated, with a high level of detail and explanation regarding how they are implemented throughout...",
+    "The club’s values are clearly articulated and explained in detail, outlining their meaning and purpose.",
+    "They are directly connected to the club’s player development processes and are supported through evidence in planning and delivery documentation.",
+    "They align with the local football community and are reflected in the club's member’s behaviours.",
+    "The club's mission encompasses its role within the community and its service to members.",
+    "It appropriately aligns its current service delivery with its place in the football ecosystem while demonstrating potential for future growth and development."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P2",
+   "section": "planning",
+   "group": "Youth Development Plan",
+   "name": "Player Development and Coaching Methodology Principles",
+   "kind": "document",
+   "maxScore": 4,
+   "weight": 8,
+   "evidence": "Electronic Submission",
+   "guidance": "Your player development and coaching methodology document, including age-specific content.",
+   "descriptor": "The P2 document, which provides the complete framework for player development at the club, should be logically structured, easy to navigate, and designed to be a practical day-to-day resource that guides coaching staff in the consistent delivery of the club's player development philosophy and methodology.\n\nThe club’s philosophy, methodology, and principles on how player development is implemented throughout the academy should be clearly articulated to ensure the best possible chance of achieving positive player development outcomes. This methodology should guide the complete implementation of program delivery and support the values, mission, vision, and philosophy of the club.\n\nThe methodology should prioritise individual player development, detailing how this will be achieved across all development phases of the academy. The club needs to outline its Long-Term Athlete Development (LTAD) framework, which should align with an evidence-based, holistic approach. This framework should account for individual differences while providing a common roadmap to success. The program’s goals should be appropriately matched to the players’ age and stage of learning and development, encompassing the physical, technical-tactical, psychological, and social aspects of player growth.\n\nThe club provides a detailed breakdown of its age-specific coaching content, outlining how each age, stage, and phase are catered for in alignment with long-term player development. Detailed coaching content and principles are clearly articulated for each age group and development phase to reflect the overall player development methodology. A breakdown of the session framework for each age and phase should be included within the age-specific guidelines to ensures alignment with the coaching content and principles.\n\nThe club is encouraged to articulates how they intend to link their unique methodology and philosophy with the 'Future Queensland Player' Framework, with detail around how they intend to develop these qualities particularly within the U9-U15 age groups.\n\nThe club’s coaching methodology should follow an evidence-based approach to teaching and learning, incorporating preferred coaching principles for the relevant ages and stages of delivery. This should include a variety of training and game day contexts. The coaching principles are clearly communicated, with specific guidance on how and when they should be implemented and delivered. The methodology should support a holistic approach to player development and be reinforced through coach education, model sessions, and regular consultation led by the Technical Director, technical staff, or industry experts. There should be clear evidence of coach buy-in and shared understanding across the club regarding the player development and coaching methodology.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The P2 document, which provides the complete framework for player development at the club, should be logically structured, easy to navigate, and designed to be a...",
+    "The club’s philosophy, methodology, and principles on how player development is implemented throughout the academy should be clearly articulated to ensure the best...",
+    "This methodology should guide the complete implementation of program delivery and support the values, mission, vision, and philosophy of the club.",
+    "The methodology should prioritise individual player development, detailing how this will be achieved across all development phases of the academy.",
+    "The club needs to outline its Long-Term Athlete Development (LTAD) framework, which should align with an evidence-based, holistic approach.",
+    "This framework should account for individual differences while providing a common roadmap to success.",
+    "The program’s goals should be appropriately matched to the players’ age and stage of learning and development, encompassing the physical, technical-tactical,...",
+    "The club provides a detailed breakdown of its age-specific coaching content, outlining how each age, stage, and phase are catered for in alignment with long-term..."
+   ],
+   "mandatory": true,
+   "optional": false
+  },
+  {
+   "id": "P3",
+   "section": "planning",
+   "group": "Youth Development Plan",
+   "name": "Club Based Playing Style",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Your club playing style document, including principles by phase of play.",
+   "descriptor": "The Club Based Playing Style is an extremely important document in place to support the club's player development framework outlined in the P2 document.\n\nThe Club Based Playing Style is based on clear principles applied throughout the main moments of the game and informs the players about their roles in a dynamic context. The model is intentionally designed to prioritise development outcomes for all players over immediate results. All club coaches work in alignment with this model, which is tailored to suit the ages and stages it is implemented in. In the junior development phase, the playing style should be based more on key technical behaviours, rather than team principles. The playing style encourages the development of creative and adaptable players, focusing less on formations or systems and more on behaviours and relationships within units.\n\nThe club must define how its unique Playing Style should be brought to life, with specific articulation for each relevant age and stage. Additionally, the club should provide detailed guidance on how the principles aligns with the player development pathway.\n\nA logical and methodical process is applied when conveying the model across the development phases. The playing style is designed to cultivate the fundamental characteristics of the type of player the club aims to produce, ensuring consistency without contradictions. This playing style is well-understood throughout the club and is evident in the planning and delivery of all sessions—whether for teams, units, or individual players.\n\nWhile the playing style remains unique to each club, the club is encouraged to outline how the documentation aligns with the 'Future Queensland Player' framework, with reference to how the playing style will support this framework.\n\nTechnical directors and technical leads not only articulate and explain the team model but also evaluate its implementation and assess the progress of coaches and teams in applying it. There is a high level of club-wide understanding regarding the delivery of the team model across all age groups.\n\nIn the delivery component of the assessment, clubs will be assessed on how consistently the playing style is implemented across all ages and phases.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The Club Based Playing Style is an extremely important document in place to support the club's player development framework outlined in the P2 document.",
+    "The Club Based Playing Style is based on clear principles applied throughout the main moments of the game and informs the players about their roles in a dynamic context.",
+    "The model is intentionally designed to prioritise development outcomes for all players over immediate results.",
+    "All club coaches work in alignment with this model, which is tailored to suit the ages and stages it is implemented in.",
+    "In the junior development phase, the playing style should be based more on key technical behaviours, rather than team principles.",
+    "The playing style encourages the development of creative and adaptable players, focusing less on formations or systems and more on behaviours and relationships within..."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P4",
+   "section": "planning",
+   "group": "Youth Development Plan",
+   "name": "Individual Development Planning Guidelines",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Guidelines describing how individual development plans are created and used.",
+   "descriptor": "There is a clear strategy and club philosophy, supported by a high level of club-wide understanding regarding the planning and implementation of individual development guidelines. The planning clearly outlines specialised windows for individualised training, which are consistently integrated into team training sessions or specifically delivered in small group/specialised sessions by specialist coaches as appropriate. These planned sessions align with best practice models and are supported by concurrent information and progress assessments. The individual development guidelines should also outline how these principles are applied and demonstrated on match days.\n\nThere are feedback procedures in place to appraise overall progress and each player’s development. These may include instructions on initial evaluation, goal setting, and the approach to be taken (e.g., improvement or mastery-based, self-guided, etc.). There is a well-articulated management system in place at the club to monitor individual player development (e.g. Player IDPs) and its planning. This system demonstrates that individual development is at the core of their delivery, consistently evidenced in club training and match day environments.\n\nThe club ensures that there is a good understanding across all staff what the guidelines mean in terms of practical delivery with clearly defined responsibilities for planning, monitoring, and reviewing player development. There is evidence of data used where possible across multiple occasions throughout the season to quantify individual player development. Consideration is made to ensure that guidelines are followed uniformly across the club and in the correct manner.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "There is a clear strategy and club philosophy, supported by a high level of club-wide understanding regarding the planning and implementation of individual...",
+    "The planning clearly outlines specialised windows for individualised training, which are consistently integrated into team training sessions or specifically delivered...",
+    "These planned sessions align with best practice models and are supported by concurrent information and progress assessments.",
+    "The individual development guidelines should also outline how these principles are applied and demonstrated on match days.",
+    "There are feedback procedures in place to appraise overall progress and each player’s development.",
+    "These may include instructions on initial evaluation, goal setting, and the approach to be taken (e.g., improvement or mastery-based, self-guided, etc.)."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P5",
+   "section": "planning",
+   "group": "Youth Development Plan",
+   "name": "Goalkeeper Development Strategy",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "Your goalkeeper development strategy.",
+   "descriptor": "The club has a clear long-term vision and strategy for the development of goalkeepers. The goalkeeping development strategy establishes a unique set of goalkeeper principles, periodic training cycles, and a session library that align with and complement the overall team model, playing style, and values of the club. Within the club's playing style, the goalkeeper's technical and tactical roles and responsibilities are clearly defined and aligned through each development phase.\n\nThe strategy articulates the technical-tactical, psychosocial, and physical expectations specific to each development stage and phase, with a particular focus on the competencies the goalkeeper should possess at various stages of development. There is a clear alignment with development and age-specific methodology and pedagogy to support the goalkeeper’s long-term development.\n\nThe strategy outlines a clear process for providing ongoing feedback from the goalkeeping department on training and match-day performance, linking this feedback to the goalkeeper’s individual development plan and evaluations.\n\nThe club clearly articulates its goalkeeping development plan to key stakeholders (players, parents, goalkeeping and other coaching staff) to create a shared understanding of the importance and objectives of the Goalkeeping Development Strategy. More emphasis should be placed on club-based goalkeeping coaches delivering upon this planning. Any external providers should adhere to the club’s ethos and coaching methodology.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club has a clear long-term vision and strategy for the development of goalkeepers.",
+    "The goalkeeping development strategy establishes a unique set of goalkeeper principles, periodic training cycles, and a session library that align with and complement...",
+    "Within the club's playing style, the goalkeeper's technical and tactical roles and responsibilities are clearly defined and aligned through each development phase.",
+    "The strategy articulates the technical-tactical, psychosocial, and physical expectations specific to each development stage and phase, with a particular focus on the...",
+    "There is a clear alignment with development and age-specific methodology and pedagogy to support the goalkeeper’s long-term development.",
+    "The strategy outlines a clear process for providing ongoing feedback from the goalkeeping department on training and match-day performance, linking this feedback to..."
+   ],
+   "mandatory": true,
+   "optional": false
+  },
+  {
+   "id": "P6",
+   "section": "planning",
+   "group": "Training Planning (Cycles, Plans)",
+   "name": "Annual Season Plan and Training Schedule",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Annual season plan and weekly training schedule for all academy teams.",
+   "descriptor": "An annual calendar is provided for all age groups, bringing together all key activities and creating synergies by keeping stakeholders on track with deadlines for each activity. The annual calendar spans a minimum of 40 weeks and outlines pre-season, physical testing, training cycles, match dates, inductions, player education workshops, player reviews, season debriefings, and other coordinated meetings with players, parents, and coaching staff across all age groups in their programs. This holistic approach ensures a connection between activities, with logical steps followed in a cyclical manner.\n\nThe club needs to demonstrate how it uses this document to plan wider activities and events across the club. Additionally, the club maintains a documented training schedule that outlines session times and locations for all teams, including specialist units, individual sessions, and goalkeeper training. The training times are structured to maximise staffing and the availability of the Technical Directors or Technical Leads, while also considering the availability of training fields.\n\nThe training system may include physical training (gym, strength and conditioning, movement competencies, etc.), meeting times or placeholders for video analysis, match reviews, and tactical, physical, psychological, or wellbeing education workshops. It is the club’s responsibility to ensure the schedule is updated weekly, as the execution of this plan can be observed during FQ club visits.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "An annual calendar is provided for all age groups, bringing together all key activities and creating synergies by keeping stakeholders on track with deadlines for...",
+    "The annual calendar spans a minimum of 40 weeks and outlines pre-season, physical testing, training cycles, match dates, inductions, player education workshops,...",
+    "This holistic approach ensures a connection between activities, with logical steps followed in a cyclical manner.",
+    "The club needs to demonstrate how it uses this document to plan wider activities and events across the club.",
+    "Additionally, the club maintains a documented training schedule that outlines session times and locations for all teams, including specialist units, individual...",
+    "The training times are structured to maximise staffing and the availability of the Technical Directors or Technical Leads, while also considering the availability of..."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P7",
+   "section": "planning",
+   "group": "Training Planning (Cycles, Plans)",
+   "name": "Principles of Periodisation and Training Program Cycles",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Your periodisation principles and training program cycles.",
+   "descriptor": "The club’s approach to periodisation aligns with recognised evidence-based practice, ensuring consistent cycle lengths and clear links to the club’s Youth Development Plan. It integrates tactical periodisation, football conditioning, and workload tracking to promote holistic player development across tactical, technical, physical, psychological, and social areas.\n\nTraining cycles are appropriately differentiated for each age and stage, with progressive loading applied to older age groups. A live, centralised library of training program cycles is maintained and accessible to all relevant technical staff.\n\nEach training cycle demonstrates clear links between training and match day objectives, with the plan regularly reviewed and updated to remain current and observable within the daily environment.\n\nThe delivery of these topics can be observed during FQ club visits or referenced in the Technical Director and Technical Lead’s evaluation of coaches, teams, or individual development progress.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club’s approach to periodisation aligns with recognised evidence-based practice, ensuring consistent cycle lengths and clear links to the club’s Youth Development...",
+    "It integrates tactical periodisation, football conditioning, and workload tracking to promote holistic player development across tactical, technical, physical,...",
+    "Training cycles are appropriately differentiated for each age and stage, with progressive loading applied to older age groups.",
+    "A live, centralised library of training program cycles is maintained and accessible to all relevant technical staff.",
+    "Each training cycle demonstrates clear links between training and match day objectives, with the plan regularly reviewed and updated to remain current and observable...",
+    "The delivery of these topics can be observed during FQ club visits or referenced in the Technical Director and Technical Lead’s evaluation of coaches, teams, or..."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P8",
+   "section": "planning",
+   "group": "Talent Identification",
+   "name": "Talent Development Philosophy",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Your talent development philosophy.",
+   "descriptor": "The club's beliefs focus on identifying and nurturing talent. The planning in this area should reflect how individual talent is recognised and developed through the training environment created at the club. The club’s philosophy prioritises promoting the best interests of each individual and providing opportunities for them to progress to state and national levels. The club collaborates with FQ Academy, QST, QAS, and A-League Academies.\n\nThe club has a detailed statement regarding talent management, which includes several best practice elements. The core of their talent management is based on an individualised approach. The club understands its role within the local community, supports players from the region, and ensures they have opportunities to engage with the club. The intent is not to hold 'open trials' but to follow a long-term approach to player development. The club’s talent identification processes assess the potential of players rather than focusing solely on current performance. The technical staff are aware of growth and maturation factors, and their talent identification decisions are based on a holistic approach (e.g., FA's technical skills and player competencies), in alignment with the club's vision and philosophy.\n\nThe talent management philosophy emphasises that master coaching is a key factor, and talent development is considered a ‘whole-of-club’ responsibility. The club prioritises patience with junior players and avoids early deselection. Appropriate succession planning ensures that there is sufficient identification of talent within or outside the club for u9-u18 players. It should be noted that this may be assessed during interviews and club visits to determine whether the philosophy is not only documented but also supported by a high level of club-wide understanding across all staff.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club's beliefs focus on identifying and nurturing talent.",
+    "The planning in this area should reflect how individual talent is recognised and developed through the training environment created at the club.",
+    "The club’s philosophy prioritises promoting the best interests of each individual and providing opportunities for them to progress to state and national levels.",
+    "The club collaborates with FQ Academy, QST, QAS, and A-League Academies.",
+    "The club has a detailed statement regarding talent management, which includes several best practice elements.",
+    "The core of their talent management is based on an individualised approach."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P9",
+   "section": "planning",
+   "group": "Talent Identification",
+   "name": "Talent ID Policy and Player Profiles",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "Talent identification policy and the player profiles you recruit against.",
+   "descriptor": "The club has a clearly defined Talent ID Policy that articulates how, when, and why newly identified players are recruited, or existing talents are retained or released. The Policy acknowledges its focus on long-term athlete development, which potentially results in consistently high retention rates and multi-year offers. A recruitment process is in place to identify and assess whether players are suitable for the club. This process details the roles and responsibilities of staff members and how they are utilised.\n\nThe club demonstrates how its policies and protocols for talent identification and progression best suit its environment. It demonstrates well-established connections and pathways within the community, including trusted sources such as schools, churches, clinics, and Memorandum of Understanding with local clubs and to the potential progression of players to FQ Development Programs. The network presented is integrated, and there is a planned approach to scouting players. Players may trial \"in-season\" with the approval of their current club and on an invitation-only basis.\n\nThe players' evaluation process is as objective as possible, with qualitative data collected and collated. Decisions are not based solely on a single coach’s opinion. Instead, a panel led by the Technical Director or Technical Lead spearheads the process, ensuring that Talent ID reflects the club’s player profiles.\n\nThe club strives to develop players in alignment with its vision and philosophy. Player profiles are specific to each developmental stage, with a focus on the competencies players should display and execute at each age and phase. These profiles may be used to assess players during the Talent ID process and as they transition through developmental stages. Player profiles include specific, position-related, or unit-based milestones. Ideally, there is a consistent link between Talent ID, player profiles, the playing style, and individual development at the club. Player profiles may also serve as a tool for internal assessments or reviews of the efficiency of the training process and policies.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club has a clearly defined Talent ID Policy that articulates how, when, and why newly identified players are recruited, or existing talents are retained or released.",
+    "The Policy acknowledges its focus on long-term athlete development, which potentially results in consistently high retention rates and multi-year offers.",
+    "A recruitment process is in place to identify and assess whether players are suitable for the club.",
+    "This process details the roles and responsibilities of staff members and how they are utilised.",
+    "The club demonstrates how its policies and protocols for talent identification and progression best suit its environment.",
+    "It demonstrates well-established connections and pathways within the community, including trusted sources such as schools, churches, clinics, and Memorandum of..."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P10",
+   "section": "planning",
+   "group": "Player Services and Support",
+   "name": "Player Parent Induction Process",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "Player and parent induction materials and process.",
+   "descriptor": "The Player/ Parent Induction process is thorough and details all the required content that will be essential for the season including operational, technical, medical, child protection and complaint resolution procedures. The induction covers all age groups between u9 to u18 and may be delivered separately for different age groups. Inductions should be completed before the season's start with content, exact date(s) and groups attended evidenced. The club must submit the presented slides that was shared at the event to prove there is comprehensive communication.\n\nLines of communication, grievance\n\nwhistleblowing processes are communicated along with child protection and serious complaints procedure. The communication process sets out protection for players, parents and coaches in terms of how and when dialogue is appropriate. The club’s player welfare officer is introduced and made available. Codes of conduct are detailed; expectations are specified to create a safe environment with responsible actions.\n\nAttendance, game time and game start keeping policies are articulated. Players’ medical screening is ideally completed by that time and follow up plans for prehab/conditioning programs for pre-season are accessible (while similar services for competition and post-season phases are outlined). Injured players understand in-season medical support and return to play protocols.\n\nThe club might provide an overview of their mission, vision, philosophy in player development, high level details of the coaching methodology, the program’s individual player focus and playing style. Players are completely comfortable in the organisation for their season; they know where to be and when and are provided with information about the equipment they will receive or need to source.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The Player/ Parent Induction process is thorough and details all the required content that will be essential for the season including operational, technical, medical,...",
+    "The induction covers all age groups between u9 to u18 and may be delivered separately for different age groups.",
+    "Inductions should be completed before the season's start with content, exact date(s) and groups attended evidenced.",
+    "The club must submit the presented slides that was shared at the event to prove there is comprehensive communication.",
+    "Lines of communication, grievance",
+    "whistleblowing processes are communicated along with child protection and serious complaints procedure."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P11",
+   "section": "planning",
+   "group": "Player Services and Support",
+   "name": "Goal Setting and Individual Development Plans",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Goal setting process and individual development plan template.",
+   "descriptor": "Goal Setting and Individual Development Plans (IDPs) reflect the club’s commitment to engaging players in a structured, ongoing process of setting, reviewing, and refining their development goals. The club clearly articulates how, why, and when goals are set, ensuring all players and coaches understand the process and their shared responsibilities within it.\n\nRegularly planned review meetings form a key part of each player’s development journey, allowing for collaborative discussions between players, coaches, and specialist staff. Players have meaningful input into their goals and are regularly reminded of them through a consistent, process-driven framework.\n\nThe framework supports the creation of S.M.A.R.T. goals that focus on mastery, effort, and continual improvement. Technical Directors, coaches, and specialist staff may ‘screen’ or validate goals to ensure they are realistic and developmentally appropriate. Goals are integrated within each player’s Individual Development Plan, linking directly to the club’s broader player development philosophy and methodology.\n\nEach IDP may include goals across technical, tactical, physical, and psychological domains, with evidence of regular updates and ongoing monitoring. The framework incorporates defined checkpoints and follow-up protocols to support player reflection and progress.\n\nTo enhance engagement and clarity, IDPs are supported with video footage aligned to each player’s goals and strengths, with players encouraged to contribute or identify clips themselves. Overall, the club demonstrates through its documentation and practice a clear, well-developed strategy for developing individuals within its program.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Goal Setting and Individual Development Plans (IDPs) reflect the club’s commitment to engaging players in a structured, ongoing process of setting, reviewing, and...",
+    "The club clearly articulates how, why, and when goals are set, ensuring all players and coaches understand the process and their shared responsibilities within it.",
+    "Regularly planned review meetings form a key part of each player’s development journey, allowing for collaborative discussions between players, coaches, and...",
+    "Players have meaningful input into their goals and are regularly reminded of them through a consistent, process-driven framework.",
+    "The framework supports the creation of S.M.A.R.T.",
+    "goals that focus on mastery, effort, and continual improvement.",
+    "Technical Directors, coaches, and specialist staff may ‘screen’ or validate goals to ensure they are realistic and developmentally appropriate.",
+    "Goals are integrated within each player’s Individual Development Plan, linking directly to the club’s broader player development philosophy and methodology."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P12",
+   "section": "planning",
+   "group": "Player Services and Support",
+   "name": "Athlete Welfare and Support",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "Athlete welfare and support policy and referral pathways.",
+   "descriptor": "This area assesses the club’s planned and professionally delivered welfare and wellbeing support for players, and how this framework is embedded across the club environment.\n\nThe club provides detailed and thorough evidence of how, when, and by whom players are supported throughout their journey at the club. Welfare strategies are proactive, evidence-based, and reflect the individual and collective needs of athletes, with processes in place to monitor and measure their effectiveness.\n\nThe club maintains a comprehensive Child Protection Policy, understood and signed off by all staff and volunteers, and appoints a qualified Club Welfare Officer with a clear position description, relevant qualifications and/or Blue Card, and a direct communication process to recognised safeguarding authorities. Members are informed of the Welfare Officer’s role, contact details, and the support services available.\n\nAthlete welfare and wellbeing strategies are holistic and follow a bio-psycho-social philosophy, recognising the interconnection between physical, psychological, social, cultural, and environmental factors. The club actively provides support in at least three of these key wellbeing dimensions, demonstrating an environment that values balanced development both on and off the field.\n\nA formal mental health referral process is in place to ensure members can access best-practice information, advice, and services. The club also appoints a School Liaison Officer with a defined role description and demonstrates commitment to players’ academic and personal growth through at least two structured initiatives, such as school MOUs, homework or study provisions, or coordinated transport support.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "This area assesses the club’s planned and professionally delivered welfare and wellbeing support for players, and how this framework is embedded across the club...",
+    "The club provides detailed and thorough evidence of how, when, and by whom players are supported throughout their journey at the club.",
+    "Welfare strategies are proactive, evidence-based, and reflect the individual and collective needs of athletes, with processes in place to monitor and measure their...",
+    "The club maintains a comprehensive Child Protection Policy, understood and signed off by all staff and volunteers, and appoints a qualified Club Welfare Officer with...",
+    "Members are informed of the Welfare Officer’s role, contact details, and the support services available.",
+    "Athlete welfare and wellbeing strategies are holistic and follow a bio-psycho-social philosophy, recognising the interconnection between physical, psychological,..."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P13",
+   "section": "planning",
+   "group": "Player Services and Support",
+   "name": "Sport Science Support",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "Sport science support plan for the academy.",
+   "descriptor": "The Club has a clear philosophy to support and nurture talent at the club. Areas such as nutrition, physical testing, athletic development, injury prevention, recovery, hydration, Talent ID, maturation and growth, health and wellbeing, and education are all appropriately and carefully planned to align with age specific milestones and development.\n\nThe club has a fully integrated High-Performance department that is appropriately qualified to monitor and assess players in its care.\n\nThe high-performance department has full reporting lines to physio, strength and conditioning staff (rehab/prehab/performance development), technical staff, and other relevant parties.\n\nBeyond the guiding philosophy, the club implements a comprehensive and periodised annual plan for the physical development of players. This plan integrates both on-field and off-field strength and conditioning components, aligns with age and maturation stages, and demonstrates a consistent and evidence-based approach to monitoring and adjusting player workloads throughout the season.\n\nThe assessment of this area covers the personnel employed by the club, and it will be assessed if the High-Performance department influence practices in player development to help keep up with modern trends.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The Club has a clear philosophy to support and nurture talent at the club.",
+    "Areas such as nutrition, physical testing, athletic development, injury prevention, recovery, hydration, Talent ID, maturation and growth, health and wellbeing, and...",
+    "The club has a fully integrated High-Performance department that is appropriately qualified to monitor and assess players in its care.",
+    "The high-performance department has full reporting lines to physio, strength and conditioning staff (rehab/prehab/performance development), technical staff, and other...",
+    "Beyond the guiding philosophy, the club implements a comprehensive and periodised annual plan for the physical development of players.",
+    "This plan integrates both on-field and off-field strength and conditioning components, aligns with age and maturation stages, and demonstrates a consistent and..."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P14",
+   "section": "planning",
+   "group": "Coaches Education and Support",
+   "name": "Club Coach Development Strategy",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Club coach development strategy.",
+   "descriptor": "The club has a clear and well-defined coach development strategy to support the professional and personal growth of its coaches. This is demonstrated by a high level of strategic planning and a significant number of annual educational events hosted at the club, providing an informal education process for all coaches from U9s to U18s.\n\nThe strategy outlines a detailed profile for each member of the coaching staff as part of their individual development plan, highlighting their key strengths, main areas for development, and a tailored plan to support their progression toward formal qualifications in the short, medium, and long term, either internally within the club or externally within the Football Queensland programs that are designed to advance identified coaches. Additionally, the plan informs the club’s management about the Technical Director’s and Technical Lead’s responsibilities, tasks, and performance in relation to coach development.\n\nKey components of the plan may include the club's optimal/ideal coach profile, recruitment strategies for coaching talent, availability of mentoring opportunities, both informal and formal educational events, individual development plans (IDPs), self-reflection protocols, and access to bursaries or scholarship. It may also allocate time for coaches to explore areas of development beyond technical coaching, such as sports science, sports psychology, match analysis, talent identification, or other relevant disciplines. The strategy ensures that all staff have access to these opportunities, which may span various disciplines within the club.\n\nThe strategy should include mid- and long-term goals from the club’s perspective, along with a clear plan on how the Club intend to achieve 50/50 gender parity in coaching positions.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club has a clear and well-defined coach development strategy to support the professional and personal growth of its coaches.",
+    "This is demonstrated by a high level of strategic planning and a significant number of annual educational events hosted at the club, providing an informal education...",
+    "The strategy outlines a detailed profile for each member of the coaching staff as part of their individual development plan, highlighting their key strengths, main...",
+    "Additionally, the plan informs the club’s management about the Technical Director’s and Technical Lead’s responsibilities, tasks, and performance in relation to coach...",
+    "Key components of the plan may include the club's optimal/ideal coach profile, recruitment strategies for coaching talent, availability of mentoring opportunities,...",
+    "It may also allocate time for coaches to explore areas of development beyond technical coaching, such as sports science, sports psychology, match analysis, talent..."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "P15",
+   "section": "planning",
+   "group": "Coaches Education and Support",
+   "name": "Coach Onboarding and Retention Process",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Coach onboarding, induction and retention process, including safeguarding education.",
+   "descriptor": "The club has a clear and detailed process for onboarding and retention of coaches, both new and retained, across all age groups from u9s to u18s. Coaches are provided with a structured onboarding process that extends beyond an 'induction night' event/s and adequately prepares them before they begin their coaching responsibilities. As part of this process, clubs could hold mid-year and end-of-season meetings with coaches to discuss performance reviews and development opportunities.\n\nFrom an HR perspective, coaches are welcomed with a thorough explanation of all policies and procedures. These include member protection protocols such as blue cards protocol, safeguarding protocols, complaints processes, and more. They are introduced to key figures within the club, including the president, board members, general manager, technical directors and technical leads, other coaches, staff members, players, and parents, etc. From a technical standpoint, coaches are provided with a comprehensive overview of the club’s Player Development and Coaching Methodology Principles (and other key documentation), which align with its overarching values, mission, vision and philosophy at the Club.\n\nWhere applicable, clubs provide evidence that coaches are given a detailed position description and/or a formal contract or agreement. These may include key performance indicators (KPIs) to clarify their roles and responsibilities. They may serve a probationary period during which they receive ongoing feedback and support from the Technical Directors and Technical Leads. Coaches are expected to become familiar with the club's football operations and, where possible, receive a full briefing on the team and players they will work with. This includes reviewing previous reports, accessing the players' most current development plans, and receiving updates on relevant matters such as personality traits, injuries, family circumstances, or other pertinent information. By the end of the induction process, all staff members must be well-versed in the coaching methodology, playing style, player feedback and review processes, as well as deadlines and record-keeping protocols. Coaches are also informed about how their performance will be assessed and reviewed, and the development and support opportunities available to them.\n\nThe club provides evidence of an effective system for tracking the coach onboarding and retention process throughout the season, which includes documenting the date, time, and location of sessions and meetings, staff members in attendance, the content covered during the induction, and any other relevant details.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club has a clear and detailed process for onboarding and retention of coaches, both new and retained, across all age groups from u9s to u18s.",
+    "Coaches are provided with a structured onboarding process that extends beyond an 'induction night' event/s and adequately prepares them before they begin their...",
+    "As part of this process, clubs could hold mid-year and end-of-season meetings with coaches to discuss performance reviews and development opportunities.",
+    "From an HR perspective, coaches are welcomed with a thorough explanation of all policies and procedures.",
+    "These include member protection protocols such as blue cards protocol, safeguarding protocols, complaints processes, and more.",
+    "They are introduced to key figures within the club, including the president, board members, general manager, technical directors and technical leads, other coaches,...",
+    "From a technical standpoint, coaches are provided with a comprehensive overview of the club’s Player Development and Coaching Methodology Principles (and other key..."
+   ],
+   "mandatory": false,
+   "optional": true
+  },
+  {
+   "id": "D1",
+   "section": "delivery",
+   "group": "Program Management and Monitoring",
+   "name": "Attendance and Game Time Record",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "Attendance and game time records for academy teams.",
+   "descriptor": "Provide attendance and game time records to date for all relevant age groups. These records help identify trends in player attendance and game time and enable the club to trigger appropriate follow-up actions or support for players. They can also be used as part of the player review process.\n\nThe club has a well-planned method for attendance recording, and the data process allows coaches and technicians easy access to relevant information. Attendance records include reasons for absence, which may trigger follow-up actions. Logs are kept up to date and accessible for the Technical Director or Technical Lead to resolve issues relating to game time, player selection, or adherence to club policies. Attendance data may also link to player welfare tracking, supporting early identification of social or psychological concerns.\n\nThe club maintains a detailed process for logging player game time. Coaches and the Technical Director or Technical Lead can access this information freely, and it is updated weekly. Game time data provides insights that inform decisions on player development, squad placement, playing minutes, and positional exposure, and can be integrated into player reports and development plans.\n\nGame time data is reviewed against the planned framework for each age group to ensure alignment with the club’s development approach. The information is used to check conformity to planned targets and inform future planning, including arranging additional matches or friendlies where required.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Provide attendance and game time records to date for all relevant age groups.",
+    "These records help identify trends in player attendance and game time and enable the club to trigger appropriate follow-up actions or support for players.",
+    "They can also be used as part of the player review process.",
+    "The club has a well-planned method for attendance recording, and the data process allows coaches and technicians easy access to relevant information.",
+    "Attendance records include reasons for absence, which may trigger follow-up actions.",
+    "Logs are kept up to date and accessible for the Technical Director or Technical Lead to resolve issues relating to game time, player selection, or adherence to club..."
+   ]
+  },
+  {
+   "id": "D2",
+   "section": "delivery",
+   "group": "Program Management and Monitoring",
+   "name": "Workload Tracking",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "Examples of player workload tracking across the season.",
+   "descriptor": "Provide workload records to date for all age-appropriate groups. These records are used by coaches and S&C staff to understand player development, prevent overload or underload, and optimise training and match stimulus.\n\nThe club has an integrated system for tracking player workloads across all daily physical activities (club, school, and other sports). The system is easily accessible to staff, and players are kept informed through dashboards, noticeboards, or other appropriate methods.\n\nWorkload data is captured through appropriate measures such as Relative Perceived Exertion (RPE) and, at older age groups, GPS data. The club’s sports scientist oversees data collection and can generate daily or weekly reports for technical staff to inform future training design. This system is used across the academy, not limited to the first team.\n\nCoaches receive education on interpreting and applying workload data, integrating it into their planning routines. Team loading targets are structured in micro- and meso-cycles, with data used to compare planned versus actual physical output. Individual top-up or pull-back adjustments are made where required.\n\nWorkload tracking also supports the medical team in return-to-play processes and monitoring overuse injury trends. It may be coupled with wellbeing monitoring to adopt a holistic approach. Player self-reporting contributes to feedback processes and demonstrates responsibility for managing their own bodies.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Provide workload records to date for all age-appropriate groups.",
+    "These records are used by coaches and S&C staff to understand player development, prevent overload or underload, and optimise training and match stimulus.",
+    "The club has an integrated system for tracking player workloads across all daily physical activities (club, school, and other sports).",
+    "The system is easily accessible to staff, and players are kept informed through dashboards, noticeboards, or other appropriate methods.",
+    "Workload data is captured through appropriate measures such as Relative Perceived Exertion (RPE) and, at older age groups, GPS data.",
+    "The club’s sports scientist oversees data collection and can generate daily or weekly reports for technical staff to inform future training design."
+   ]
+  },
+  {
+   "id": "D3",
+   "section": "delivery",
+   "group": "Program Management and Monitoring",
+   "name": "Wellbeing Monitoring",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "Examples of player wellbeing monitoring.",
+   "descriptor": "Provide wellbeing records to date for all age-appropriate groups. These records help coaches ensure that all players under their care are supported and provide a clear red-flag system to identify athletes requiring attention.\n\nA qualified Club Wellbeing Officer oversees this process, supported by medical and technical staff (Physio, Psychologist, Doctor, Club Liaison, Technical Lead and Technical Director). The officer manages documentation, follow-up, and coordination between the club and external contacts such as schools or relevant authorities when serious issues arise. The role has a clear position description, formal support from the board, and access to all player contact details.\n\nPlayers have access to a wellbeing monitoring platform that can be used remotely and in which they have confidence regarding the red-flag process and data privacy. All relevant staff have access to this information to inform player care and adapt training expectations accordingly.\n\nBeyond monitoring, the club provides education sessions and wellbeing programs for players and parents that address physical, social, psychological, and environmental wellbeing, supporting a proactive and preventative culture.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Provide wellbeing records to date for all age-appropriate groups.",
+    "These records help coaches ensure that all players under their care are supported and provide a clear red-flag system to identify athletes requiring attention.",
+    "A qualified Club Wellbeing Officer oversees this process, supported by medical and technical staff (Physio, Psychologist, Doctor, Club Liaison, Technical Lead and...",
+    "The officer manages documentation, follow-up, and coordination between the club and external contacts such as schools or relevant authorities when serious issues arise.",
+    "The role has a clear position description, formal support from the board, and access to all player contact details.",
+    "Players have access to a wellbeing monitoring platform that can be used remotely and in which they have confidence regarding the red-flag process and data privacy."
+   ]
+  },
+  {
+   "id": "D4",
+   "section": "delivery",
+   "group": "Program Management and Monitoring",
+   "name": "Sport Science Monitoring, Support & Athletic Development",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Maturation monitoring, testing results and athletic development programs (dated).",
+   "descriptor": "Provide maturation data (Bio-Banding, Peak Height Velocity (PHV), etc.) and relevant physical testing records to date for all age-appropriate groups. Clubs are assessed on their ability to accurately record players’ physiological maturation and age-appropriate physical performance data, and demonstrate how this information informs training prescription, athletic development programming, team placement, player assessment, Talent ID, and player welfare.\n\nClubs achieve higher scores when all key maturation monitoring methodologies (minimum six times per year) and physical performance assessments (minimum three times per year) are conducted and recorded regularly across all relevant teams. High-scoring clubs analyse this data through sport science staff and ensure findings are effectively communicated to coaching staff to enhance player development practices and technical decision-making. This should include classifying players according to their rate of development (e.g. early, average, or late developers).\n\nPhysical testing should be age-appropriate and used to establish player benchmarks, monitor physical development over time, identify individual needs, and inform individualised exercise prescription throughout both pre-season and in-season.\n\nThese records should support individual player development, guide the management of players through key stages of maturation, and safeguard late developers and players experiencing their PHV growth-spurt phase.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Provide maturation data (Bio-Banding, Peak Height Velocity (PHV), etc.) and relevant physical testing records to date for all age-appropriate groups.",
+    "Clubs are assessed on their ability to accurately record players’ physiological maturation and age-appropriate physical performance data, and demonstrate how this...",
+    "Clubs achieve higher scores when all key maturation monitoring methodologies (minimum six times per year) and physical performance assessments (minimum three times...",
+    "High-scoring clubs analyse this data through sport science staff and ensure findings are effectively communicated to coaching staff to enhance player development...",
+    "This should include classifying players according to their rate of development (e.g.",
+    "early, average, or late developers)."
+   ]
+  },
+  {
+   "id": "D5",
+   "section": "delivery",
+   "group": "Program Management and Monitoring",
+   "name": "Return To Play Process",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission, Club visits",
+   "guidance": "Return to play process and examples of its use.",
+   "descriptor": "Provide records and proof of process to date for each age group. These records demonstrate that the club has an individualised return-to-play process to support injured players back into training and match play.\n\nEvidence should include documentation from a qualified physiotherapist who collaborates with high-performance staff to minimise the risk of injury or re-injury through a clear, progressive return-to-training plan provided to coaches.\n\nThe club maintains fully integrated communication between the physiotherapist or doctor, sports scientist/S&C coach, and technical department. Each discipline recognises its role within the process and contributes to the player’s safe return to full fitness. All stakeholders access a single, secure reference system that stores player injury records, availability status, and relevant medical notes (with appropriate permission levels). Player injury histories are retained for several years, including post-departure, to satisfy insurance and player-transfer requirements.\n\nThe return-to-play process is informed by historical data and strengthened by prevention measures such as pre-season screening and personalised prehabilitation programs targeting strength or balance discrepancies. The club also maintains clear policies and procedures for concussion management, emergency response (defibrillator, EpiPen), and serious-injury protocols. Baseline fitness and concussion tests are completed at the start of each season or when new players join. Where possible, the club works with a preferred doctor or surgeon to support serious-injury management and establish best practice standards.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Provide records and proof of process to date for each age group.",
+    "These records demonstrate that the club has an individualised return-to-play process to support injured players back into training and match play.",
+    "Evidence should include documentation from a qualified physiotherapist who collaborates with high-performance staff to minimise the risk of injury or re-injury...",
+    "The club maintains fully integrated communication between the physiotherapist or doctor, sports scientist/S&C coach, and technical department.",
+    "Each discipline recognises its role within the process and contributes to the player’s safe return to full fitness.",
+    "All stakeholders access a single, secure reference system that stores player injury records, availability status, and relevant medical notes (with appropriate...",
+    "Player injury histories are retained for several years, including post-departure, to satisfy insurance and player-transfer requirements."
+   ]
+  },
+  {
+   "id": "D6",
+   "section": "delivery",
+   "group": "Program Management and Monitoring",
+   "name": "Session Plan Library",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission, Club visits",
+   "guidance": "Access to or export of your session plan library.",
+   "descriptor": "The club’s session plan library is stored in a centralised, easily accessible location for all coaching staff and is available to FQ Club Development Ambassadors prior to club visits. Session plans for all age groups are player-specific, current, and reviewed by the Technical Director to ensure a consistent approach across the program.\n\nCoaches can access session plans from other age groups to encourage collaboration and knowledge sharing. All session plans align with the club’s periodisation framework and reflect its player development and coaching methodology principles.\n\nSession plans, including goalkeeper, individualised, and specialised sessions, are clearly evidenced and uploaded using a consistent naming convention across all ages and stages. Additional planning evidence may also be provided where relevant.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club’s session plan library is stored in a centralised, easily accessible location for all coaching staff and is available to FQ Club Development Ambassadors...",
+    "Session plans for all age groups are player-specific, current, and reviewed by the Technical Director to ensure a consistent approach across the program.",
+    "Coaches can access session plans from other age groups to encourage collaboration and knowledge sharing.",
+    "All session plans align with the club’s periodisation framework and reflect its player development and coaching methodology principles.",
+    "Session plans, including goalkeeper, individualised, and specialised sessions, are clearly evidenced and uploaded using a consistent naming convention across all ages...",
+    "Additional planning evidence may also be provided where relevant."
+   ]
+  },
+  {
+   "id": "D7",
+   "section": "delivery",
+   "group": "Program Management and Monitoring",
+   "name": "Video Analysis Services",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Examples of video analysis provided to players and teams.",
+   "descriptor": "The club possesses adequate equipment for filming matches and operates an associated video analysis platform that supports player and team development. There is clear evidence of consistent match-day footage being recorded for all teams throughout the season (ideally weekly, but at minimum fortnightly), with footage made available to all key stakeholders including players, coaches, parents, and medical staff.\n\nAn up-to-date video library is maintained, reflecting the club’s playing style and key individual techniques. This library serves as evidence of the club’s methodology and is accessible to stakeholders as part of the club’s learning environment. Match footage is actively used by an analyst or team coaches to create individual and team development clips, such as match reviews, opposition analysis, and unit feedback sessions.\n\nPlayers regularly receive individual clips or have access to systems where they can self-identify and share their own clips with relevant staff. There is a structured feedback process in place within the club that supports player development through review presentations, one-to-one discussions, or the use of AI-driven platforms providing key highlights and performance statistics. The process is coordinated by a dedicated analyst (this can be as part of a dual role) who works closely with coaches and players to maximise the use of video evidence and ensure feedback is objective, consistent, and developmentally focused.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club possesses adequate equipment for filming matches and operates an associated video analysis platform that supports player and team development.",
+    "There is clear evidence of consistent match-day footage being recorded for all teams throughout the season (ideally weekly, but at minimum fortnightly), with footage...",
+    "An up-to-date video library is maintained, reflecting the club’s playing style and key individual techniques.",
+    "This library serves as evidence of the club’s methodology and is accessible to stakeholders as part of the club’s learning environment.",
+    "Match footage is actively used by an analyst or team coaches to create individual and team development clips, such as match reviews, opposition analysis, and unit...",
+    "Players regularly receive individual clips or have access to systems where they can self-identify and share their own clips with relevant staff.",
+    "There is a structured feedback process in place within the club that supports player development through review presentations, one-to-one discussions, or the use of...",
+    "The process is coordinated by a dedicated analyst (this can be as part of a dual role) who works closely with coaches and players to maximise the use of video..."
+   ]
+  },
+  {
+   "id": "D8",
+   "section": "delivery",
+   "group": "Training Program Observation",
+   "name": "Training Delivery Observation",
+   "kind": "onfield",
+   "maxScore": 4,
+   "weight": 10,
+   "evidence": "Club visits",
+   "guidance": "Observed by FQ at training. No submission needed.",
+   "descriptor": "No submission required. Training sessions are observed to assess how effectively the club’s player development and coaching methodology are delivered. There is clear evidence of a structured training plan with consistent delivery across groups within each development phase. Session areas are organised to promote connection between players and coaches and to allow effective monitoring.\n\nA Technical Lead oversees sessions, providing direction, support, and feedback where required, within a recognisable and inclusive culture that reflects the club’s values. Technical detail is evident throughout delivery, and coaches demonstrate a strong understanding of the session content, methodology, and intended outcomes. Each session has clear technical and/or tactical objectives linked to the training cycle and tailored to individual or team needs.\n\nPreparation and organisation are timely; field space, equipment, and staffing are used efficiently. Coaches manage time and flow between components effectively, adapting practices to meet player or team needs. Interventions show high levels of football knowledge and observation skills. Feedback is timely, relevant, and age-appropriate, supporting meaningful player learning.\n\nSessions conclude with evaluation and reflection that involve players and staff in reviewing delivery and learning outcomes. The appearance, behaviour, and overall conduct of coaches align with the club’s values and beliefs.\n\nThe club should provide pre-visit access to its session library and training schedule, ensuring planned sessions align with training cycles and are stored electronically to support collaboration and shared learning. All academy coaches adhere to the detailed methodology and intervention standards established by the club.\n\nFull marks are awarded when there is clear consistency and alignment between the boys' and girls' programs, in the delivery of the club's player development philosophy, coaching methodology, and delivery standards.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Training sessions are observed to assess how effectively the club’s player development and coaching methodology are delivered.",
+    "There is clear evidence of a structured training plan with consistent delivery across groups within each development phase.",
+    "Session areas are organised to promote connection between players and coaches and to allow effective monitoring.",
+    "A Technical Lead oversees sessions, providing direction, support, and feedback where required, within a recognisable and inclusive culture that reflects the club’s...",
+    "Technical detail is evident throughout delivery, and coaches demonstrate a strong understanding of the session content, methodology, and intended outcomes.",
+    "Each session has clear technical and/or tactical objectives linked to the training cycle and tailored to individual or team needs.",
+    "Preparation and organisation are timely; field space, equipment, and staffing are used efficiently.",
+    "Coaches manage time and flow between components effectively, adapting practices to meet player or team needs.",
+    "Interventions show high levels of football knowledge and observation skills.",
+    "Feedback is timely, relevant, and age-appropriate, supporting meaningful player learning."
+   ]
+  },
+  {
+   "id": "D9",
+   "section": "delivery",
+   "group": "Training Program Observation",
+   "name": "Coach Interaction Observation (Training)",
+   "kind": "onfield",
+   "maxScore": 3,
+   "weight": 8,
+   "evidence": "Club visits",
+   "guidance": "Observed by FQ at training. No submission needed.",
+   "descriptor": "No submission required. It will be observed during club visits when the coaches interact with players, coaching staff and other club staff members. This area looks to assess the interactions of coaches before, during and after training sessions and team meetings. This evaluation is also about the human side of coaching and leadership that goes beyond the technicalities; from the start of the session to the close, how coaches set up the environment and how coaches generally affect player behaviours and actions.\n\nThe following essential traits for successful coaching interactions are to be observed at training or team meetings:\n\n1.) Clear, concise, and effective communication to deliver key messages,\n\n2.) Ability to ask purposeful questions, engage and guide players,\n\n3.) Appropriate mannerisms, tone and body language,\n\n4.) Skill to find the balance when to motivate, influence and inspire,\n\n5.) Ability to create a learning environment where players are engaged and included,\n\n6.) Positive interactions with team members and club technical staff to exchange ideas, share knowledge or ask advice.\n\nFull marks are awarded if there is clear consistency and alignment between the boys' and girls' programs in the delivery of the club's player development philosophy, coaching methodology, and delivery standards. The above interactions from the coach must be relevant to the age and stage of the player.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "It will be observed during club visits when the coaches interact with players, coaching staff and other club staff members.",
+    "This area looks to assess the interactions of coaches before, during and after training sessions and team meetings.",
+    "This evaluation is also about the human side of coaching and leadership that goes beyond the technicalities; from the start of the session to the close, how coaches...",
+    "The following essential traits for successful coaching interactions are to be observed at training or team meetings:",
+    "1.) Clear, concise, and effective communication to deliver key messages,",
+    "2.) Ability to ask purposeful questions, engage and guide players,",
+    "3.) Appropriate mannerisms, tone and body language,",
+    "4.) Skill to find the balance when to motivate, influence and inspire,"
+   ]
+  },
+  {
+   "id": "D10",
+   "section": "delivery",
+   "group": "Training Program Observation",
+   "name": "TD/TL Interaction Observation (Training)",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Club visits, Supporting documents",
+   "guidance": "Observed by FQ at training. Optional supporting documents.",
+   "descriptor": "Technical Director (TD) and Technical Lead (TL) interaction observations will be assessed mainly during club visits. The Technical Director is the guardian of the club's coaching philosophy and methodology and actively interacts with and supports the club's technical staff in person. Where a Technical Lead is appointed, this role works in alignment with and as an extension of the Technical Director, ensuring consistency of message, methodology, and standards across all age phases.\n\nThe foundation of a positive and engaging TD/TL interaction in the club environment are:\n\n1.) 1 on 1 meeting and mentoring of coaches.\n\n2.) Workshops for coaches and regular in person meetings.\n\n3.) Training observations with formal or informal feedback.\n\n4.) Model sessions or best practice observations of external presenters.\n\nDuring these occasions the TD/TL displays:\n\nA.) Outstanding football knowledge with the intent to share and to create a learning environment.\n\nB.) The ability to care about coaches, players, staff.\n\nC.) The ability to ask questions, engage and guide coaches and technical staff.\n\nD.) The ability to effectively communicate with all key stakeholders.\n\nThe TD should retain the same level of influence and understanding across all areas of the program, ensuring consistent care, connection, and communication. All interactions from the TD/TL must be age and stage appropriate and demonstrate leadership, connection, and alignment with the club’s technical direction.\n\nFull marks are awarded if there is clear consistency and alignment between the boys' and girls' programs in the resource allocation and delivery of the club's player development philosophy, coaching methodology, and delivery standards.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Technical Director (TD) and Technical Lead (TL) interaction observations will be assessed mainly during club visits.",
+    "The Technical Director is the guardian of the club's coaching philosophy and methodology and actively interacts with and supports the club's technical staff in person.",
+    "Where a Technical Lead is appointed, this role works in alignment with and as an extension of the Technical Director, ensuring consistency of message, methodology,...",
+    "The foundation of a positive and engaging TD/TL interaction in the club environment are:",
+    "1.) 1 on 1 meeting and mentoring of coaches.",
+    "2.) Workshops for coaches and regular in person meetings."
+   ]
+  },
+  {
+   "id": "D11",
+   "section": "delivery",
+   "group": "Training Program Observation",
+   "name": "Individualised and Specialised Training",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 8,
+   "evidence": "Club visits, Supporting documents",
+   "guidance": "Plans and records of individualised and specialised training.",
+   "descriptor": "Players gain development opportunities through training that is structured to assist them in meeting targets identified within their individual development plans (IDPs). Individual/specialised trainings are planned and offered as the core of the academy program. Training practices are designed to include specific contexts/techniques for individuals. Those trainings are regular and either built into the team training, held outside of those sessions, or replace team training from time to time. The key is regularity and specificity when attention is given to players individual improvement\n\nmastery of skill or positional knowledge. The individual trainings are not ad-hoc or generic, they reflect on players needs since they follow specific and documented feedback from evaluation procedures.\n\nThe most advanced academy programs can allocate technical staff within the program to conduct specialised sessions and monitor individual player progress. The dates, content of individual/specialised training are recorded and documented, and they are regularly delivered as part of the training program. They are indicated in the annual plan and within training cycles as well. The athlete’s improvement is monitored, and the aim and progress of the program is clearly communicated to the players and parents.\n\nGoalkeeper training is assessed separately and not included in this line item.\n\nFull marks are awarded if the club demonstrates clear consistency, care and attention in the allocation of resources and delivery standards for both male and female players, ensuring equitable access to individualised and specialised training.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Players gain development opportunities through training that is structured to assist them in meeting targets identified within their individual development plans (IDPs).",
+    "Individual/specialised trainings are planned and offered as the core of the academy program.",
+    "Training practices are designed to include specific contexts/techniques for individuals.",
+    "Those trainings are regular and either built into the team training, held outside of those sessions, or replace team training from time to time.",
+    "The key is regularity and specificity when attention is given to players individual improvement",
+    "mastery of skill or positional knowledge.",
+    "The individual trainings are not ad-hoc or generic, they reflect on players needs since they follow specific and documented feedback from evaluation procedures.",
+    "The most advanced academy programs can allocate technical staff within the program to conduct specialised sessions and monitor individual player progress."
+   ]
+  },
+  {
+   "id": "D12",
+   "section": "delivery",
+   "group": "Training Program Observation",
+   "name": "Female Player Development in Mixed Training and Playing Environments",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Club visits, Supporting documents",
+   "guidance": "Evidence of how female players are developed in mixed environments.",
+   "descriptor": "Female player development in a mixed environment is an effective solution to provide the best possible challenge for the most talented girls at FQ Academy clubs.\n\nClubs are required to have a documented structure that allows talented girls to train or play, either regularly or permanently, with boys in the Junior and Youth phases. It is expected that the Club’s Technical Director identifies female players who can benefit from training or playing with boys, creates a periodised plan to provide this challenge, informs the Club Development Ambassador, and connects with FQ’s Female Player Development Leads to consult with both about the best possible way to execute the plan. This collaboration should result in regular updates, the sharing of players’ Individual Development Plans, and preparing the players to participate in FQ Emerging or Queensland State Team training in the future.\n\nThe club may also offer merged training sessions or in-house mixed games between teams through evidenced and documented planning. Lastly, a club’s commitment to contributing to the creation of a mixed football environment will also be positively recognised if the club fields competitive boys’ teams in friendly matches against the girls’ Queensland State Team or QAS program.\n\nPlaying opportunities for female players in boys’ competitions during the Youth phase may require formal approval. Granting this opportunity remains at Football Queensland’s sole discretion, based on the Technical Department’s advice and in line with the Rules of Competition applied by the FQ Competitions Department.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Female player development in a mixed environment is an effective solution to provide the best possible challenge for the most talented girls at FQ Academy clubs.",
+    "Clubs are required to have a documented structure that allows talented girls to train or play, either regularly or permanently, with boys in the Junior and Youth phases.",
+    "It is expected that the Club’s Technical Director identifies female players who can benefit from training or playing with boys, creates a periodised plan to provide...",
+    "This collaboration should result in regular updates, the sharing of players’ Individual Development Plans, and preparing the players to participate in FQ Emerging or...",
+    "The club may also offer merged training sessions or in-house mixed games between teams through evidenced and documented planning.",
+    "Lastly, a club’s commitment to contributing to the creation of a mixed football environment will also be positively recognised if the club fields competitive boys’..."
+   ]
+  },
+  {
+   "id": "D13",
+   "section": "delivery",
+   "group": "Training Program Observation",
+   "name": "Goalkeeping Development Delivery",
+   "kind": "onfield",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Club visits",
+   "guidance": "Observed by FQ at training. No submission needed.",
+   "descriptor": "No submission required. The club provides appropriate field space to conduct all forms of goalkeeping practice, including crossing, distribution, and game-realistic situations. Goalkeeping sessions are well organised and structured to meet both individual and group needs, demonstrating excellent planning and organisation from the coach. Practices show a strong balance between execution-based and game-related elements that are age- and stage-appropriate, aligned to a clear session objective or topic.\n\nThe goalkeeping coach displays a thorough understanding of goalkeeping techniques and positional roles within the game, communicating key concepts clearly and effectively. The coach’s intervention process is clear, concise, and consistent, utilising modelling and demonstrations to support player understanding.\n\nThere is clear evidence that the goalkeeping coach attends a high proportion of match days to provide both formal and informal feedback to goalkeepers across the junior and youth academy phases, ensuring individual progression and alignment with the club’s overall player development methodology.\n\nThe club is encouraged to provide access pre-visit to the club’s session library and training schedule and planned training sessions are in line with cycles.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club provides appropriate field space to conduct all forms of goalkeeping practice, including crossing, distribution, and game-realistic situations.",
+    "Goalkeeping sessions are well organised and structured to meet both individual and group needs, demonstrating excellent planning and organisation from the coach.",
+    "Practices show a strong balance between execution-based and game-related elements that are age- and stage-appropriate, aligned to a clear session objective or topic.",
+    "The goalkeeping coach displays a thorough understanding of goalkeeping techniques and positional roles within the game, communicating key concepts clearly and...",
+    "The coach’s intervention process is clear, concise, and consistent, utilising modelling and demonstrations to support player understanding.",
+    "There is clear evidence that the goalkeeping coach attends a high proportion of match days to provide both formal and informal feedback to goalkeepers across the..."
+   ]
+  },
+  {
+   "id": "D14",
+   "section": "delivery",
+   "group": "Training Program Observation",
+   "name": "Medical Standards",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Club visits, Supporting documents",
+   "guidance": "Medical standards documentation (first aid, emergency plans).",
+   "descriptor": "The club has a medical room on site with first aid equipment, ice and strapping supply (free of charge for players), stretcher and defibrillator.  At minimum, a Level 1 Sports Trainer is available on training nights and games to provide strapping and first aid and a physio for triage and match days. The club's physio or a preferred physio practice is the point of contact for players who require ongoing treatment, preferably at a discounted rate.\n\nAssessment is not solely concerned with sports trainer or physio cover of games and sessions, but the club should demonstrate how the full coverage of players health is delivered throughout the season. Assessment will also look at the records that are kept by the club and how the club ensures that there are measures in place to detail the training and medical history of any player at the club.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club has a medical room on site with first aid equipment, ice and strapping supply (free of charge for players), stretcher and defibrillator.",
+    "At minimum, a Level 1 Sports Trainer is available on training nights and games to provide strapping and first aid and a physio for triage and match days.",
+    "The club's physio or a preferred physio practice is the point of contact for players who require ongoing treatment, preferably at a discounted rate.",
+    "Assessment is not solely concerned with sports trainer or physio cover of games and sessions, but the club should demonstrate how the full coverage of players health...",
+    "Assessment will also look at the records that are kept by the club and how the club ensures that there are measures in place to detail the training and medical...",
+    "Placeholder criterion 1"
+   ]
+  },
+  {
+   "id": "D15",
+   "section": "delivery",
+   "group": "Match Day Observation",
+   "name": "Adherence to Club's Player Development Philosophy and Playing Style",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 8,
+   "evidence": "Club visits, Supporting documents",
+   "guidance": "Supporting documents showing match day alignment with your philosophy.",
+   "descriptor": "Adherence to the club’s playing style is observed during match visits or via access to the club’s video analysis platform.\n\nThere should be a clear and consistent implementation of the playing style through each age, phase, and group. The playing style evidenced on match day should clearly reflect the club's P2 and P3 documents and should be unwavering regardless of result or match situation. Additionally, with reference to the 'Future Queensland Player' framework outlined in P2 and P3, the club should consistently bring to life the adopted playing style and methodology, ensuring a clear intention to support this framework through the club's unique playing style.\n\nPlayers should consistently demonstrate the intent to execute the principles of the playing style throughout each key moment of the game. The readiness of the display may improve gradually from younger to older age groups. The focus is on the players' commitment and intent, rather than perfect execution of the principles, independent of the match result.\n\nThe maximum score for the Club Based Playing Style in planning may align with the potential maximum score for the team's adherence to the playing style. The rationale is that an underdeveloped playing style (focusing primarily on formation or basic team actions) is easier to implement than a well-developed framework, which allows players to gradually build their game knowledge. It is easily identifiable when clubs provide a high level of detail to their coaches and players, and when there is a strong club-wide understanding of the team model throughout the player development pathway.\n\nIt is beneficial if this collective effort and the development of the playing style are measured by the club’s Technical Directors and Technical Leads and shared with FQ to support the observation.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Adherence to the club’s playing style is observed during match visits or via access to the club’s video analysis platform.",
+    "There should be a clear and consistent implementation of the playing style through each age, phase, and group.",
+    "The playing style evidenced on match day should clearly reflect the club's P2 and P3 documents and should be unwavering regardless of result or match situation.",
+    "Additionally, with reference to the 'Future Queensland Player' framework outlined in P2 and P3, the club should consistently bring to life the adopted playing style...",
+    "Players should consistently demonstrate the intent to execute the principles of the playing style throughout each key moment of the game.",
+    "The readiness of the display may improve gradually from younger to older age groups.",
+    "The focus is on the players' commitment and intent, rather than perfect execution of the principles, independent of the match result.",
+    "The maximum score for the Club Based Playing Style in planning may align with the potential maximum score for the team's adherence to the playing style.",
+    "The rationale is that an underdeveloped playing style (focusing primarily on formation or basic team actions) is easier to implement than a well-developed framework,..."
+   ]
+  },
+  {
+   "id": "D16",
+   "section": "delivery",
+   "group": "Match Day Observation",
+   "name": "Individual Development and Player Behaviours (Match Day)",
+   "kind": "onfield",
+   "maxScore": 4,
+   "weight": 8,
+   "evidence": "Club visits",
+   "guidance": "Observed by FQ on match day. No submission needed.",
+   "descriptor": "No submission required. An observation of the club’s approach and conduct on match day focuses particularly on its players and their behaviours. Player behaviours are assessed in alignment with the club’s values, mission, vision and philosophy. This area also considers individual development and how it can and should be prioritized on match day. A high-performing club demonstrates clarity and consistency in outlining its approach, emphasizing individual player development over team results.\n\nIndividual development is central to the club's game-day delivery. This is evident in the coach’s ability to connect the game-day experience to the individual development plan (IDP) or focused learning objectives for each player. Individual targets may align with unit or team goals, but there is a clear understanding for each player regarding their specific focus for each game. While the outcome or state of the game may slightly influence a player’s tasks, the emphasis on individual focus remains consistent.\n\nPlayer behaviours during the game are clearly linked to their assigned objectives or plans, whether set by the coach or self-determined. There is evidence of pre-planning with visual cues or targets, and the way this information is conveyed to players is clear and avoids unnecessary cognitive overload. Additionally, there is evidence of post-game or planned reviews—both objective and subjective—tied back to individual targets.\n\nPlayers generally conduct themselves in the appropriate spirit of the game, demonstrating a commitment to a season-long development approach rather than focusing solely on winning a single match.\n\nFull marks are awarded if there is clear consistency and alignment between the boys' and girls' programs in the delivery of the club's player development philosophy, coaching methodology, and delivery standards.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "An observation of the club’s approach and conduct on match day focuses particularly on its players and their behaviours.",
+    "Player behaviours are assessed in alignment with the club’s values, mission, vision and philosophy.",
+    "This area also considers individual development and how it can and should be prioritized on match day.",
+    "A high-performing club demonstrates clarity and consistency in outlining its approach, emphasizing individual player development over team results.",
+    "Individual development is central to the club's game-day delivery.",
+    "This is evident in the coach’s ability to connect the game-day experience to the individual development plan (IDP) or focused learning objectives for each player."
+   ]
+  },
+  {
+   "id": "D17",
+   "section": "delivery",
+   "group": "Match Day Observation",
+   "name": "Coach Interaction Observation (Match Day)",
+   "kind": "onfield",
+   "maxScore": 3,
+   "weight": 8,
+   "evidence": "Club visits",
+   "guidance": "Observed by FQ on match day. No submission needed.",
+   "descriptor": "No submission required. Training observations are considered when assessing match day coaching to evaluate the transfer and consistency of learning outcomes, as well as the prioritization of long-term player development. The planning, preparation, conduct, and evaluation of match day activities are aligned with the club's vision, philosophy, and coaching methodology. Coaches are assessed on how their interactions reflect the club’s MVP and values, as outlined in their planning.\n\nAssessment also examines whether match day planning is designed with specific technical or tactical objectives to meet individual and team needs. Effective organization is evidenced by timely execution, efficient use of warm-up time, appropriate allocation of field space and equipment, and optimal utilization of available staff. Coaches are evaluated on their ability to adapt and engage players through a variety of methods and technology before, during, and after the game. Interactions and feedback must be age- and stage-appropriate, encompassing team and individual tasks that are linked to learning outcomes.\n\nThe way coaches interact with players—including tone, body language, and timing—is also assessed. Coaches are expected to motivate, influence, and inspire players effectively. High scores are achieved through positive interactions with team members and club technical staff, fostering an exchange of ideas, knowledge sharing, and collaboration. Additionally, coaches are evaluated on their respectful and constructive interactions with officials, opposition staff, and players.\n\nMatch day evaluation involves engaging players and staff in reflective practices that analyse performance and learning outcomes. Finally, the appearance, behaviour, and overall conduct of the coach must consistently align with the club’s values and beliefs.\n\nFull marks are awarded if there is clear consistency and alignment between the boys' and girls' programs in the delivery of the club's player development philosophy, coaching methodology, and delivery standards.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Training observations are considered when assessing match day coaching to evaluate the transfer and consistency of learning outcomes, as well as the prioritization of...",
+    "The planning, preparation, conduct, and evaluation of match day activities are aligned with the club's vision, philosophy, and coaching methodology.",
+    "Coaches are assessed on how their interactions reflect the club’s MVP and values, as outlined in their planning.",
+    "Assessment also examines whether match day planning is designed with specific technical or tactical objectives to meet individual and team needs.",
+    "Effective organization is evidenced by timely execution, efficient use of warm-up time, appropriate allocation of field space and equipment, and optimal utilization...",
+    "Coaches are evaluated on their ability to adapt and engage players through a variety of methods and technology before, during, and after the game.",
+    "Interactions and feedback must be age- and stage-appropriate, encompassing team and individual tasks that are linked to learning outcomes.",
+    "The way coaches interact with players—including tone, body language, and timing—is also assessed."
+   ]
+  },
+  {
+   "id": "D18",
+   "section": "delivery",
+   "group": "Match Day Observation",
+   "name": "TD/TL Interaction Observation (Match Day)",
+   "kind": "onfield",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Club visits",
+   "guidance": "Observed by FQ on match day. No submission needed.",
+   "descriptor": "No submission required. The Technical Director (TD) and Technical Lead (TL) interaction observation on match day evaluates their conduct, management, and positive influence on the overall game-day experience. Together, they ensure that learning outcomes and adherence to the club’s values and Player Development Philosophy are maintained through their interactions with players, coaches, and staff.\n\nThe TD and/or TL are regularly present during game-day delivery across all phases of the club and serve as positive influences on coaches, players, and staff. They are instrumental in shaping coaching behaviours by providing timely and appropriate guidance aligned with the club’s expectations and playing methodology. Both roles actively support coaches and players throughout the day, contributing to pre-game, in-game, and post-game learning. This may include sitting on the bench with the coaching team to offer advice, providing feedback during breaks, or organising video recordings to ensure valuable learning moments are captured.\n\nFollowing the game though not necessarily on match day the TD and/or TL conduct a formal debrief with staff, emphasising individual player development as the primary focus. This ensures that the developmental aspects of the game remain the key outcome of the day. Additionally, the TD and/or TL act as key points of communication and support for visiting referees and ground staff, fostering a supportive and professional environment.\n\nThe TD also plays a vital role in overseeing U18 games, ensuring a seamless transition within the club from the youth development phase to the performance phase. They maintain full awareness of all match-day operations, uphold the spirit of the game, demonstrate professional conduct, and ensure a positive and developmentally focused experience for everyone involved.\n\nFull marks are awarded if there is clear consistency and alignment between the boys' and girls' programs in the resource allocation and delivery of the club's player development philosophy, coaching methodology, and delivery standards.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The Technical Director (TD) and Technical Lead (TL) interaction observation on match day evaluates their conduct, management, and positive influence on the overall...",
+    "Together, they ensure that learning outcomes and adherence to the club’s values and Player Development Philosophy are maintained through their interactions with...",
+    "The TD and/or TL are regularly present during game-day delivery across all phases of the club and serve as positive influences on coaches, players, and staff.",
+    "They are instrumental in shaping coaching behaviours by providing timely and appropriate guidance aligned with the club’s expectations and playing methodology.",
+    "Both roles actively support coaches and players throughout the day, contributing to pre-game, in-game, and post-game learning.",
+    "This may include sitting on the bench with the coaching team to offer advice, providing feedback during breaks, or organising video recordings to ensure valuable..."
+   ]
+  },
+  {
+   "id": "D19",
+   "section": "delivery",
+   "group": "Individual Development and Player Reviews",
+   "name": "Players’ Self-Evaluations",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Dated player self-evaluations from across the season.",
+   "descriptor": "Prior to start of the season, players are educated on how to critically evaluate their own performance and complete structured self-assessments using the club’s designated platform. Initial evaluations are documented and used to establish individual development priorities, with clear performance targets and measurable outcomes agreed upon collaboratively between the player and technical staff. These discussions form the basis of each player's Individual Development Plan (IDP).\n\nThe club provides evidence that players complete regular self-assessment checkpoints to review progress, reflect on performance, adjust goals, and identify areas for continued improvement. Evaluations may be conducted through various methods, including face-to-face meetings, online forms, and video review sessions. Ideally, players are provided with match and training footage to support self-reflection and encourage meaningful dialogue with technical staff. All feedback, observations, and action points are recorded and referenced throughout the season to track development against agreed objectives.\n\nPlayer self-assessments and IDP outcomes are reviewed as part of the club’s end-of-season evaluation process. The information gathered throughout the year provides a valuable foundation for coach, Technical Lead, and Technical Director reviews, supporting retention, progression, and future development planning. This comprehensive approach promotes player accountability, encourages continuous improvement, and reinforces a player-centred development environment.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "Prior to start of the season, players are educated on how to critically evaluate their own performance and complete structured self-assessments using the club’s...",
+    "Initial evaluations are documented and used to establish individual development priorities, with clear performance targets and measurable outcomes agreed upon...",
+    "These discussions form the basis of each player's Individual Development Plan (IDP).",
+    "The club provides evidence that players complete regular self-assessment checkpoints to review progress, reflect on performance, adjust goals, and identify areas for...",
+    "Evaluations may be conducted through various methods, including face-to-face meetings, online forms, and video review sessions.",
+    "Ideally, players are provided with match and training footage to support self-reflection and encourage meaningful dialogue with technical staff."
+   ]
+  },
+  {
+   "id": "D20",
+   "section": "delivery",
+   "group": "Individual Development and Player Reviews",
+   "name": "Players’ Individual Development Plans",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Dated player individual development plans and review records.",
+   "descriptor": "The club maintains comprehensive and well-documented records of individual player feedback and assessments throughout the season. A structured Individual Development Plan (IDP) process is implemented using appropriate evaluation tools, delivery methods, timing, and follow-up procedures to ensure feedback is consistent, meaningful, and actionable. Players participate in a minimum of two formal reviews per season (ideally three), in addition to regular self-assessments.\n\nThe review process is closely aligned with the club’s goal-setting and IDP framework, providing regular checkpoints for players to reflect on progress, review development objectives, and measure performance against agreed goals. Feedback is tailored to each player’s technical, tactical, physical, and personal development needs, helping identify strengths, areas for improvement, and clear actions for future development.\n\nFeedback incorporates input from age-group coaches, Technical Leads, the Technical Director, and other relevant staff where appropriate, providing a holistic view of player progress. Where age-appropriate, video analysis and objective performance data may be incorporated to support self-reflection and targeted development.\n\nIDPs are regularly reviewed and refined to ensure development priorities remain relevant and aligned to each player’s needs and long-term objectives. Outcomes from player reviews, self-assessments, and IDPs inform player progression, retention, re-trial, release, and end-of-season decisions, with clear processes and outcomes communicated to players and parents.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club maintains comprehensive and well-documented records of individual player feedback and assessments throughout the season.",
+    "A structured Individual Development Plan (IDP) process is implemented using appropriate evaluation tools, delivery methods, timing, and follow-up procedures to ensure...",
+    "Players participate in a minimum of two formal reviews per season (ideally three), in addition to regular self-assessments.",
+    "The review process is closely aligned with the club’s goal-setting and IDP framework, providing regular checkpoints for players to reflect on progress, review...",
+    "Feedback is tailored to each player’s technical, tactical, physical, and personal development needs, helping identify strengths, areas for improvement, and clear...",
+    "Feedback incorporates input from age-group coaches, Technical Leads, the Technical Director, and other relevant staff where appropriate, providing a holistic view of..."
+   ]
+  },
+  {
+   "id": "D21",
+   "section": "delivery",
+   "group": "Individual Development and Player Reviews",
+   "name": "Player Parent Education Events",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Club visits, Supporting documents, Electronic Submission",
+   "guidance": "Dated records of player and parent education events.",
+   "descriptor": "The club implements a planned schedule of player and parent workshops throughout the season, supplementing the yearly induction presentation. These educational events are incorporated into the academy’s annual plan and are accessible to all players across the club. The content and topics of the workshops are relevant and appropriately tailored to the ages and development stages of the participants. The material is presented in a clear and understandable manner for both players and parents, ensuring it facilitates future growth and learning.\n\nWorkshop sessions may cover a wide range of topics, including, but not limited to, the team model explanation, player evaluation procedures, match analysis, sport psychology, goal setting, injury prevention, nutrition, athlete wellbeing, and other relevant subjects. The workshops may feature leading industry experts to enhance the quality and depth of the content. Players are often encouraged to complete follow-up tasks to reinforce their learning, and online platforms may also be utilised to deliver workshop content for greater accessibility.\n\nThe club provides evidence of the workshops, including scheduled dates, attendee lists, workshop content, presentations (with clear date and location), and video recordings of the educational events. Additionally, in cases of wet weather or unforeseen circumstances, the club has alternative educational resources available, such as those hosted on the AIS website, FQ Hub, or the club’s own website.\n\nA minimum of quarterly workshop delivery is expected in addition to the player induction presentation, ensuring consistent opportunities for education and development throughout the season.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club implements a planned schedule of player and parent workshops throughout the season, supplementing the yearly induction presentation.",
+    "These educational events are incorporated into the academy’s annual plan and are accessible to all players across the club.",
+    "The content and topics of the workshops are relevant and appropriately tailored to the ages and development stages of the participants.",
+    "The material is presented in a clear and understandable manner for both players and parents, ensuring it facilitates future growth and learning.",
+    "Workshop sessions may cover a wide range of topics, including, but not limited to, the team model explanation, player evaluation procedures, match analysis, sport...",
+    "The workshops may feature leading industry experts to enhance the quality and depth of the content."
+   ]
+  },
+  {
+   "id": "D22",
+   "section": "delivery",
+   "group": "Coach Reviews and Mentoring",
+   "name": "Coaches’ Self-Evaluations",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Dated coach self-evaluations from across the season.",
+   "descriptor": "The club demonstrates a strong commitment to informal education and collaboration for its academy coaching staff through the implementation of structured self-evaluation processes.\n\nThere is consistent and clear evidence of ongoing self-assessment across various activities, including video recording of training sessions, match review, pre-game team talks, half-time team talks, post-game team talks, club workshop delivery, and more (evidence should be dated).\n\nThe club strictly follows its review schedule and ensures that all self-assessments are documented using a dedicated form or template. Following these evaluations, coaches develop or review Individual Development Plans (IDPs), with multiple check-in points with the Technical Director/Technical Leads throughout the season to facilitate self-reflection and monitor progress.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club demonstrates a strong commitment to informal education and collaboration for its academy coaching staff through the implementation of structured...",
+    "There is consistent and clear evidence of ongoing self-assessment across various activities, including video recording of training sessions, match review, pre-game...",
+    "The club strictly follows its review schedule and ensures that all self-assessments are documented using a dedicated form or template.",
+    "Following these evaluations, coaches develop or review Individual Development Plans (IDPs), with multiple check-in points with the Technical Director/Technical Leads...",
+    "Placeholder criterion 1",
+    "Placeholder criterion 2"
+   ]
+  },
+  {
+   "id": "D23",
+   "section": "delivery",
+   "group": "Coach Reviews and Mentoring",
+   "name": "Coaches' Individual Development Plans",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "Dated coach individual development plans.",
+   "descriptor": "The club provides detailed evidence of the implementation of Individual Development Plans (IDPs) for all academy coaches. The club follows established processes for review frequency and documents evidence for all coaches, with check-in points scheduled throughout the season to track progress, at a minimum, on a quarterly basis (evidence should be dated).\n\nCoaches are encouraged to focus on identified areas of strength and areas for improvement linked to personal and football competencies, with their IDPs set up to be appropriate for their stage of development. There is consistent evidence of IDPs showing a high level of detail, clear objectives, and ongoing reflection.\n\nCoaches are given benchmarks and growth pathways for both personal and professional development and receive additional support, either internally or externally, through a mentor network, which includes, but is not limited to, Technical Directors, Technical Leads, Heads of Phase, senior coaches, experienced coaches, or peer mentoring between coaches.\n\nThere is a clear link between ongoing self-evaluation processes and the coaches’ IDPs, ensuring alignment between individual learning and club objectives. A season-ending performance review provides guidance to inform the next season’s plan. High coach retention may indicate that coaches are well-supported, valued, and cared for year after year.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club provides detailed evidence of the implementation of Individual Development Plans (IDPs) for all academy coaches.",
+    "The club follows established processes for review frequency and documents evidence for all coaches, with check-in points scheduled throughout the season to track...",
+    "Coaches are encouraged to focus on identified areas of strength and areas for improvement linked to personal and football competencies, with their IDPs set up to be...",
+    "There is consistent evidence of IDPs showing a high level of detail, clear objectives, and ongoing reflection.",
+    "Coaches are given benchmarks and growth pathways for both personal and professional development and receive additional support, either internally or externally,...",
+    "There is a clear link between ongoing self-evaluation processes and the coaches’ IDPs, ensuring alignment between individual learning and club objectives.",
+    "A season-ending performance review provides guidance to inform the next season’s plan.",
+    "High coach retention may indicate that coaches are well-supported, valued, and cared for year after year."
+   ]
+  },
+  {
+   "id": "D24",
+   "section": "delivery",
+   "group": "Coach Reviews and Mentoring",
+   "name": "Coach Mentoring",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 8,
+   "evidence": "Club visits, Supporting documents",
+   "guidance": "Mentoring records for coaches, Technical Leads and the Female Technical Lead.",
+   "descriptor": "The club provides detailed evidence of ongoing mentoring through both formal and informal coach development activities. The club demonstrates the implementation of a structured mentoring network for all Technical Leads, academy coaches and nominated Female Technical Lead, which includes the option to officially nominate a mentor for each coach. This network may include regular and ongoing access to industry experts, Technical Directors, Technical Leads, senior coaches, experienced coaches, coach developers, and peer mentors.\n\nRegular mentoring sessions are structured with clear goals and specific outcomes, aligned with the club’s self-evaluation processes and each coach’s Individual Development Plan (IDP). These sessions are supported by feedback mechanisms, such as check-ins, written reflections, or observation reviews, that track progress over time.\n\nThere is clear evidence of documented goals and measurable outcomes achieved by academy coaches for continuous growth, with formal and informal mentoring monitored, recorded, and reviewed throughout the season.\n\nMentoring appears across multiple activities and contexts, including training and match reviews, workshops, peer observations, and inter-department collaboration. Confidentiality guidelines ensure a safe and respectful mentoring environment, fostering mutual benefits for both mentors and mentees, and contributing to a collaborative coaching culture across the club.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club provides detailed evidence of ongoing mentoring through both formal and informal coach development activities.",
+    "The club demonstrates the implementation of a structured mentoring network for all Technical Leads, academy coaches and nominated Female Technical Lead, which...",
+    "This network may include regular and ongoing access to industry experts, Technical Directors, Technical Leads, senior coaches, experienced coaches, coach developers,...",
+    "Regular mentoring sessions are structured with clear goals and specific outcomes, aligned with the club’s self-evaluation processes and each coach’s Individual...",
+    "These sessions are supported by feedback mechanisms, such as check-ins, written reflections, or observation reviews, that track progress over time.",
+    "There is clear evidence of documented goals and measurable outcomes achieved by academy coaches for continuous growth, with formal and informal mentoring monitored,..."
+   ]
+  },
+  {
+   "id": "D25",
+   "section": "delivery",
+   "group": "Coach Reviews and Mentoring",
+   "name": "Coach Education Events",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Club visits, Supporting documents, Electronic Submission",
+   "guidance": "Records of coach education events planned and delivered by the club.",
+   "descriptor": "The club plans and delivers a series of annual internal educational events to support coach education, aligning with its internal coach development strategy and each coach’s Individual Development Plan (IDP). These planned workshops and webinars are directly connected to the club’s player development philosophy and other topics of professional interest relevant to coaches from U9 to U18.\n\nTo maximise engagement and staff inclusion, training schedules include planned breaks for these events, ensuring participation without disrupting the program. Consideration is given to seasonal planning (e.g., Term 2 delivery or wet-weather rescheduling) to maintain consistency across the season. Educational events may also be delivered by other departments, such as sports science, physiotherapy, nutrition, or psychology. Staff are encouraged to have input into content design and delivery, taking on shared responsibility for shaping and presenting information that supports collective growth.\n\nThe club regularly invites external experts to lead specialist educational sessions, providing exposure to diverse perspectives and enriching the club’s learning culture. These workshops and webinars are also inclusive of wider partner clubs or schools, ensuring that the content delivered is relevant, practical, and impactful.\n\nThe outcomes and reflections from these events contribute to refining and improving the club’s practices and delivery methods. Video recordings, presentations, and supporting materials are made available to coaches and attendees following each event and are archived within the club’s permanent knowledge base for future access.\n\nThe club maintains an effective system for tracking attendance, documenting the date, time, location, presenters, staff in attendance, key themes, and session outcomes. Information about upcoming workshops is also shared in advance with FQ Club Development Ambassadors, offering them opportunities to attend and observe as part of the club’s transparent and developmental approach.\n\nCoach and player/parent inductions are excluded from the scope of this requirement. Furthermore, workshop or education events delivered by FQ Staff or Club Ambassadors will not be considered, as they are delivered as part of the 2027 Club Development support process.",
+   "type": "ticks",
+   "assessors": 2,
+   "criteria": [
+    "The club plans and delivers a series of annual internal educational events to support coach education, aligning with its internal coach development strategy and each...",
+    "These planned workshops and webinars are directly connected to the club’s player development philosophy and other topics of professional interest relevant to coaches...",
+    "To maximise engagement and staff inclusion, training schedules include planned breaks for these events, ensuring participation without disrupting the program.",
+    "Consideration is given to seasonal planning (e.g., Term 2 delivery or wet-weather rescheduling) to maintain consistency across the season.",
+    "Educational events may also be delivered by other departments, such as sports science, physiotherapy, nutrition, or psychology.",
+    "Staff are encouraged to have input into content design and delivery, taking on shared responsibility for shaping and presenting information that supports collective...",
+    "The club regularly invites external experts to lead specialist educational sessions, providing exposure to diverse perspectives and enriching the club’s learning culture."
+   ]
+  },
+  {
+   "id": "O1",
+   "section": "outcomes",
+   "group": "Player Development",
+   "name": "National Team Players (Socceroos/Matildas and Overseas)",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "List of club-developed players in national teams, with evidence.",
+   "descriptor": "For this line item, submissions must only include players who have represented the Australian Senior National Team or an overseas Senior National Team in an official international fixture for their country. For overseas representatives, the national team must be ranked within the top 50 of the FIFA Women’s World Rankings or the top 100 of the FIFA Men’s World Rankings.\n\nClubs may include current or former players from the past seven years who have played at least two seasons for the club in an age-eligible junior or youth competition (U12–U18).\n\nPlayers who represented the club more than seven years ago or who do not meet the above criteria must not be included.\n\nTo be awarded points for each eligible player, clubs MUST upload all relevant supporting evidence demonstrating compliance with the above criteria.",
+   "type": "value",
+   "assessors": 1,
+   "unit": "eligible players",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 1,
+     "score": 1
+    },
+    {
+     "min": 3,
+     "score": 2
+    },
+    {
+     "min": 5,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "section": "outcomes",
+   "group": "Player Development",
+   "name": "Professional Players (A-Leagues, Australian Championship & Overseas)",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "List of club-developed players in professional teams, with evidence.",
+   "descriptor": "For this line item, sumbission must only include full-time professional players (Women’s and Men’s). Players are only scored if they play in the top two tier leagues of countries ranked within the top 50 FIFA Women’s or top 100 FIFA Men’s.\n\nClubs may include players from the last five years who have played at least two seasons for the club in an age-eligible junior or youth competition (U12–U18). For Australia-based players, the A-League Men’s, A-League Women’s, and Australian Championships are accepted.\n\nPlayers who represented the club more than five years ago or who do not meet the above criteria must not be included.\n\nTo be awarded points for each eligible player, clubs MUST upload all relevant supporting evidence demonstrating compliance with the above criteria.",
+   "type": "value",
+   "assessors": 1,
+   "unit": "eligible players",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 1,
+     "score": 1
+    },
+    {
+     "min": 6,
+     "score": 2
+    },
+    {
+     "min": 10,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "section": "outcomes",
+   "group": "Player Development",
+   "name": "Homegrown Players",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "List of homegrown players, with evidence.",
+   "descriptor": "For this line item, submissions must only include Australian male or female players aged 23 years and under who have played and been registered with the club for a minimum of two seasons in an age-eligible junior or youth competition (U12-U18), and have played at least 30% of matches in the current season for the club's NPL, FQPL 1, or FQPL 2 Men's or Women's First Team.\n\nClubs may include players who satisfy the above eligibility criteria and are currently registered and competing within the club's First Team program. Players who have not completed a minimum of two seasons at the club within the eligible age groups, exceed the age limit, or do not meet the minimum match participation requirement must not be included.\n\nTo be awarded points for each eligible player, clubs MUST upload all relevant supporting evidence demonstrating compliance with the above criteria.",
+   "type": "value",
+   "assessors": 1,
+   "unit": "eligible players",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 1,
+     "score": 1
+    },
+    {
+     "min": 6,
+     "score": 2
+    },
+    {
+     "min": 10,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O4",
+   "section": "outcomes",
+   "group": "Player Development",
+   "name": "National Youth Team Players (Young Socceroos/Joeys and Young/Junior Matildas and overseas)",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "List of club-developed players in national youth teams, with evidence.",
+   "descriptor": "For this line item, submission must only include Australian players who have represented a Football Australia National Youth Team, as well as overseas players who have represented their country in an official international fixture. Clubs may also include players who have represented an overseas national team ranked within the top 50 of the FIFA Women's World Rankings or the top 100 of the FIFA Men's World Rankings.\n\nClubs may include current or former players from the last five years who have played a minimum of one season for the club in an age-eligible junior or youth competition (U12-U18). Players who represented the club more than five years ago or who do not meet the above eligibility criteria must not be included.\n\nTo be awarded points for each eligible player, clubs MUST upload all relevant supporting evidence demonstrating compliance with the above criteria.",
+   "type": "value",
+   "assessors": 1,
+   "unit": "eligible players",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 1,
+     "score": 1
+    },
+    {
+     "min": 3,
+     "score": 2
+    },
+    {
+     "min": 5,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O5",
+   "section": "outcomes",
+   "group": "Player Development",
+   "name": "Full-Time Queensland State Team Players",
+   "kind": "fq",
+   "maxScore": 3,
+   "weight": 8,
+   "evidence": "Assessed by FQ",
+   "guidance": "Assessed by FQ from state team records. No submission needed.",
+   "descriptor": "For this line item, players selected and signed to the full-time Queensland State Team (QST) programs will be considered. This includes both male and female players progressing from club-based programs to the full-time QST programs during the current Club Development & Assessment year.\n\nClubs will be recognised by Football Queensland for their contribution to the development of these players, provided the player has been registered with and developed at the club within the past three seasons.\n\nNo submission is required from clubs for Queensland-based players, as FQ will assess eligibility following the QST program selection process.",
+   "type": "value",
+   "assessors": 1,
+   "unit": "QST points",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 1,
+     "score": 1
+    },
+    {
+     "min": 4,
+     "score": 2
+    },
+    {
+     "min": 7,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O6",
+   "section": "outcomes",
+   "group": "Player Development",
+   "name": "Club Based Queensland State Team Players",
+   "kind": "fq",
+   "maxScore": 3,
+   "weight": 8,
+   "evidence": "Assessed by FQ",
+   "guidance": "Assessed by FQ from state team records. No submission needed.",
+   "descriptor": "For this line item, Club-Based State Team players are those selected to represent the Member Federation Boys’ or Girls’ State Teams during the current Club Development & Assessment year. School representative programs and non-FA-affiliated futsal representation will not be considered.\n\nFQ Academy clubs will also be recognised by Football Queensland for their contribution to the development of selected State Team players, provided the player has been registered with and developed at the club within the past three seasons.\n\nNo submission is required for Queensland-based players, as FQ will assess eligibility following the State Team selection process.",
+   "type": "value",
+   "assessors": 1,
+   "unit": "state team players",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 1,
+     "score": 1
+    },
+    {
+     "min": 6,
+     "score": 2
+    },
+    {
+     "min": 10,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O7",
+   "section": "outcomes",
+   "group": "Player Development",
+   "name": "Talented Player Programs (FQ Emerging & FQ Academy Regional Programs)",
+   "kind": "fq",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Assessed by FQ",
+   "guidance": "Assessed by FQ from program records. No submission needed.",
+   "descriptor": "For this line item, Talented Support Program players are those aged U13–U16 who have been officially selected into an FQ Emerging (Metro) or FQ Academy Regional program during the current Club Development & Assessment year, but have not been selected to represent an outdoor State Team.\n\nNo submission is required for Queensland-based players, as FQ will assess eligibility following the relevant program selection process.",
+   "type": "value",
+   "assessors": 1,
+   "unit": "program players",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 1,
+     "score": 1
+    },
+    {
+     "min": 6,
+     "score": 2
+    },
+    {
+     "min": 10,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O8",
+   "section": "outcomes",
+   "group": "Player Development",
+   "name": "Progressing Players",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic Submission",
+   "guidance": "List of players progressing to higher-level programs, with evidence.",
+   "descriptor": "This area of assessment is designed to indicate how effectively identified players are supported to progress through the FA/FQ player development pyramid.  The club should provide evidence for moving players through this pathway.  The club is in regular discussion with a prospective new club and may even have a formal agreement in place, that might lead to trials in season (with the current club's consent).  Player losses/movement are pre-planned to help avoid mass open trials. To score highly in this area there must be evidence that at least 1 player has progressed the player pathway with the level of communication and transparency as detailed above. Players that move to another club at the end of the season do not simply leave the club as they want to play in a different environment. Scoring in this area is applicable to Silver, Bronze and Development Committed rated clubs only.",
+   "type": "ticks",
+   "assessors": 1,
+   "criteria": [
+    "This area of assessment is designed to indicate how effectively identified players are supported to progress through the FA/FQ player development pyramid.",
+    "The club should provide evidence for moving players through this pathway.",
+    "The club is in regular discussion with a prospective new club and may even have a formal agreement in place, that might lead to trials in season (with the current...",
+    "Player losses/movement are pre-planned to help avoid mass open trials."
+   ],
+   "exceptShields": [
+    "Gold"
+   ]
+  },
+  {
+   "id": "O9",
+   "section": "outcomes",
+   "group": "Player Development",
+   "name": "Talent Identification Database & Management",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Weekly Electronic Submission",
+   "guidance": "Talent identification database exports, submitted weekly.",
+   "descriptor": "Football Queensland and Football Australia are committed to building a comprehensive Talent ID database.\n\nFor Pool A clubs, a collaborative approach through player recommendations for QST selection, active communication with FQ’s Talent ID network, and the consistent submission of Talent ID forms at FQ Academy fixtures, TDS, and Carnivals will directly influence scoring outcomes.\n\nFor Pool B and C clubs, positive attendance and support at Talent ID events and Carnivals, along with the timely submission of Talent ID forms, are key evidence points for strong performance in this criterion.\n\nAll Technical Directors are expected to attend Talent ID workshops, contribute to player identification, and maintain regular Talent ID submissions. A full-year calendar outlining key age-specific data collection points will be provided to clubs to support this process.",
+   "type": "ticks",
+   "assessors": 1,
+   "criteria": [
+    "Football Queensland and Football Australia are committed to building a comprehensive Talent ID database.",
+    "For Pool A clubs, a collaborative approach through player recommendations for QST selection, active communication with FQ’s Talent ID network, and the consistent...",
+    "For Pool B and C clubs, positive attendance and support at Talent ID events and Carnivals, along with the timely submission of Talent ID forms, are key evidence...",
+    "All Technical Directors are expected to attend Talent ID workshops, contribute to player identification, and maintain regular Talent ID submissions."
+   ]
+  },
+  {
+   "id": "O10",
+   "section": "outcomes",
+   "group": "Retention",
+   "name": "Player Retention",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 8,
+   "evidence": "Electronic Submission",
+   "guidance": "Player retention list using the FQ template.",
+   "descriptor": "Clubs are required to complete the provided 'O10 – Player Retention' template for the u9-u18 teams as part of the non-negotiables (item NN4), located in the club folder in the FQ Club Development Hub. Player retention is calculated for academy players for the u10-u18 teams. Any players who departed the club due to progressing to a higher ranked club are classified as 'retained players' and are required to be listed in the appropriate section of the template. Evidence between clubs must be provided for any player passed on to a higher ranked club.\n\nIn regional areas, the assessment focus is further expanded to include internal player progression into the club’s senior QPL environment, or supporting players who leave the region to pursue education, training, or advanced football opportunities.\n\nThe player retention scoring breakdown is as follows:\n\n• Percentage >= 85% = 3 points\n\n• 80% =< percentage < 85% = 2.7 points\n\n• 75% =< percentage < 80% = 2.4 points\n\n• 70% =< percentage < 75% = 2.1 points\n\n• 65% =< percentage < 70% = 1.8 points\n\n• 60% =< percentage < 65% = 1.5 points\n\n• 55% =< percentage < 60% = 1.2 points\n\n• 50% =< percentage < 55% = 0.9 points\n\n• Percentage < 50% = 0 points",
+   "type": "value",
+   "assessors": 1,
+   "unit": "% retained",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 50,
+     "score": 0.9
+    },
+    {
+     "min": 55,
+     "score": 1.2
+    },
+    {
+     "min": 60,
+     "score": 1.5
+    },
+    {
+     "min": 65,
+     "score": 1.8
+    },
+    {
+     "min": 70,
+     "score": 2.1
+    },
+    {
+     "min": 75,
+     "score": 2.4
+    },
+    {
+     "min": 80,
+     "score": 2.7
+    },
+    {
+     "min": 85,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O15",
+   "section": "outcomes",
+   "group": "Retention",
+   "name": "Coach Retention",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 4,
+   "evidence": "Electronic Submission",
+   "guidance": "Coach retention information (from your staff qualification template).",
+   "descriptor": "Coach retention information will be collected through the Technical Staff Qualification submission via the template located in the club's folder in the FQ Club Development Hub.\n\nCoach retention is calculated based on the technical staff (Technical Director, Technical leads and Head Coaches) being retained from the previous year, recognising the club's ability to retain staff and provide continuity within its technical development program. Additional points will be awarded for staff who have been at the club for at least three years, with a higher weighting applied to the Technical Director (TD) and Technical Leads.\n\nCoaches progressing from the club's community football programs into its academy program, or from an assistant role to a head coach role will be considered retained coaches.\n\nSimilarly to O10 - Player Retention, coaches progressing to higher-ranked clubs will also be recognised as retained, provided there is evidence of a prior agreement between the two clubs supporting the coach's progression.\n\nThe coach retention scoring breakdown is as follows:\n\n• Percentage >= 85% = 3 points\n\n• 80% =< percentage < 85% = 2.7 points\n\n• 75% =< percentage < 80% = 2.4 points\n\n• 70% =< percentage < 75% = 2.1 points\n\n• 65% =< percentage < 70% = 1.8 points\n\n• 60% =< percentage < 65% = 1.5 points\n\n• 55% =< percentage < 60% = 1.2 points\n\n• 50% =< percentage < 55% = 0.9 points\n\n• Percentage < 50% = 0 points",
+   "type": "value",
+   "assessors": 1,
+   "unit": "% retained",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 50,
+     "score": 0.9
+    },
+    {
+     "min": 55,
+     "score": 1.2
+    },
+    {
+     "min": 60,
+     "score": 1.5
+    },
+    {
+     "min": 65,
+     "score": 1.8
+    },
+    {
+     "min": 70,
+     "score": 2.1
+    },
+    {
+     "min": 75,
+     "score": 2.4
+    },
+    {
+     "min": 80,
+     "score": 2.7
+    },
+    {
+     "min": 85,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O11",
+   "section": "outcomes",
+   "group": "Member Satisfaction",
+   "name": "Member Experience Surveys",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Email list, FQ Survey",
+   "guidance": "Member email list for the FQ member experience survey.",
+   "descriptor": "A survey will be distributed twice by FQ to parents of u9-u18 registered players of your club. FQ will also ask the clubs to distribute the survey link to their members.\n\nThe first collection point will take place in March/April, focusing on club onboarding and early satisfaction with the player development program. The second collection point will occur at the end of August, gathering overall feedback from the season. An average Net Promoter Score (NPS) will be calculated across both data points to form each club’s final score.\n\nYour members will be asked about their satisfaction regarding coaching, technical services, facilities, individual player feedback, training, match day experience, etc. This area will be scored using the Net Promoter Score methodology and results collected and processed by FQ.\n\nThe feedback will be uploaded into the club’s CDU folder at the conclusion of the Club Development & Assessment year.\n\nMinimum number of responses to be evaluated in each timepoint: 30\n\nThe Average NPS scoring breakdown is as follows:\n\n• NPS >= 30 = 3 points\n\n• 20 =<  NPS < 30 = 2.5 points\n\n• 15 =<  NPS < 20 = 2 points\n\n• 10 =<  NPS < 15 = 1.5 point\n\n• 5 =<  NPS < 10 = 1 point\n\n• 0 =<  NPS < 5 = 0.5 point\n\n• NPS <0 = 0 points",
+   "type": "value",
+   "assessors": 1,
+   "unit": "average NPS",
+   "bands": [
+    {
+     "min": -100,
+     "score": 0
+    },
+    {
+     "min": 0,
+     "score": 0.5
+    },
+    {
+     "min": 5,
+     "score": 1
+    },
+    {
+     "min": 10,
+     "score": 1.5
+    },
+    {
+     "min": 15,
+     "score": 2
+    },
+    {
+     "min": 20,
+     "score": 2.5
+    },
+    {
+     "min": 30,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O12",
+   "section": "outcomes",
+   "group": "Knowledge Sharing",
+   "name": "Shared Best Practice Delivery",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Practical or Theory Delivery, Or Submission Evidence",
+   "guidance": "Evidence of best practice you have shared with other clubs.",
+   "descriptor": "Clubs can score in two ways. Gold-rated Clubs will be provided the opportunity to share their knowledge and present a Shared Best Practice (SBP) webinar or workshop upon meeting the following criteria:\n\nThe nominated item should be a point of difference for the Club – unique and specific.\n\nThe nominated item must have been awarded the highest score (3 points) in the previous year’s assessment.\n\nThe workshop/webinar should be presented by Lead Technical Staff or Club Officials (TD, coach, etc.) or a qualified specialist provider within the February–July window.\n\nGold-rated Clubs may also opt to complete their SBP via TD mentoring. These Clubs must follow the template provided in their Club Development Plan and mentor at least one Pool B or C Club Technical Director. The process must document:\n\nInitial meeting and information sharing with the mentored Club TD.\n\nMentee Club TD’s training visit to observe the program’s delivery on a training night.\n\nMentee Club TD attendance at one of the Gold Club’s internal coach education workshops or events.\n\nIf all three steps are completed and documented with dates and content, full points will be awarded.",
+   "type": "ticks",
+   "assessors": 1,
+   "criteria": [
+    "Gold-rated Clubs will be provided the opportunity to share their knowledge and present a Shared Best Practice (SBP) webinar or workshop upon meeting the following..."
+   ],
+   "onlyShields": [
+    "Gold"
+   ]
+  },
+  {
+   "id": "O13",
+   "section": "outcomes",
+   "group": "Strategic Plan",
+   "name": "Female Technical Staff",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic submission",
+   "guidance": "List of female technical staff.",
+   "descriptor": "In line with the Football Australia and FQ strategic target of 50/50 gender parity, this item assesses the current percentage of female technical staff holding positions at the club.\n\nThe club is required to list all coaching staff and their current valid qualifications as part of the Technical Staff Qualification submission via the template located in the Club's folder in the FQ Club Development Hub.\n\nThe female technical staff scoring breakdown is as follows:\n\nPercentage >= 35% = 3 points\n\n25% =< percentage < 35% = 2.5 points\n\n20% =< percentage < 25% = 2 points\n\n15% =< percentage < 20% = 1.5 point\n\n10% =< percentage < 15% = 1 point\n\n0% < percentage < 10% = 0 points",
+   "type": "value",
+   "assessors": 1,
+   "unit": "% female technical staff",
+   "bands": [
+    {
+     "min": 0,
+     "score": 0
+    },
+    {
+     "min": 10,
+     "score": 1
+    },
+    {
+     "min": 15,
+     "score": 1.5
+    },
+    {
+     "min": 20,
+     "score": 2
+    },
+    {
+     "min": 25,
+     "score": 2.5
+    },
+    {
+     "min": 35,
+     "score": 3
+    }
+   ]
+  },
+  {
+   "id": "O14",
+   "section": "outcomes",
+   "group": "Strategic Plan",
+   "name": "Female Participation",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic submission",
+   "guidance": "Female participation numbers.",
+   "descriptor": "In line with the Football Australia and FQ strategic target of 50/50 gender parity, this item assesses the current percentage of female players at the club in relation to the overall player base along with the growth of female participation from 2026 > 2027. Club scores are calculated by taking the state's average participation and player growth into account.\n\nNo submission is required as scores will be calculated based on player registration data recorded in Squadi. Clubs should ensure all players are correctly registered, as failure to register players correctly may result in a discrepancy in scoring.",
+   "type": "direct",
+   "assessors": 1
+  },
+  {
+   "id": "O16",
+   "section": "outcomes",
+   "group": "Club Conduct",
+   "name": "Club Disciplinary Performance",
+   "kind": "document",
+   "maxScore": 3,
+   "weight": 6,
+   "evidence": "Electronic submission",
+   "guidance": "Disciplinary records for academy teams across the season.",
+   "descriptor": "The club demonstrates a consistent commitment to fostering a positive, respectful, and safe match day environment focused on development for players, coaches, technical staff, team officials, and spectators. The club actively promotes behaviours that align with Football Queensland’s and the clubs, values, codes of conduct, and competition regulations.\n\nAssessment will consider the club's overall disciplinary record across all Academy teams, including yellow cards, red cards, misconduct reports, suspended matches, and monetary fines issued throughout the season. The objective is to encourage positive touchline behaviours, respect for match officials, opponents, and the game, while reducing incidents that negatively impact the football environment that detract from learning.\n\nThe club's end-of-season disciplinary record should demonstrate a commitment to maintaining standards that are at or above Football Queensland benchmarks. Consistently low levels of disciplinary sanctions may indicate that positive behavioural expectations are embedded across the club's football program.\n\nAs part of the induction processes it is recommended that the club educates players, coaches, technical staff, and team officials on expected behaviours and takes proactive measures to minimise misconduct throughout the season. The club should implement strategies that promote self-discipline, emotional control, respect, accountability, and positive role modelling from players, coaches, and technical staff.\n\nNote: Any offences or disciplinary actions occurring after the scores have been confirmed will be considered in the following year's assessment.",
+   "type": "direct",
+   "assessors": 1
+  },
+  {
+   "id": "NN1",
+   "section": "nn",
+   "group": "Non-Negotiables",
+   "name": "Fee Transparency",
+   "kind": "document",
+   "maxScore": 1,
+   "weight": 0,
+   "evidence": "Electronic submission",
+   "guidance": "Fee breakdown using the FQ fee template.",
+   "descriptor": "The club is required to provide a breakdown of fees using the FQ template to ensure comparability across all clubs. Additionally, it must provide a statement confirming that all academy development fees are exclusively used to support the club’s academy program",
+   "type": "yesno",
+   "assessors": 2
+  },
+  {
+   "id": "NN2",
+   "section": "nn",
+   "group": "Non-Negotiables",
+   "name": "Scholarship positions",
+   "kind": "document",
+   "maxScore": 1,
+   "weight": 0,
+   "evidence": "Electronic submission",
+   "guidance": "List of scholarship players and the scholarship amounts.",
+   "descriptor": "The club is required to provide a list of players who have received a full or partial scholarship for the current season, in accordance with the licence agreement (if applicable).",
+   "type": "yesno",
+   "assessors": 2
+  },
+  {
+   "id": "NN3",
+   "section": "nn",
+   "group": "Non-Negotiables",
+   "name": "Coaches Registration",
+   "kind": "document",
+   "maxScore": 1,
+   "weight": 0,
+   "evidence": "Electronic submission via Squadi",
+   "guidance": "Squadi export showing all coaches are registered.",
+   "descriptor": "All club coaches across all programs must be registered in Squadi, the official system for the season. Registration for coaches is free of charge.\n\nAs part of the Technical Staff Qualification submission, the club is required to provide a list containing all coaches' details and their team allocations.",
+   "type": "yesno",
+   "assessors": 2
+  },
+  {
+   "id": "NN4",
+   "section": "nn",
+   "group": "Non-Negotiables",
+   "name": "Fielding teams and squad numbers",
+   "kind": "document",
+   "maxScore": 1,
+   "weight": 0,
+   "evidence": "Electronic submission",
+   "guidance": "Complete player lists for every academy team.",
+   "descriptor": "The club is required to provide a complete list of players by the deadline set by FQ before the season commences. If the squad list is incomplete or changes occur, regular updates must be provided to FQ's Competition and Technical Department. All teams must be fielded in accordance with the licence agreement.",
+   "type": "yesno",
+   "assessors": 2
+  },
+  {
+   "id": "NN5",
+   "section": "nn",
+   "group": "Non-Negotiables",
+   "name": "Technical Director Qualification",
+   "kind": "document",
+   "maxScore": 1,
+   "weight": 0,
+   "evidence": "Electronic submission",
+   "guidance": "Technical Director qualification or current enrolment evidence.",
+   "descriptor": "Tier 1 Club Technical Directors must hold or be enrolled in the current season in the AFC/Football Australia 'A' Diploma or Licence, or an overseas equivalent. The Technical Director must reside in Queensland to attend training, games, meetings, and fulfil club duties.\n\nWhile the qualification remains a key requirement, Football Queensland recognises that other factors may contribute to a Technical Director's suitability for the role. These include previous experience as a Technical Director, coaching experience, the level of support provided by the club, the club's technical environment, and equity considerations.\n\nAny request for an exemption or consideration of exceptional circumstances will be assessed on a case-by-case basis, at the sole discretion of FQ, taking into account the supporting documentation and evidence provided by the club. An exemption is not automatic and will only be considered where sufficient justification is demonstrated.",
+   "type": "yesno",
+   "assessors": 2
+  },
+  {
+   "id": "NN6",
+   "section": "nn",
+   "group": "Non-Negotiables",
+   "name": "Safeguarding (Blue Cards)",
+   "kind": "document",
+   "maxScore": 1,
+   "weight": 0,
+   "evidence": "Electronic submission",
+   "guidance": "Blue card numbers and expiry dates for all technical staff.",
+   "descriptor": "As part of the Technical Staff Qualification submission, the club is required to provide a list including the full names, Blue Card numbers, and expiry dates of all coaches, support staff, and administrators involved in the academy program. The template provided by FQ must be used for this submission.",
+   "type": "yesno",
+   "assessors": 2
+  },
+  {
+   "id": "NN7",
+   "section": "nn",
+   "group": "Non-Negotiables – Shield Based Standards",
+   "name": "Club Structure Standards",
+   "kind": "document",
+   "maxScore": 1,
+   "weight": 0,
+   "evidence": "Electronic submission",
+   "guidance": "Organisational structure and position descriptions.",
+   "descriptor": "The club is required to submit the organisational structure, position descriptions, and staff roster/contact information for teams. The club structure standards are set for each shield level and have been progressively introduced over a four-year period. Please refer to pages titled ‘Shield Thresholds’ within the Club Development & Assessment Info Pack for additional details on standards and submission requirements per shield.",
+   "type": "yesno",
+   "assessors": 2
+  },
+  {
+   "id": "NN8",
+   "section": "nn",
+   "group": "Non-Negotiables – Shield Based Standards",
+   "name": "Coaching Standards",
+   "kind": "document",
+   "maxScore": 1,
+   "weight": 0,
+   "evidence": "Electronic submission, Club visits",
+   "guidance": "Secondary coach names and roster for each team.",
+   "descriptor": "The club is required to meet minimum coaching qualification and staffing standards per shield. Qualification standards are captured in each club’s Technical Staff Qualifications template and do not require a separate submission. To capture staffing standards, clubs must submit the names and roster of secondary coaches at the beginning of the season. Compliance with the above will be recorded during CDA’s training delivery observations. The coaching standards are set for each shield level and have been progressively introduced over a four-year period. Please refer to pages titled ‘Shield Thresholds’ within the Club Development & Assessment Info Pack for additional details on standards and submission requirements per shield.",
+   "type": "yesno",
+   "assessors": 2
+  },
+  {
+   "id": "NN9",
+   "section": "nn",
+   "group": "Non-Negotiables – Shield Based Standards",
+   "name": "Training Program Standards",
+   "kind": "document",
+   "maxScore": 1,
+   "weight": 0,
+   "evidence": "Electronic submission, Club visits",
+   "guidance": "Training schedule showing contact hours per age group.",
+   "descriptor": "Training Program Standards capture clubs' ability to provide players with a minimum requirement for frequency and duration of training sessions per week, appropriate field space, and individualised training sessions. Compliance with Training Standards will be evaluated through various means, primarily during training delivery observations. The club is required to submit their full training schedule with field allocation, as per previous years. The training program standards are set for each shield level and have been progressively introduced over a four-year period. Please refer to pages titled ‘Shield Thresholds’ within the Club Development & Assessment Info Pack for additional details on standards and submission requirements per shield.",
+   "type": "yesno",
+   "assessors": 2
+  }
+ ]
+}

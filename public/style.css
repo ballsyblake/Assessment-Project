@@ -36,7 +36,7 @@ h3 { font-size: 15px; margin: 18px 0 8px; color: var(--muted); text-transform: u
 .b-approved, .b-verified, .b-observed, .b-done { background: #dff3e8; color: #135c38; }
 .b-submitted { background: #e3edfb; color: #1c4a8a; }
 .b-returned, .b-warn { background: #fff1dc; color: #7a4600; }
-.b-closed, .b-rejected, .b-bad { background: #fde5e3; color: #8c1d16; }
+.b-not_accepted, .b-bad { background: #fde5e3; color: #8c1d16; }
 .b-muted, .b-not_started { background: var(--chip); color: var(--muted); }
 table { width: 100%; border-collapse: collapse; background: var(--card); }
 th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -91,3 +91,19 @@ details > summary { cursor: pointer; color: var(--brand-2); font-size: 14px; }
   .card, .tablewrap { border: 0; }
   main { padding: 0; }
 }
+
+.ticks { display: grid; gap: 6px; margin: 8px 0; }
+.tick { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: #fafbfc; }
+.tick .opts { display: flex; gap: 2px; }
+.tick .opts label { padding: 2px 8px; border: 1px solid #c6ced8; border-radius: 4px; cursor: pointer; background: #fff; font-size: 12px; white-space: nowrap; }
+.tick .opts input { position: absolute; opacity: 0; pointer-events: none; }
+.tick .opts input:checked + span { font-weight: 700; }
+.tick .opts label:has(input:checked) { background: var(--brand-2); color: #fff; border-color: var(--brand-2); }
+.tick .opts input:focus-visible + span { outline: 2px solid var(--brand-2); outline-offset: 2px; }
+.cmp td.y { color: #135c38; } .cmp td.p { color: #7a4600; } .cmp td.n { color: #8c1d16; }
+.cmp td.diff { background: #fff1dc; }
+.grid-assign { font-size: 12px; } .grid-assign td, .grid-assign th { padding: 4px 6px; white-space: nowrap; }
+.grid-assign .gap { background: #fde5e3; }
+.phase-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin-top: 28px; }
+.phase-head h2 { margin: 0; }
+.lead-comment { background: #f3f7fd; border-left: 3px solid var(--brand-2); padding: 10px 14px; border-radius: 4px; margin: 8px 0 12px; white-space: pre-wrap; }

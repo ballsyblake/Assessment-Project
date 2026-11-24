@@ -1,5 +1,5 @@
-// Database-level access tests: run the queries directly as each DB role, with no
-// web UI involved, to prove the rules hold even if the interface had a bug.
+// Database-level tests: queries run directly as each DB role, with no web UI involved,
+// to prove the access and workflow rules hold even if the interface had a bug.
 import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { openDb, asUser, sys } from '../src/db.js';
@@ -7,115 +7,169 @@ import { seed } from '../src/seed.js';
 
 let ids;
 const user = async (email) => (await sys().query('select id, role, club_id from users where email = $1', [email])).rows[0];
+const byId = async (id) => (await sys().query('select id, role, club_id from users where id = $1', [id])).rows[0];
 const q = (u, sql, params = []) => asUser(u, async (tx) => (await tx.query(sql, params)).rows);
-const fails = async (p, re) => assert.rejects(p, re);
+const fails = (p, re) => assert.rejects(p, re);
+const holder = async (club, req, slot) => byId((await sys().query(
+  'select assessor_id from slots where club_id = $1 and req_id = $2 and slot = $3', [club, req, slot])).rows[0].assessor_id);
+
+// Score every item an assessor holds at a club in a phase, with a given tick pattern.
+async function scoreAll(u, club, phase, tick = 'y') {
+  const { rows } = await sys().query(
+    `select s.req_id, s.slot, q.type, q.n_criteria from slots s join requirements q on q.id = s.req_id
+     where s.club_id = $1 and s.assessor_id = $2 and q.section = $3 and item_applies($1, s.req_id)`, [club, u.id, phase]);
+  for (const r of rows) {
+    await q(u, `insert into scores(club_id, req_id, slot, assessor_id, ticks, value, score) values ($1,$2,$3,$4,$5,$6,$7)
+      on conflict (club_id, req_id, slot) do update set ticks = excluded.ticks, value = excluded.value, score = excluded.score`,
+    [club, r.req_id, r.slot, u.id, r.type === 'ticks' ? JSON.stringify(Array(r.n_criteria).fill(tick)) : null,
+      r.type === 'value' ? 90 : null, r.type === 'yesno' ? 1 : 2]);
+  }
+}
 
 before(async () => {
   await openDb({ memory: true });
   ids = await seed({ issueLinks: false });
+  // Open Delivery for scoring.
+  await sys().query(`update phases set deadline = current_date - 1 where id = 'delivery'`);
 });
 
-test('club sees only its own club and items', async () => {
+test('club sees only its own club, items and files', async () => {
   const c = await user('td@riverside-rovers.example');
   assert.deepEqual((await q(c, 'select id from clubs')).map((r) => r.id), [c.club_id]);
-  const items = await q(c, 'select distinct club_id from club_items');
-  assert.deepEqual(items.map((r) => r.club_id), [c.club_id]);
-  const files = await q(c, 'select distinct club_id from files');
-  assert.deepEqual(files.map((r) => r.club_id), [c.club_id]);
+  assert.deepEqual((await q(c, 'select distinct club_id from club_items')).map((r) => r.club_id), [c.club_id]);
+  assert.deepEqual((await q(c, 'select distinct club_id from files')).map((r) => r.club_id), [c.club_id]);
 });
 
-test('club has no access to criteria, scores, assignments, audit or hidden columns', async () => {
+test('club has no access to criteria, assignments, scores, leads or audit', async () => {
   const c = await user('td@riverside-rovers.example');
-  for (const t of ['requirement_criteria', 'scores', 'score_locks', 'assignments', 'moderations', 'resolutions', 'audit_log', 'settings', 'prior_scores']) {
+  for (const t of ['requirement_criteria', 'slots', 'scores', 'score_locks', 'third_assignments', 'club_leads', 'resolutions',
+    'prior_scores', 'settings', 'audit_log']) {
     await fails(q(c, `select * from ${t}`), /permission denied/);
   }
   await fails(q(c, 'select verification from club_items'), /permission denied/);
 });
 
-test('club cannot read results before release', async () => {
-  await sys().query(`insert into results(club_id, total, max_total, pct, rating, nn_met, details) values ($1, 1, 2, 50, 'Bronze', true, '{}')`, [ids.clubIds.riverside]);
+test('results and lead comments are hidden from clubs until release', async () => {
   const c = await user('td@riverside-rovers.example');
-  assert.equal((await q(c, 'select * from results')).length, 0);
-  await sys().query('update results set released_at = now() where club_id = $1', [ids.clubIds.riverside]);
+  assert.ok((await sys().query('select count(*)::int n from lead_comments where club_id = $1', [c.club_id])).rows[0].n > 0);
+  assert.equal((await q(c, 'select * from lead_comments')).length, 0);
+  await sys().query(`insert into results(club_id, total, max_total, pct, rating, nn_met, details, released_at) values ($1,1,2,50,'Bronze',true,'{}',now())`, [c.club_id]);
+  assert.ok((await q(c, 'select * from lead_comments')).length > 0);
   assert.equal((await q(c, 'select * from results')).length, 1);
   await sys().query('delete from results');
 });
 
-test('club cannot approve its own item or change a locked one', async () => {
+test('club cannot approve its own item, or upload after a section deadline', async () => {
   const c = await user('td@riverside-rovers.example');
-  await fails(q(c, `update club_items set status = 'approved' where req_id = 'P1'`), /Clubs can only submit/);
-  await fails(q(c, `update club_items set status = 'submitted' where req_id = 'NN1'`), /Clubs can only submit/); // NN1 is approved
+  await fails(q(c, `update club_items set status = 'approved' where req_id = 'D1'`), /Clubs can only submit/);
+  await fails(q(c, `insert into files(club_id, req_id, filename, mime, size, data, uploaded_by) values ($1,'P3','x.pdf','application/pdf',1,'\\x00',$2)`,
+    [c.club_id, c.id]), /deadline|locked/);
+  await fails(q(c, `update staff_rows set person = 'Changed' where club_id = $1`, [c.club_id]), /locked|deadline/);
 });
 
-test('blind scoring: assessors see only their own scores and locks', async () => {
-  const jordan = await user('jordan.lee@fq-assess.example');
-  const rows = await q(jordan, 'select distinct assessor_id from scores');
-  assert.deepEqual(rows.map((r) => r.assessor_id), [jordan.id]);
-  const locks = await q(jordan, 'select distinct assessor_id from score_locks');
-  assert.deepEqual(locks.map((r) => r.assessor_id), [jordan.id]);
+test('an extension reopens uploads for that club and phase only', async () => {
+  const c = await user('td@riverside-rovers.example');
+  await sys().query(`update club_items set status = 'not_started' where club_id = $1 and req_id = 'P3'`, [c.club_id]);
+  await sys().query(`update phases set closed_at = null where id = 'planning'`);
+  await sys().query(`insert into extensions(club_id, phase, until) values ($1, 'planning', current_date + 3)`, [c.club_id]);
+  await q(c, `insert into files(club_id, req_id, filename, mime, size, data, uploaded_by) values ($1,'P3','x.pdf','application/pdf',1,'\\x00',$2)`, [c.club_id, c.id]);
+  await sys().query('delete from extensions');
+  await sys().query(`update phases set closed_at = now() where id = 'planning'`);
 });
 
-test('admin sees scores only after both assessors lock in', async () => {
+test('blind scoring: assessors see only their own slots, scores and locks', async () => {
+  const a = await user('jordan.lee@fq-assess.example');
+  // Rows where this person is the third assessor are the only exception (and only after both locked).
+  assert.deepEqual([...new Set((await q(a, 'select assessor_id from scores where not is_third_for(club_id, req_id)')).map((r) => r.assessor_id))], [a.id]);
+  const thirdRows = await q(a, 'select club_id, req_id, item_locked(club_id, req_id) l from scores where is_third_for(club_id, req_id)');
+  assert.ok(thirdRows.every((r) => r.l));
+  assert.deepEqual([...new Set((await q(a, 'select assessor_id from slots')).map((r) => r.assessor_id))], [a.id]);
+  assert.deepEqual([...new Set((await q(a, 'select assessor_id from score_locks')).map((r) => r.assessor_id))], [a.id]);
+});
+
+test('assessors see evidence only for items they hold', async () => {
+  const a = await holder(ids.clubIds.coastal, 'D1', 'first');
+  const visible = await q(a, 'select distinct req_id from club_items where club_id = $1', [ids.clubIds.coastal]);
+  const held = (await sys().query('select distinct req_id from slots where club_id = $1 and assessor_id = $2', [ids.clubIds.coastal, a.id])).rows;
+  const lead = (await sys().query('select 1 from club_leads where club_id = $1 and lead_id = $2', [ids.clubIds.coastal, a.id])).rowCount;
+  if (!lead) assert.equal(visible.length, held.length);
+});
+
+test('scores are computed in the database: proportional ticks, partial = 0.5, value bands', async () => {
+  const club = ids.clubIds.northgate;
+  const a = await holder(club, 'D1', 'first');
+  await q(a, `insert into scores(club_id, req_id, slot, assessor_id, ticks) values ($1,'D1','first',$2,'["y","y","y","y","p","n"]')`, [club, a.id]);
+  const [row] = await q(a, `select score from scores where club_id = $1 and req_id = 'D1' and slot = 'first'`, [club]);
+  assert.equal(Number(row.score), 2.3); // 4.5 / 6 x 3 = 2.25 -> 2.3
+  await fails(q(a, `update scores set ticks = '["y","y"]' where club_id = $1 and req_id = 'D1' and slot = 'first'`, [club]), /mark every criterion/);
+  const d = await holder(club, 'O10', 'first');
+  await q(d, `insert into scores(club_id, req_id, slot, assessor_id, value) values ($1,'O10','first',$2,77)`, [club, d.id]);
+  assert.equal(Number((await q(d, `select score from scores where club_id = $1 and req_id = 'O10'`, [club]))[0].score), 2.4);
+});
+
+test('assignment rules: no same person in both slots, one slot for data items, third not a holder', async () => {
   const a = await user('admin@fq-assess.example');
-  const visible = await q(a, 'select distinct club_id from scores order by club_id');
-  // Coastal and Northgate are locked; Highland has scores but is not.
-  assert.deepEqual(visible.map((r) => r.club_id), [ids.clubIds.coastal, ids.clubIds.northgate]);
-  const sealed = await q(a, `select * from audit_log where table_name = 'scores' and club_id = $1`, [ids.clubIds.highland]);
-  assert.equal(sealed.length, 0);
+  const club = ids.clubIds.westfield;
+  const first = await holder(club, 'D1', 'first');
+  await fails(q(a, `update slots set assessor_id = $2 where club_id = $1 and req_id = 'D1' and slot = 'second'`, [club, first.id]), /same person/);
+  await fails(q(a, `insert into slots(club_id, req_id, slot, assessor_id) values ($1,'O10','second',$2)`, [club, first.id]), /one assessor only/);
+  await fails(q(a, `insert into third_assignments(club_id, req_id, assessor_id) values ($1,'D1',$2)`, [club, first.id]), /cannot be the first or second/);
 });
 
-test('admin never scores', async () => {
-  const a = await user('admin@fq-assess.example');
-  await fails(q(a, `insert into scores(club_id, req_id, assessor_id, slot, score) values ($1, 'P1', $2, 'first', 2)`, [ids.clubIds.riverside, a.id]), /permission denied/);
+test('lock flow: complete -> agreed or needs third -> third decides', async () => {
+  const club = ids.clubIds.riverside;
+  const a1 = await holder(club, 'D1', 'first');
+  const a2 = await holder(club, 'D1', 'second');
+  await fails(q(a1, `insert into score_locks(club_id, assessor_id, phase) values ($1,$2,'delivery')`, [club, a1.id]), /Score every item/);
+  await scoreAll(a1, club, 'delivery', 'y');
+  await scoreAll(a2, club, 'delivery', 'y');
+  await q(a2, `update scores set ticks = '["y","y","y","y","y","n"]' where club_id = $1 and req_id = 'D1' and slot = 'second'`, [club]);
+  await q(a1, `insert into score_locks(club_id, assessor_id, phase) values ($1,$2,'delivery')`, [club, a1.id]);
+  await fails(q(a1, `update scores set score = 0 where club_id = $1 and req_id = 'D1' and slot = 'first'`, [club]), /locked/);
+  assert.equal((await sys().query(`select * from resolutions where club_id = $1 and req_id = 'D1'`, [club])).rowCount, 0);
+  await q(a2, `insert into score_locks(club_id, assessor_id, phase) values ($1,$2,'delivery')`, [club, a2.id]);
+  // D1 differs (3 vs 2.5): no resolution yet. Admin can now see both scores.
+  assert.equal((await sys().query(`select * from resolutions where club_id = $1 and req_id = 'D1'`, [club])).rowCount, 0);
+  const admin = await user('admin@fq-assess.example');
+  assert.equal((await q(admin, `select * from scores where club_id = $1 and req_id = 'D1'`, [club])).length, 2);
+  const third = (await sys().query(`select id, role from users where role = 'assessor' and id not in ($1,$2) order by id limit 1`, [a1.id, a2.id])).rows[0];
+  await q(admin, `insert into third_assignments(club_id, req_id, assessor_id) values ($1,'D1',$2)`, [club, third.id]);
+  assert.equal((await q(third, `select * from scores where club_id = $1 and req_id = 'D1'`, [club])).length, 2);
+  await q(third, `insert into scores(club_id, req_id, slot, assessor_id, ticks, comment) values ($1,'D1','third',$2,'["y","y","y","y","y","p"]','Evidence supports 5.5 of 6')`, [club, third.id]);
+  const [res] = (await sys().query(`select method, final_score from resolutions where club_id = $1 and req_id = 'D1'`, [club])).rows;
+  assert.deepEqual([res.method, Number(res.final_score)], ['third', 2.8]);
 });
 
-test('assessor cannot score an unassigned club or edit after locking', async () => {
-  const sam = await user('sam.reid@fq-assess.example');
-  await fails(q(sam, `insert into scores(club_id, req_id, assessor_id, slot, score) values ($1, 'P1', $2, 'first', 2)`, [ids.clubIds.coastal, sam.id]), /row-level security|Not assigned/);
-  const jordan = await user('jordan.lee@fq-assess.example');
-  await fails(q(jordan, `update scores set score = 1 where club_id = $1 and req_id = 'P2'`, [ids.clubIds.coastal]), /locked/);
+test('admin sees scores only on locked items and never scores', async () => {
+  const admin = await user('admin@fq-assess.example');
+  const club = ids.clubIds.coastal;
+  const a = await holder(club, 'D1', 'first');
+  await scoreAll(a, club, 'delivery');
+  assert.equal((await q(admin, `select * from scores where club_id = $1 and req_id = 'D1'`, [club])).length, 0);
+  assert.equal((await q(admin, `select * from audit_log where table_name = 'scores' and club_id = $1 and req_id = 'D1'`, [club])).length, 0);
+  await fails(q(admin, `insert into scores(club_id, req_id, slot, assessor_id, score) values ($1,'D2','first',$2,2)`, [club, admin.id]), /permission denied/);
+  await fails(q(admin, `insert into resolutions(club_id, req_id, final_score, method, note) values ($1,'D2',2,'admin','x')`, [club]), /lock in first/);
 });
 
-test('same person cannot be first and second, or moderate a club they assess', async () => {
-  const a = await user('admin@fq-assess.example');
-  const sam = await user('sam.reid@fq-assess.example');
-  await fails(q(a, 'update assignments set second_id = first_id where club_id = $1', [ids.clubIds.riverside]), /check constraint/);
-  await fails(q(a, `insert into moderations(club_id, req_id, moderator_id) values ($1, 'P1', $2)`, [ids.clubIds.riverside, sam.id]), /cannot be the first or second/);
+test('leads see final scores for their clubs, never individual scores or other clubs', async () => {
+  const lead = await user('sam.reid@fq-assess.example'); // leads Riverside
+  const own = await q(lead, 'select distinct club_id from resolutions where not is_third_for(club_id, req_id)');
+  assert.deepEqual(own.map((r) => r.club_id), [ids.clubIds.riverside]);
+  const s = await q(lead, 'select * from scores where club_id = $1 and assessor_id <> $2 and not is_third_for(club_id, req_id)', [ids.clubIds.riverside, lead.id]);
+  assert.equal(s.length, 0);
 });
 
-test('moderator sees both scores only for the moderated item, and only that evidence', async () => {
-  const sam = await user('sam.reid@fq-assess.example');
-  const rows = await q(sam, 'select distinct req_id from scores where club_id = $1', [ids.clubIds.coastal]);
-  assert.deepEqual(rows.map((r) => r.req_id), ['D8']);
-  const items = await q(sam, 'select req_id from club_items where club_id = $1', [ids.clubIds.coastal]);
-  assert.deepEqual(items.map((r) => r.req_id), ['D8']);
-  assert.equal((await q(sam, 'select * from files where club_id = $1', [ids.clubIds.coastal])).length, 0);
-});
-
-test('assessor sees criteria; every score change is audited', async () => {
-  const sam = await user('sam.reid@fq-assess.example');
-  assert.ok((await q(sam, 'select * from requirement_criteria')).length > 80);
-  await q(sam, `insert into scores(club_id, req_id, assessor_id, slot, score) values ($1, 'P3', $2, 'first', 1.5)`, [ids.clubIds.riverside, sam.id]);
-  const { rows } = await sys().query(`select * from audit_log where table_name = 'scores' and actor_id = $1 and req_id = 'P3'`, [sam.id]);
-  assert.equal(rows.length, 1);
-});
-
-test('club cannot upload to a locked item or edit a locked staff row', async () => {
-  const c = await user('td@coastal-united.example');
-  await fails(q(c, `insert into files(club_id, req_id, filename, mime, size, data, uploaded_by) values ($1, 'P2', 'x.pdf', 'application/pdf', 1, '\\x00', $2)`,
-    [c.club_id, c.id]), /locked/);
-  await fails(q(c, `update staff_rows set person = 'Changed' where club_id = $1`, [c.club_id]), /locked/);
-});
-
-test('pool A/C clubs: P2 and P5 mandatory, at most three optional planning items', async () => {
-  const c = await user('td@highland-park.example'); // pool C, P1/P8/P14 already chosen
-  await fails(q(c, `update club_items set selected = false where req_id = 'P2'`), /mandatory/);
-  await fails(q(c, `update club_items set selected = true where req_id = 'P3'`), /at most three/);
+test('lead comments only once a section is reconciled; phases close only when complete', async () => {
+  const lead = await user('jordan.lee@fq-assess.example'); // leads Coastal
+  await fails(q(lead, `insert into lead_comments(club_id, section, body) values ($1,'delivery','Too early')`, [ids.clubIds.coastal]), /not fully reconciled/);
+  await fails(q(lead, `insert into lead_comments(club_id, section, body) values ($1,'overall','Too early')`, [ids.clubIds.coastal]), /every section/);
+  const admin = await user('admin@fq-assess.example');
+  await fails(q(admin, `update phases set closed_at = now() where id = 'delivery'`), /not yet resolved/);
 });
 
 test('club contact cannot invite a third person or create staff accounts', async () => {
-  const c = await user('td@riverside-rovers.example');
-  await q(c, `insert into users(email, name, role, club_id) values ('two@riverside-rovers.example', 'Two', 'club', $1)`, [c.club_id]);
-  await fails(q(c, `insert into users(email, name, role, club_id) values ('three@riverside-rovers.example', 'Three', 'club', $1)`, [c.club_id]), /at most two/);
+  const c = await user('td@westfield-city.example');
+  await q(c, `insert into users(email, name, role, club_id) values ('two@westfield-city.example', 'Two', 'club', $1)`, [c.club_id]);
+  await fails(q(c, `insert into users(email, name, role, club_id) values ('three@westfield-city.example', 'Three', 'club', $1)`, [c.club_id]), /at most two/);
   await fails(q(c, `insert into users(email, name, role, club_id) values ('x@x.example', 'X', 'admin', null)`), /row-level security|Invalid|check constraint/);
 });
