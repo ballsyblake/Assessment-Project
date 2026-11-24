@@ -16,8 +16,14 @@ const MAX_CODE_ATTEMPTS = 5;
 const SESSION_HOURS = { club: 24 * 7, assessor: 8, admin: 8 };
 
 export function baseUrl() {
-  return process.env.BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`;
+  if (process.env.BASE_URL) return process.env.BASE_URL.replace(/\/$/, '');
+  // Railway sets this automatically once the service has a public domain.
+  if (process.env.RAILWAY_PUBLIC_DOMAIN) return `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+  return `http://localhost:${process.env.PORT ?? 3000}`;
 }
+
+// Secure (HTTPS-only) cookies whenever the site is served over HTTPS.
+export const secureCookies = () => process.env.SECURE_COOKIES === '1' || baseUrl().startsWith('https://');
 
 export async function issueLink(userId) {
   const db = sys();

@@ -1,6 +1,7 @@
 // End-to-end walk through the 2027 flow with a real browser.
 // Usage: start the server on a fresh database (npm run reset && npm start), then
 //   BASE=http://localhost:3000 node test/e2e.mjs [screenshotDir]
+// Add SITE_PASSWORD=... if the server runs with a site password.
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -19,6 +20,12 @@ async function newPage() {
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('response', (r) => { if (r.status() >= 500) errors.push(`${r.status()} ${r.url()}`); });
   page.on('dialog', (d) => d.accept());
+  if (process.env.SITE_PASSWORD) {
+    // Pass the site-wide password gate used on public demos.
+    await page.goto(`${BASE}/`);
+    await page.fill('input[name=password]', process.env.SITE_PASSWORD);
+    await Promise.all([page.waitForNavigation(), page.click('button')]);
+  }
   return page;
 }
 async function shot(page, name) {

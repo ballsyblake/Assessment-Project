@@ -20,7 +20,7 @@ Open http://localhost:3000/dev. Emails are not sent; the demo mailbox stands in 
 npm run reset
 ```
 
-Wipes the database (stop the app first). The next start re-seeds it.
+Wipes the database (stop the app first). The next start re-seeds it. On a running site, use **Reset demo data** on `/dev` instead.
 
 ## Demo state
 
@@ -46,6 +46,32 @@ Suggested walkthrough:
 | Admin | Close Non-negotiables, see the Planning leaderboard and the assessor statistics |
 
 To show the release without scoring everything by hand, use **Fast-forward to release** on `/dev`. It completes the open phases with dummy data. Then release as the admin and view the club's results.
+
+## Put it online (Railway)
+
+The repo is ready for Railway (`railway.json`). Railway builds from GitHub and redeploys on every push.
+
+1. Sign up at railway.app with your GitHub account. Choose the Hobby plan, about US$5 a month.
+2. **New Project > Deploy from GitHub repo**. Pick `Assessment-Project`. If asked, allow Railway access to the repo.
+3. Open the new service, then **Settings > Source**. Set the branch to `claude/compassionate-wright-4yxte6`.
+4. **Add a volume** to the service: right-click the service on the canvas, or use the command palette (Ctrl/Cmd+K) and search "volume". Set the mount path to `/data`.
+5. **Variables** tab, add:
+   - `DATA_DIR` = `/data/pgdata`. The database lives on the volume, so data survives restarts and redeploys.
+   - `SITE_PASSWORD` = a password you choose. Required: it guards the whole site, including the demo mailbox.
+6. **Settings > Networking > Generate Domain**. Railway gives an `https://...up.railway.app` address, and sign-in links use it automatically. With your own domain, also set `BASE_URL` = `https://your.domain`.
+7. Wait for the deploy to show as active, then open the address. Enter the site password, then go to `/dev`.
+
+On the live site, the `/dev` page has **Reset demo data**, which puts everything back to the starting state, and **Fast-forward to release**.
+
+Only share the address and password with people you are demonstrating to. This deployment is for fictional data only: see "Moving to hosted Postgres" before any real FQ data is used.
+
+| Variable | Purpose |
+|---|---|
+| `SITE_PASSWORD` | Site-wide password gate (strongly recommended on any public address) |
+| `DATA_DIR` | Where the database files live (point at the volume) |
+| `BASE_URL` | Public address for sign-in links (defaults to Railway's domain, then localhost) |
+| `DEMO_MODE` | `0` removes the demo mailbox (`/dev`); only once real email is connected |
+| `FRAMEWORK_FILE` | Use a framework file kept outside the repo |
 
 ## How it works
 

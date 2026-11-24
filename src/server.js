@@ -2,10 +2,11 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { openDb, sys, asUser } from './db.js';
+import crypto from 'node:crypto';
+import { openDb, sys, asUser, resetDb } from './db.js';
 import { seed, autoComplete } from './seed.js';
 import { layout, html, NAV, fmtDate } from './html.js';
-import { linkValid, requestCode, verifyCode, userForSession, endSession, issueLink } from './auth.js';
+import { linkValid, requestCode, verifyCode, userForSession, endSession, issueLink, secureCookies } from './auth.js';
 import clubRoutes from './routes/club.js';
 import reviewRoutes from './routes/review.js';
 import assessorRoutes from './routes/assessor.js';
@@ -21,9 +22,37 @@ export async function createApp(opts = {}) {
 
   const app = express();
   app.disable('x-powered-by');
+  app.set('trust proxy', 1); // behind the hosting provider's HTTPS proxy
+  app.get('/healthz', (req, res) => res.type('text').send('ok'));
   app.use('/static', express.static(path.join(here, '..', 'public')));
   app.use(express.urlencoded({ extended: false, limit: '1mb' }));
   app.use(cookieParser());
+
+  // Optional site-wide password (set SITE_PASSWORD). Required for any public demo:
+  // without it anyone with the address could use the demo mailbox to sign in as the admin.
+  const SITE_PASSWORD = process.env.SITE_PASSWORD;
+  if (SITE_PASSWORD) {
+    const GATE = 'cap_site';
+    const token = crypto.createHmac('sha256', SITE_PASSWORD).update('site-access-v1').digest('hex');
+    const ok = (v) => typeof v === 'string' && v.length === token.length && crypto.timingSafeEqual(Buffer.from(v), Buffer.from(token));
+    const page = (error) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Club Assessment</title><link rel="stylesheet" href="/static/style.css"></head><body>
+      <main class="wrap"><div class="login card"><h1>Club Assessment prototype</h1><p>Enter the access password you were given.</p>
+      ${error ? '<div class="flash err">Incorrect password.</div>' : ''}
+      <form method="post" action="/site-access"><p><input type="password" name="password" required autofocus style="width:100%"></p>
+      <button>Continue</button></form></div></main></body></html>`;
+    app.post('/site-access', express.urlencoded({ extended: false }), async (req, res) => {
+      const given = crypto.createHmac('sha256', SITE_PASSWORD).update('site-access-v1').digest('hex');
+      const candidate = crypto.createHmac('sha256', String(req.body.password ?? '')).update('site-access-v1').digest('hex');
+      if (!crypto.timingSafeEqual(Buffer.from(given), Buffer.from(candidate))) {
+        await new Promise((r) => setTimeout(r, 800)); // slow down guessing
+        return res.status(401).send(page(true));
+      }
+      res.cookie(GATE, token, { httpOnly: true, sameSite: 'lax', secure: secureCookies(), maxAge: 30 * 864e5 });
+      res.redirect('/');
+    });
+    app.use((req, res, next) => (ok(req.cookies[GATE]) ? next() : res.status(401).send(page(false))));
+  }
 
   app.use((req, res, next) => {
     res.setHeader('X-Frame-Options', 'DENY');
@@ -96,7 +125,7 @@ export async function createApp(opts = {}) {
   app.post('/auth/link/:token/code', async (req, res) => {
     const r = await verifyCode(req.params.token, req.body.code);
     if (!r.ok) return res.page('Enter code', codeForm(req.params.token, r.error));
-    res.cookie(COOKIE, r.sessionToken, { httpOnly: true, sameSite: 'lax', maxAge: r.maxAgeMs, secure: process.env.SECURE_COOKIES === '1' });
+    res.cookie(COOKIE, r.sessionToken, { httpOnly: true, sameSite: 'lax', maxAge: r.maxAgeMs, secure: secureCookies() });
     res.redirect('/');
   });
 
@@ -124,7 +153,8 @@ export async function createApp(opts = {}) {
         <div class="card"><strong>Demo shortcut</strong>
           <p class="small muted">Completes every open phase with dummy scores, third assessments and lead comments, so the release and the
           club results page can be shown. Use it only after walking through the parts you want to demonstrate by hand.</p>
-          <form method="post" action="/dev/fast-forward" onsubmit="return confirm('Complete all open phases with dummy data?')"><button class="small secondary">Fast-forward to release</button></form></div>
+          <div class="row"><form method="post" action="/dev/fast-forward" onsubmit="return confirm('Complete all open phases with dummy data?')"><button class="small secondary">Fast-forward to release</button></form>
+          <form method="post" action="/dev/reset" onsubmit="return confirm('Wipe all data and go back to the starting demo state?')"><button class="small danger">Reset demo data</button></form></div></div>
         <h2>Outbox (latest 30)</h2>
         ${mail.map((m) => html`<div class="card"><div class="row"><strong>${m.subject}</strong><span class="spacer"></span>
           <span class="muted small">to ${m.to_addr} · ${fmtDate(m.created_at)}</span></div>
@@ -134,6 +164,12 @@ export async function createApp(opts = {}) {
       const { rows } = await sys().query('select id from phases where closed_at is null order by sort');
       await autoComplete({ phases: rows.map((r) => r.id), seed: 99 });
       res.redirect('/dev?msg=' + encodeURIComponent('All phases completed and closed. Sign in as the admin to release results.'));
+    });
+    app.post('/dev/reset', async (req, res) => {
+      await resetDb();
+      await seed();
+      res.clearCookie(COOKIE);
+      res.redirect('/dev?msg=' + encodeURIComponent('Demo data reset to the starting state. Everyone has been signed out.'));
     });
     app.post('/dev/send/:id', async (req, res) => {
       await issueLink(Number(req.params.id));

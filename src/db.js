@@ -8,14 +8,25 @@ const ROLE = { club: 'app_club', assessor: 'app_assessor', admin: 'app_admin' };
 
 export let db;
 
-export async function openDb({ dataDir = process.env.DATA_DIR ?? path.join(here, '..', 'data', 'pgdata'), memory = false } = {}) {
+export async function openDb({ dataDir = dataDirDefault(), memory = false } = {}) {
   const fresh = memory || !fs.existsSync(path.join(dataDir, 'PG_VERSION'));
+  if (!memory) fs.mkdirSync(dataDir, { recursive: true });
   db = memory ? new PGlite() : new PGlite(dataDir);
   await db.waitReady;
   if (fresh) {
     await db.exec(fs.readFileSync(path.join(here, 'schema.sql'), 'utf8'));
   }
   return { db, fresh };
+}
+
+export const dataDirDefault = () => process.env.DATA_DIR ?? path.join(here, '..', 'data', 'pgdata');
+
+// Demo only: wipe the database files and start again.
+export async function resetDb() {
+  const dir = dataDirDefault();
+  await db.close();
+  fs.rmSync(dir, { recursive: true, force: true });
+  return openDb({ dataDir: dir });
 }
 
 // Trusted system access (auth layer, seeding, outbox). Bypasses RLS as table owner.
