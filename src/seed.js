@@ -67,7 +67,7 @@ const COMMENTS = {
   staff: 'Qualification levels are solid across the leadership group. Prioritise course pathways for junior head coaches next season.',
   delivery: 'Sessions observed were well organised with clear objectives. Feedback quality varied between age groups and is the main area to work on.',
   outcomes: 'Retention and member satisfaction are positives. Progressing players into representative pathways remains the biggest opportunity.',
-  nn: 'All non-negotiable standards were met on time.',
+  nn: 'Compliance documents were submitted on time. Shield threshold standards are summarised above; see the notes on any item marked On Notice.',
   overall: 'A strong season with clear progress in planning and delivery. Focus next year on consistent coach feedback and the player pathway.',
 };
 
@@ -96,6 +96,11 @@ function genScore(req, q, rand, base) {
     return { ticks: Array.from({ length: req.n_criteria }, () => { const x = rand(); return x < q ? 'y' : x < q + 0.15 ? 'p' : 'n'; }) };
   }
   if (req.type === 'yesno') return { score: base ? base.score : rand() < 0.95 ? 1 : 0 };
+  if (req.type === 'threshold') {
+    if (base) return { score: base.score };
+    const level = q >= 0.78 ? 4 : q >= 0.6 ? 3 : q >= 0.45 ? 2 : 1;
+    return { score: rand() < 0.15 ? 0.5 : level };
+  }
   if (req.type === 'value') {
     const u = req.unit ?? '';
     const v = u.includes('%') ? Math.round(40 + q * 50 + rand() * 10) : u.includes('NPS') ? Math.round(-5 + q * 50 + rand() * 10) : Math.round(q * 10 * rand() * 1.5);
@@ -158,6 +163,7 @@ export async function autoComplete({ phases, leaveDisputes = 0, close = true, co
         for (const h of holders) {
           if (have.find((x) => x.slot === h.slot)) continue;
           const s = genScore(req, cfg.q, rand, h.slot === 'second' ? firstScore : null);
+          if (req.id === 'NN7' && cfg.key === 'riverside') s.score = 0.5; // on notice again: shows the downgrade rule
           await as(h.assessor_id);
           await db.query(`insert into scores(club_id, req_id, slot, assessor_id, ticks, value, score, comment) values ($1,$2,$3,$4,$5,$6,$7,$8)`,
             [club.id, req.id, h.slot, h.assessor_id, s.ticks ? JSON.stringify(s.ticks) : null, s.value ?? null, s.score ?? 0,
@@ -285,9 +291,11 @@ export async function seed({ issueLinks = true } = {}) {
     }
     // previous cycle scores, shown to assessors and used for planning carry-forward
     const rand = rng(club.id * 97);
-    for (const r of reqs.filter((x) => x.section !== 'nn')) {
-      await db.query('insert into prior_scores(club_id, req_id, score) values ($1,$2,$3)',
-        [club.id, r.id, r1(Math.min(r.max_score, Math.max(0, r.max_score * (c.q + (rand() - 0.5) * 0.3))))]);
+    for (const r of reqs.filter((x) => x.type !== 'yesno')) {
+      const score = r.type === 'threshold'
+        ? (c.key === 'riverside' && r.id === 'NN7' ? 0.5 : { Gold: 4, Silver: 3, Bronze: 2 }[c.shield] ?? 1)
+        : r1(Math.min(r.max_score, Math.max(0, r.max_score * (c.q + (rand() - 0.5) * 0.3))));
+      await db.query('insert into prior_scores(club_id, req_id, score) values ($1,$2,$3)', [club.id, r.id, score]);
     }
   }
 

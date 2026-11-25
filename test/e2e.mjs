@@ -226,11 +226,17 @@ expect((await flash(admin)).includes('released'), 'results released');
 await admin.goto(`${BASE}/admin/leaderboard`);
 expect((await text(admin)).includes('Full ranking'), 'full ranking after every phase closed');
 
+await admin.goto(`${BASE}/admin/release`);
+await go(admin, 'button:has-text("Confirm ratings")');
+expect((await flash(admin)).includes('confirmed'), `ratings confirmed (${(await flash(admin)).slice(0, 80)})`);
 console.log('Club sees results with lead feedback');
 await club.goto(`${BASE}/club/results`);
 const res = await text(club);
-expect(/Total score/.test(res) && res.includes('Next step: link the playing style'), 'club sees rating, totals and the lead comment');
+expect(/Club audit summary/.test(res) && res.includes('Next step: link the playing style'), 'club sees the audit summary and the lead comment');
+expect(/Top 5 strengths/.test(res) && /Shield threshold standards/.test(res), 'report has top 5 lists and shield thresholds');
+expect(/two consecutive years/.test(res), 'Riverside downgrade explained (on notice two years running)');
 await shot(club, 'club-results');
+expect(/Confirmed rating/.test(await text(club)), 'club sees the rating as confirmed');
 await club.setViewportSize({ width: 390, height: 844 });
 for (const p of ['/club', '/club/results']) {
   await club.goto(BASE + p);

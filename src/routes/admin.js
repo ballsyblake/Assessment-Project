@@ -10,7 +10,7 @@ import { evidenceBlock, staffTable } from './review.js';
 import { resultsView } from './club.js';
 import { issueLink } from '../auth.js';
 import { sendMail } from '../mail.js';
-import { THRESHOLDS } from '../scoring.js';
+import { THRESHOLDS, scoreText, thresholdLabel } from '../scoring.js';
 
 const back = (res, path, msg) => res.redirect(`${path}${path.includes('?') ? '&' : '?'}msg=${encodeURIComponent(msg)}`);
 const PHASE_IDS = framework.phases.map((p) => p.id);
@@ -332,19 +332,21 @@ export default function adminRoutes() {
           return html`<tr id="${x.id}">
           <td><strong>${x.id}</strong> ${x.name}<br><span class="small muted">max ${x.max_score} · x${x.weight}${x.assessors === 1 ? ' · single assessor' : ''}</span></td>
           <td class="small">${holders.map((h) => html`${h.slot}: ${h.name} ${h.locked ? html`&#10003;` : html`<span class="muted">(open)</span>`}<br>`)}</td>
-          <td class="num">${x.sc.first ? fmtNum(x.sc.first.score) : '–'}${x.sc.first?.comment ? html`<div class="small muted" style="max-width:220px;text-align:left">${x.sc.first.comment}</div>` : ''}</td>
-          <td class="num">${x.sc.second ? fmtNum(x.sc.second.score) : '–'}${x.sc.second?.comment ? html`<div class="small muted" style="max-width:220px;text-align:left">${x.sc.second.comment}</div>` : ''}</td>
+          <td class="num">${x.sc.first ? scoreText(x, x.sc.first.score) : '–'}${x.sc.first?.comment ? html`<div class="small muted" style="max-width:220px;text-align:left">${x.sc.first.comment}</div>` : ''}</td>
+          <td class="num">${x.sc.second ? scoreText(x, x.sc.second.score) : '–'}${x.sc.second?.comment ? html`<div class="small muted" style="max-width:220px;text-align:left">${x.sc.second.comment}</div>` : ''}</td>
           <td><span class="badge ${STATE[x.state][0]}">${STATE[x.state][1]}</span>
             ${x.tick_mismatch ? html`<br><span class="badge b-warn">Same score, different criteria marks</span>` : ''}
             ${x.third_name ? html`<div class="small muted">Third: ${x.third_name}</div>` : ''}${ticksTable(x)}</td>
-          <td>${x.final_score !== null ? html`<strong>${fmtNum(x.final_score)}</strong><div class="small muted">${METHOD[x.method]}${x.resolver ? ` · ${x.resolver}` : ''}</div>
+          <td>${x.final_score !== null ? html`<strong>${scoreText(x, x.final_score)}</strong><div class="small muted">${METHOD[x.method]}${x.resolver ? ` · ${x.resolver}` : ''}</div>
             ${x.note && x.method !== 'agreed' && x.method !== 'single' ? html`<div class="small">${x.note}</div>` : ''}` : ''}</td>
           <td>${ph.closed ? '' : html`
             ${(x.state === 'disputed' || x.state === 'third') ? html`<form method="post" action="/admin/reconcile/${clubId}/${x.id}/third" class="inline">
               <select name="assessor_id" required><option value="">Third assessor...</option>${eligible.map((a) => html`<option value="${a.id}" ${x.third_id === a.id ? 'selected' : ''}>${a.name}</option>`)}</select>
               <button class="small">${x.third_id ? 'Reassign' : 'Assign'}</button></form>` : ''}
             ${x.state !== 'scoring' && x.state !== 'unassigned' ? html`<form method="post" action="/admin/reconcile/${clubId}/${x.id}/override" class="inline">
-              <input type="number" name="score" step="0.1" min="0" max="${x.max_score}" required placeholder="Score" style="width:72px">
+              ${x.type === 'threshold' ? html`<select name="score" required><option value="">Outcome...</option>${(framework.thresholdOutcomes ?? []).map((o) => html`<option value="${o.code}">${o.label}</option>`)}</select>`
+                : x.type === 'yesno' ? html`<select name="score" required><option value="1">Met</option><option value="0">Not met</option></select>`
+                : html`<input type="number" name="score" step="0.1" min="0" max="${x.max_score}" required placeholder="Score" style="width:72px">`}
               <input name="note" required placeholder="Reason for override" style="width:150px"><button class="small secondary">Override</button></form>` : ''}
             ${x.state === 'unassigned' ? html`<a class="small" href="/admin/assignments?phase=${phase}">Assign assessors</a>` : ''}`}</td>
         </tr>`;
@@ -448,7 +450,8 @@ export default function adminRoutes() {
     const deadline = settings.internal_deadline;
     const pastDeadline = Boolean(deadline) && new Date(deadline) <= new Date();
     const openPhases = phases.filter((p) => !p.closed);
-    return { settings, phases, reqs, list, deadline, pastDeadline, openPhases, ok: pastDeadline && !openPhases.length && list.every((x) => x.ready) };
+    const confirmedCount = (await tx.query('select count(*)::int n from results where confirmed_at is not null')).rows[0].n;
+    return { settings, phases, reqs, list, deadline, pastDeadline, openPhases, confirmedCount, ok: pastDeadline && !openPhases.length && list.every((x) => x.ready) };
   })();
 
   r.get('/release', async (req, res) => {
@@ -456,8 +459,12 @@ export default function adminRoutes() {
     const released = g.settings.released_at;
     res.page('Release results', html`
       <h1>Release results</h1>
-      <p class="sub">One action releases results and lead feedback to every club. Before that, the database blocks clubs from reading results or comments.</p>
-      ${released ? html`<div class="notice"><strong>Results released ${fmtDate(released)}.</strong></div>` : ''}
+      <p class="sub">One action releases preliminary results and lead feedback to every club. Before that, the database blocks clubs from reading results or comments.</p>
+      ${released ? html`<div class="notice"><strong>Preliminary results released ${fmtDate(released)}.</strong>
+        Clubs have ${framework.review?.days ?? 8} days to request a review. Then confirm the ratings below.</div>
+        <form method="post" action="/admin/release/confirm" class="card" onsubmit="return confirm('Confirm ratings now? Clubs with outstanding non-negotiable documents are skipped.')">
+          <p class="small">Confirmed: ${g.confirmedCount} of ${g.list.length} clubs. A rating cannot be confirmed while the club has non-negotiable documents outstanding.</p>
+          <button class="small" ${g.confirmedCount === g.list.length ? 'disabled' : ''}>Confirm ratings</button></form>` : ''}
       <div class="card"><dl class="kv">
         <dt>Internal deadline</dt><dd><form method="post" action="/admin/release/deadline" class="inline"><input type="date" name="deadline" value="${g.deadline ?? ''}" ${released ? 'disabled' : ''}>
           ${released ? '' : html`<button class="small secondary">Save</button>`}</form>
@@ -473,6 +480,20 @@ export default function adminRoutes() {
       ${released ? '' : html`<form method="post" action="/admin/release" class="card" onsubmit="return confirm('Release results to all clubs now? This cannot be undone.')">
         ${g.ok ? '' : html`<div class="warnbox">Release is blocked until the internal deadline has passed, every phase is closed, and every club's lead has written all section and overall comments.</div>`}
         <button ${g.ok ? '' : 'disabled'}>Release results to all clubs</button></form>`}`);
+  });
+
+  r.post('/release/confirm', async (req, res) => {
+    const out = await req.db(async (tx) => {
+      const { rows } = await tx.query(`
+        select r.club_id, c.name,
+          exists (select 1 from club_items i join requirements q on q.id = i.req_id
+                  where i.club_id = r.club_id and q.section = 'nn' and q.kind = 'document' and i.status not in ('approved','not_accepted')) outstanding
+        from results r join clubs c on c.id = r.club_id where r.released_at is not null and r.confirmed_at is null`);
+      const ok = rows.filter((x) => !x.outstanding);
+      if (ok.length) await tx.query('update results set confirmed_at = now() where club_id = any($1::int[])', [ok.map((x) => x.club_id)]);
+      return { confirmed: ok.length, skipped: rows.filter((x) => x.outstanding).map((x) => x.name) };
+    }, 'Ratings confirmed');
+    back(res, '/admin/release', `${out.confirmed} rating(s) confirmed.${out.skipped.length ? ` Not confirmed (non-negotiable documents outstanding): ${out.skipped.join(', ')}.` : ''}`);
   });
 
   r.post('/release/deadline', async (req, res) => {

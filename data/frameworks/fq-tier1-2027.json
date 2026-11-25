@@ -4,7 +4,8 @@
  "notes": [
   "Line items, scales and weightings: FQ Info Pack 2027 Appendix 7 and 9.",
   "PLACEHOLDER criteria: tick criteria are drafted from the 2027 descriptors until FQ supplies the final 2027 criteria. Criteria counts follow 2026.",
-  "Outcome value bands: 2027 descriptors for O10, O11, O13, O15; 2026 assessment bands for O1-O7 until confirmed."
+  "Outcome value bands: 2027 descriptors for O10, O11, O13, O15; 2026 assessment bands for O1-O7 until confirmed.",
+  "NN1-NN6 are compliance items (Yes/No) and do not change the rating; a score cannot be confirmed while they are outstanding. NN7-NN9 are shield thresholds: outcome per shield level or On Notice / Not Met (from the 2026 preliminary reports)."
  ],
  "scoring": {
   "partialValue": 0.5,
@@ -58,7 +59,6 @@
   ],
   "maxOptional": 3
  },
- "nnCapsRating": true,
  "items": [
   {
    "id": "T01",
@@ -1850,12 +1850,12 @@
    "group": "Non-Negotiables – Shield Based Standards",
    "name": "Club Structure Standards",
    "kind": "document",
-   "maxScore": 1,
+   "maxScore": 4,
    "weight": 0,
    "evidence": "Electronic submission",
    "guidance": "Organisational structure and position descriptions.",
    "descriptor": "The club is required to submit the organisational structure, position descriptions, and staff roster/contact information for teams. The club structure standards are set for each shield level and have been progressively introduced over a four-year period. Please refer to pages titled ‘Shield Thresholds’ within the Club Development & Assessment Info Pack for additional details on standards and submission requirements per shield.",
-   "type": "yesno",
+   "type": "threshold",
    "assessors": 2
   },
   {
@@ -1864,12 +1864,12 @@
    "group": "Non-Negotiables – Shield Based Standards",
    "name": "Coaching Standards",
    "kind": "document",
-   "maxScore": 1,
+   "maxScore": 4,
    "weight": 0,
    "evidence": "Electronic submission, Club visits",
    "guidance": "Secondary coach names and roster for each team.",
    "descriptor": "The club is required to meet minimum coaching qualification and staffing standards per shield. Qualification standards are captured in each club’s Technical Staff Qualifications template and do not require a separate submission. To capture staffing standards, clubs must submit the names and roster of secondary coaches at the beginning of the season. Compliance with the above will be recorded during CDA’s training delivery observations. The coaching standards are set for each shield level and have been progressively introduced over a four-year period. Please refer to pages titled ‘Shield Thresholds’ within the Club Development & Assessment Info Pack for additional details on standards and submission requirements per shield.",
-   "type": "yesno",
+   "type": "threshold",
    "assessors": 2
   },
   {
@@ -1878,13 +1878,53 @@
    "group": "Non-Negotiables – Shield Based Standards",
    "name": "Training Program Standards",
    "kind": "document",
-   "maxScore": 1,
+   "maxScore": 4,
    "weight": 0,
    "evidence": "Electronic submission, Club visits",
    "guidance": "Training schedule showing contact hours per age group.",
    "descriptor": "Training Program Standards capture clubs' ability to provide players with a minimum requirement for frequency and duration of training sessions per week, appropriate field space, and individualised training sessions. Compliance with Training Standards will be evaluated through various means, primarily during training delivery observations. The club is required to submit their full training schedule with field allocation, as per previous years. The training program standards are set for each shield level and have been progressively introduced over a four-year period. Please refer to pages titled ‘Shield Thresholds’ within the Club Development & Assessment Info Pack for additional details on standards and submission requirements per shield.",
-   "type": "yesno",
+   "type": "threshold",
    "assessors": 2
   }
- ]
+ ],
+ "thresholdOutcomes": [
+  {
+   "code": 4,
+   "label": "Gold Met"
+  },
+  {
+   "code": 3,
+   "label": "Silver Met"
+  },
+  {
+   "code": 2,
+   "label": "Bronze Met"
+  },
+  {
+   "code": 1,
+   "label": "Development Committed Met"
+  },
+  {
+   "code": 0.5,
+   "label": "On Notice"
+  },
+  {
+   "code": 0,
+   "label": "Not Met"
+  }
+ ],
+ "thresholdRule": {
+  "description": "Clubs can only be on notice for the same threshold item for one season, and for no more than one threshold item in a year. Being on notice for the same item two years running, or on notice/not met for more than one item, lowers the shield by one level.",
+  "downgradeLevels": 1
+ },
+ "review": {
+  "days": 8,
+  "maxItems": {
+   "staff": 1,
+   "planning": 3,
+   "planningPartial": 1,
+   "delivery": 3,
+   "outcomes": 2
+  }
+ }
 }

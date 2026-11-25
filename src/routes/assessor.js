@@ -2,6 +2,7 @@ import express from 'express';
 import { num } from '../db.js';
 import { html, raw, progressBar, fmtDate, fmtDay, fmtNum, TICK_LABEL } from '../html.js';
 import { sectionLabel, framework } from '../catalog.js';
+import { scoreText } from '../scoring.js';
 import { getReqs, getClub, getItems, getFiles, getStaff, getPhases, submissionProgress, sumProgress } from '../model.js';
 import { evidenceBlock, staffTable } from './review.js';
 
@@ -233,7 +234,7 @@ export default function assessorRoutes() {
       <h1>Third assessment: ${d.q.id} ${d.q.name}</h1>
       <p class="sub">${d.club.name} · max ${d.q.max_score} · weighting ${d.q.weight}. Read both assessors' comments, check the evidence, then mark the criteria yourself. Your score becomes the final score.</p>
       <div class="grid">${['first', 'second'].map((sl) => s[sl] ? html`<div class="card"><div class="small muted">${sl} assessor · ${s[sl].name}</div>
-        <div class="stat">${fmtNum(s[sl].score)}</div><div class="small">${s[sl].comment ?? html`<span class="muted">No comment</span>`}</div></div>` : '')}</div>
+        <div class="stat">${scoreText(d.q, s[sl].score)}</div><div class="small">${s[sl].comment ?? html`<span class="muted">No comment</span>`}</div></div>` : '')}</div>
       ${criteria.length ? html`<h2>Criteria marks</h2><div class="tablewrap"><table class="cmp"><tr><th>#</th><th>Criterion</th><th>First</th><th>Second</th></tr>
         ${criteria.map((c, i) => {
           const a = s.first?.ticks?.[i]; const b = s.second?.ticks?.[i];
@@ -307,7 +308,7 @@ export default function assessorRoutes() {
           ${pr ? progressBar(pr.approved, pr.submitted, pr.total) : ''}
           ${done ? html`<details><summary>Final scores (${lines.length} items)</summary><div class="tablewrap"><table>
               <tr><th>Item</th><th>Line item</th><th class="num">Final</th></tr>
-              ${lines.map((q) => html`<tr><td>${q.id}</td><td>${q.name}</td><td class="num">${fmtNum(resBy[q.id].final_score)} / ${q.max_score}</td></tr>`)}
+              ${lines.map((q) => html`<tr><td>${q.id}</td><td>${q.name}</td><td class="num">${q.type === 'threshold' || q.type === 'yesno' ? scoreText(q, resBy[q.id].final_score) : `${fmtNum(resBy[q.id].final_score)} / ${q.max_score}`}</td></tr>`)}
             </table></div></details>` : html`<p class="small muted">Final scores and feedback open once every item in this section is reconciled.</p>`}
           ${commentForm(d, p.id, done)}
         </div>`;
@@ -352,6 +353,11 @@ function scoreInputs(q, crit, mine, enabled, formId = 'scoreform') {
     return html`<label class="small">Measured value (${q.unit})<br><input type="number" step="0.1" name="v_${q.id}" value="${mine?.value ?? ''}" ${raw(f)} ${dis}></label>
       <div class="small muted">Bands: ${(crit.bands ?? []).map((b) => `${b.min}+ = ${b.score}`).join(' · ')}</div>`;
   }
+  if (q.type === 'threshold') {
+    return html`<label class="small">Shield threshold outcome<br><select name="s_${q.id}" ${raw(f)} ${dis}><option value=""></option>
+      ${(framework.thresholdOutcomes ?? []).map((o) => html`<option value="${o.code}" ${mine && num(mine.score) === Number(o.code) ? 'selected' : ''}>${o.label}</option>`)}</select></label>
+      <div class="small muted">${framework.thresholdRule?.description ?? ''}</div>`;
+  }
   if (q.type === 'yesno') {
     return html`<label class="small">Outcome<br><select name="s_${q.id}" ${raw(f)} ${dis}><option value=""></option>
       <option value="1" ${mine && num(mine.score) === 1 ? 'selected' : ''}>Met</option><option value="0" ${mine && num(mine.score) === 0 ? 'selected' : ''}>Not met</option></select></label>`;
@@ -367,7 +373,7 @@ function itemCard(q, d, scoringOpen) {
     <div class="row"><span class="code" style="font-weight:700;color:var(--brand)">${q.id}</span><strong>${q.name}</strong>
       <span class="spacer"></span>
       ${d.prior[q.id] !== undefined ? html`<span class="small muted">Last cycle: ${fmtNum(d.prior[q.id])}</span>` : ''}
-      ${mine ? html`<span class="badge b-done">My score ${fmtNum(mine.score)} / ${q.max_score}</span>` : html`<span class="badge b-muted">Not scored</span>`}</div>
+      ${mine ? html`<span class="badge b-done">My score ${q.type === 'threshold' || q.type === 'yesno' ? scoreText(q, mine.score) : `${fmtNum(mine.score)} / ${q.max_score}`}</span>` : html`<span class="badge b-muted">Not scored</span>`}</div>
     ${q.kind !== 'staff' ? evidenceBlock({ q, it, files: d.files.filter((f) => f.req_id === q.id), names: d.names, clubId: d.club.id, canAct: !d.phase.closed }) : html`<div class="guid">${q.guidance}</div>`}
     <details><summary>Descriptor</summary><div class="criteria">${crit.descriptor}</div></details>
     ${scoringOpen || mine ? html`${scoreInputs(q, crit, mine, scoringOpen)}

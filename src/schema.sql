@@ -49,7 +49,7 @@ create table requirements (
   grp text not null,
   name text not null,
   kind text not null check (kind in ('staff','document','onfield','fq')),   -- what the CLUB does
-  type text not null check (type in ('ticks','value','direct','yesno')),   -- how ASSESSORS score
+  type text not null check (type in ('ticks','value','direct','yesno','threshold')),   -- how ASSESSORS score
   assessors int not null check (assessors in (1,2)),
   evidence text not null,
   max_score numeric(5,1) not null,
@@ -221,7 +221,8 @@ create table results (
   rating text not null,
   nn_met boolean not null,
   details jsonb not null,
-  released_at timestamptz
+  released_at timestamptz,           -- preliminary rating sent to the club
+  confirmed_at timestamptz           -- rating confirmed (after the review window)
 );
 
 create table audit_log (
@@ -442,6 +443,10 @@ begin
     new.ticks := null;
   elsif q.type = 'yesno' then
     if new.score not in (0, 1) then raise exception '%: Met or Not met', new.req_id; end if;
+    new.ticks := null; new.value := null;
+  elsif q.type = 'threshold' then
+    -- shield threshold: 4 Gold, 3 Silver, 2 Bronze, 1 Development Committed met; 0.5 On Notice; 0 Not Met
+    if new.score not in (0, 0.5, 1, 2, 3, 4) then raise exception '%: choose a threshold outcome', new.req_id; end if;
     new.ticks := null; new.value := null;
   else
     if new.score is null or new.score < 0 or new.score > q.max_score then

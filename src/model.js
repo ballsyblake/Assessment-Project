@@ -151,6 +151,6 @@ export async function assessorStats(tx) {
     join users u on u.id = x.assessor_id
     join requirements q on q.id = x.req_id
     join resolutions r on r.club_id = x.club_id and r.req_id = x.req_id
-    where x.slot in ('first','second') and q.assessors = 2 and q.type <> 'yesno'
+    where x.slot in ('first','second') and q.assessors = 2 and q.type not in ('yesno','threshold')
     group by u.id, u.name order by u.name`)).rows;
 }

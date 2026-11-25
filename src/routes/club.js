@@ -290,50 +290,107 @@ export default function clubRoutes() {
   return r;
 }
 
-// Results page: rating and badge at the top, overall comment, then each section with
-// the lead's comment above its line-item table.
+// Results page, modelled on FQ's preliminary rating report: rating summary, audit summary
+// by section, each section's areas with points missed and % grade plus the lead's comment,
+// top 5 strengths and areas to improve, non-negotiables and shield thresholds, next steps.
+const SECTION_COLOUR = { staff: '#8d9bb0', planning: '#7fb0de', delivery: '#f2c94c', outcomes: '#8fc27a' };
+const ORDER = ['staff', 'planning', 'delivery', 'outcomes'];
+const pctClass = (p) => (p >= 75 ? 'g-high' : p >= 50 ? 'g-mid' : 'g-low');
+
+function bars(rows) {
+  return html`<div class="bars" role="img" aria-label="${rows.map((r) => `${r.label} ${r.pct}%`).join(', ')}">
+    ${rows.map((r) => html`<div class="bar"><div class="bar-track"><div class="bar-fill" style="height:${Math.max(2, r.pct)}%;background:${r.colour}"></div></div>
+      <div class="bar-val">${r.pct}%</div><div class="bar-label">${r.label}</div></div>`)}</div>`;
+}
+
 export function resultsView(result, club, { preview = false } = {}) {
   const det = result.details;
   const comments = det.comments ?? {};
-  const ORDER = ['planning', 'staff', 'delivery', 'outcomes'];
+  const confirmed = Boolean(result.confirmed_at);
+  const status = preview ? 'Admin preview' : confirmed ? 'Confirmed rating' : 'Preliminary rating (to be confirmed)';
+  const sections = ORDER.filter((s) => det.bySection?.[s]);
+  const review = framework.review ?? {};
   return html`
     ${preview ? html`<div class="warnbox noprint">Admin preview. The club cannot see this until results are released.</div>` : ''}
     <div class="card result-head">
       ${shield(result.rating, 110)}
       <div>
-        <h1>${club.name}</h1>
+        <span class="badge ${confirmed ? 'b-approved' : 'b-warn'}">${status}</span>
+        <h1 style="margin-top:6px">${club.name}</h1>
         <p class="sub" style="margin:0">${framework.name}</p>
         <div class="row" style="margin-top:12px;gap:32px">
-          <div><div class="muted small">Total score</div><div class="stat">${fmtNum(result.total)} <span class="muted small">/ ${fmtNum(result.max_total)}</span></div></div>
-          <div><div class="muted small">Percentage</div><div class="stat">${fmtNum(result.pct)}%</div></div>
-          <div><div class="muted small">Rating</div><div class="stat">${result.rating}</div></div>
+          <div><div class="muted small">${confirmed ? 'Score' : 'Preliminary score'}</div><div class="stat">${fmtNum(result.total)} <span class="muted small">/ ${fmtNum(result.max_total)}</span></div></div>
+          <div><div class="muted small">Score percentage</div><div class="stat">${Math.round(Number(result.pct))}%</div></div>
+          <div><div class="muted small">${confirmed ? 'Rating' : 'Preliminary rating'}</div><div class="stat">${result.rating}</div></div>
         </div>
       </div>
       <span class="spacer"></span>
       <button class="secondary noprint" onclick="window.print()">Print or save as PDF</button>
     </div>
-    ${det.capped ? html`<div class="warnbox">One or more non-negotiable standards were not met, so the rating cannot rise above the club's current shield.</div>` : ''}
-    ${comments.overall ? html`<h2>Overall feedback</h2><div class="lead-comment">${comments.overall}</div>` : ''}
-    <div class="grid">${ORDER.filter((s) => det.bySection[s]).map((s) => {
+    ${det.downgradeReasons?.length ? html`<div class="warnbox">* The club has been awarded a ${result.rating} shield instead of ${det.scoreRating}, as it was ${det.downgradeReasons.join(' and ')}.</div>` : ''}
+
+    <h2>Club audit summary</h2>
+    <div class="grid" style="grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:start">
+      <div class="tablewrap"><table class="audit">
+        <tr><th>Section</th><th class="num">Maximum score</th><th class="num">Score</th><th class="num">Points missed</th><th class="num">% grade</th></tr>
+        ${sections.map((s) => { const b = det.bySection[s]; return html`<tr><td><span class="swatch" style="background:${SECTION_COLOUR[s]}"></span>${sectionLabel(s)}</td>
+          <td class="num">${fmtNum(b.max)}</td><td class="num">${fmtNum(b.points)}</td><td class="num">${fmtNum(b.missed)}</td><td class="num"><span class="grade ${pctClass(b.pct)}">${b.pct}%</span></td></tr>`; })}
+        <tr class="total"><td>Total</td><td class="num">${fmtNum(det.max)}</td><td class="num">${fmtNum(det.total)}</td><td class="num">${fmtNum(det.missed)}</td><td class="num"><span class="grade ${pctClass(det.pct)}">${Math.round(det.pct)}%</span></td></tr>
+      </table></div>
+      <div class="card">${bars(sections.map((s) => ({ label: sectionLabel(s), pct: det.bySection[s].pct, colour: SECTION_COLOUR[s] })))}</div>
+    </div>
+
+    ${comments.overall ? html`<h2>Assessment summary</h2><div class="lead-comment">${comments.overall}</div>` : ''}
+
+    ${sections.map((s) => {
       const b = det.bySection[s];
-      return html`<div class="card"><strong>${sectionLabel(s)}</strong>${progressBar(b.points, 0, b.max)}
-        <div class="small muted">${fmtNum(b.points)} of ${fmtNum(b.max)} points · ${fmtNum((b.points / b.max) * 100)}%</div></div>`;
-    })}</div>
-    ${ORDER.map((s) => {
-      const lines = det.lines.filter((l) => l.section === s);
-      if (!lines.length) return '';
-      const b = det.bySection[s];
-      return html`<div class="phase-head"><h2>${sectionLabel(s)}</h2><span class="muted">${fmtNum(b.points)} / ${fmtNum(b.max)} points</span></div>
-        ${comments[s] ? html`<div class="lead-comment">${comments[s]}</div>` : ''}
-        <div class="tablewrap"><table>
-        <tr><th>Item</th><th>Line item</th><th class="num">Score</th><th class="num">Weighting</th><th class="num">Points</th><th class="num">Max</th></tr>
-        ${lines.map((l) => html`<tr><td>${l.id}</td><td>${l.name}${l.source === 'carried forward' ? html` <span class="badge b-muted">carried forward</span>` : ''}</td>
-          <td class="num">${fmtNum(l.score)} / ${l.max_score}</td><td class="num">${l.weight}</td><td class="num">${fmtNum(l.points)}</td><td class="num">${l.max}</td></tr>`)}
-      </table></div>`;
+      const areas = det.areas?.[s] ?? [];
+      return html`<section class="report-section">
+        <div class="phase-head"><h2><span class="swatch" style="background:${SECTION_COLOUR[s]}"></span>${sectionLabel(s)}</h2>
+          <span class="muted">${fmtNum(b.points)} of ${fmtNum(b.max)} points · <span class="grade ${pctClass(b.pct)}">${b.pct}%</span></span></div>
+        <div class="tablewrap"><table class="report">
+          ${areas.map((a) => html`
+            <tr class="area-head"><th colspan="2">${a.name}</th><th class="num">Club score</th><th class="num">Weighting</th><th class="num">Points</th></tr>
+            ${a.lines.map((l) => html`<tr><td class="code-cell">${l.id}</td><td>${l.name}${l.source === 'carried forward' ? html` <span class="badge b-muted">carried forward</span>` : ''}</td>
+              <td class="num">${fmtNum(l.score)}</td><td class="num">${l.weight}</td><td class="num">${fmtNum(l.points)}</td></tr>`)}
+            <tr class="area-total"><td colspan="2">Area: ${fmtNum(a.points)} of ${fmtNum(a.max)} · ${fmtNum(a.missed)} points missed</td>
+              <td colspan="3" class="num"><span class="grade ${pctClass(a.pct)}">${a.pct}%</span></td></tr>`)}
+        </table></div>
+        ${areas.length > 1 ? html`<div class="card">${bars(areas.map((a) => ({ label: a.name, pct: a.pct, colour: SECTION_COLOUR[s] })))}</div>` : ''}
+        ${comments[s] ? html`<h3>${sectionLabel(s)} summary</h3><div class="lead-comment">${comments[s]}</div>` : ''}
+      </section>`;
     })}
-    <div class="phase-head"><h2>Non-negotiables</h2></div>
-    ${comments.nn ? html`<div class="lead-comment">${comments.nn}</div>` : ''}
-    <div class="tablewrap"><table><tr><th>Item</th><th>Standard</th><th>Outcome</th></tr>
-      ${det.nn.map((n) => html`<tr><td>${n.id}</td><td>${n.name}</td><td>${n.met ? html`<span class="badge b-approved">Met</span>` : html`<span class="badge b-bad">Not met</span>`}</td></tr>`)}
-    </table></div>`;
+
+    <section class="report-section">
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+        ${[['Top 5 strengths', det.strengths], ['Top 5 areas to improve', det.improve]].map(([title, rows]) => html`<div>
+          <h2>${title}</h2><div class="tablewrap"><table>
+          <tr><th>Area</th><th>Line item</th><th class="num">Score</th><th class="num">Weighting</th><th class="num">Points</th></tr>
+          ${(rows ?? []).map((l) => html`<tr><td class="small">${l.grp}</td><td>${l.id} ${l.name}</td><td class="num">${fmtNum(l.score)} / ${l.max_score}</td><td class="num">${l.weight}</td><td class="num">${fmtNum(l.points)}</td></tr>`)}
+          ${(rows ?? []).length ? '' : html`<tr><td colspan="5" class="muted">None.</td></tr>`}
+          </table></div></div>`)}
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Non-negotiables</h2>
+      <div class="tablewrap"><table>
+        <tr><th>Ref</th><th>Compliance standard</th><th>Yes / No</th></tr>
+        ${(det.compliance ?? det.nn ?? []).map((n) => html`<tr><td>${n.id}</td><td>${n.name}</td><td>${n.met ? html`<span class="badge b-approved">Yes</span>` : html`<span class="badge b-bad">No</span>`}</td></tr>`)}
+      </table></div>
+      ${(det.thresholds ?? []).length ? html`<h3>Shield threshold standards</h3><div class="tablewrap"><table>
+        <tr><th>Ref</th><th>Standard</th><th>Outcome</th></tr>
+        ${det.thresholds.map((t) => html`<tr><td>${t.id}</td><td>${t.name}</td><td><span class="badge ${t.code === null ? 'b-muted' : t.code <= 0.5 ? 'b-bad' : 'b-approved'}">${t.label}</span>
+          ${t.code === 0.5 && t.prior === 0.5 ? html` <span class="small muted">(also on notice last year)</span>` : ''}</td></tr>`)}
+      </table></div>
+      <p class="small muted">${framework.thresholdRule?.description ?? ''}</p>` : ''}
+      ${comments.nn ? html`<div class="lead-comment">${comments.nn}</div>` : ''}
+    </section>
+
+    ${confirmed ? '' : html`<section class="report-section"><h2>Next steps</h2><div class="card"><ul>
+      <li>You can request a review within ${review.days ?? 8} days if you believe evidence uploaded before the deadline was overlooked. Reviews based only on arguments for more points are not considered.</li>
+      <li>Maximum items per review: ${review.maxItems ? `${review.maxItems.staff} staff qualifications, ${review.maxItems.planning} planning (${review.maxItems.planningPartial} for partial planning assessments), ${review.maxItems.delivery} delivery and ${review.maxItems.outcomes} outcomes` : 'see the information pack'}.</li>
+      <li>If no review is requested, the rating becomes confirmed when the review period ends. No rating is confirmed while non-negotiable documents are missing.</li>
+      <li>Once confirmed, FQ provides your Club Shield. It is the only part of the assessment that may be shared publicly; this report is confidential.</li>
+    </ul></div></section>`}`;
 }
