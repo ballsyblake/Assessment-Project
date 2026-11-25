@@ -65,7 +65,7 @@ async function fillAll(page) {
   for (let i = 0; i < radios; i++) {
     const row = page.locator('.tick').nth(i);
     if (await row.locator('input:checked').count()) continue;
-    await row.locator(`input[value=${i % 5 === 0 ? 'p' : 'y'}]`).check({ force: true });
+    await row.locator(`input[value=${i % 5 === 0 ? 'p' : 'y'}]`).dispatchEvent('click');
   }
   for (const el of await page.locator('input[name^=s_]:not([disabled]), input[name^=v_]:not([disabled])').all()) {
     if (!(await el.inputValue())) await el.fill('2');
@@ -157,7 +157,7 @@ console.log(`  D1 at Riverside: first ${firstName}, second ${secondName}`);
 const a1 = await login(emailOf(firstName));
 await a1.goto(`${BASE}/assessor/club/1?phase=delivery`);
 const n = await a1.locator('#D1 .tick').count();
-for (let i = 0; i < n; i++) await a1.locator(`#D1 .tick`).nth(i).locator(`input[value=${i === 0 ? 'p' : i === 1 ? 'n' : 'y'}]`).check({ force: true });
+for (let i = 0; i < n; i++) await a1.locator(`#D1 .tick`).nth(i).locator(`input[value=${i === 0 ? 'p' : i === 1 ? 'n' : 'y'}]`).dispatchEvent('click');
 await go(a1, 'button:has-text("Save my scores")');
 const expected = Math.round(((n - 2 + 0.5) / n) * 3 * 10) / 10;
 const badge = await a1.locator('#D1 .badge', { hasText: 'My score' }).innerText();
