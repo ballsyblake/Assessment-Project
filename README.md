@@ -83,7 +83,7 @@ The tick criteria in that file are **placeholders** drafted from the 2027 descri
 - Tick items: Yes = 1, Partial = 0.5, No = 0. Score = criteria met ÷ number of criteria × item maximum, to one decimal. This is the proportional method, chosen deliberately.
 - Outcome value items: the assessor enters the number (players, %, NPS) and the band gives the score.
 - Staff items: direct score entry. Non-negotiables: Met or Not met.
-- Outcomes have one assessor (data based). Everything else has a first and a second assessor.
+- Outcomes (data based) and Staff Qualifications (calculated, one assessor per club confirms) have one assessor. Planning, Delivery and Non-negotiables have a first and a second assessor.
 - Points = score × weighting. 2027 thresholds: Gold 75%, Silver 60%, Bronze 45%, Development Committed 35%. Failing a non-negotiable caps the rating at the current shield.
 
 **Assignment.** One row per club × item × slot. There are no fixed pairs. Bulk tools assign one item across a pool (evidence items) or several items at one club (a visit). The database blocks the same person holding both slots on an item, and blocks a second slot on single-assessor items. A club's lead may score their own club.

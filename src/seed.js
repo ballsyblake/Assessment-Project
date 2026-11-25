@@ -83,6 +83,8 @@ async function as(uid) { await sys().query(`select set_config('app.uid', $1, fal
 // observation items are assessed by whoever attends that club's visit.
 function slotFor({ req, itemIdx, clubIdx, assessors, dataOfficer }) {
   const n = assessors.length;
+  // Staff qualifications: one assessor per club confirms the calculated scores.
+  if (req.section === 'staff') return { first: assessors[clubIdx % n] };
   if (req.assessors === 1) return { first: req.type === 'ticks' ? assessors[itemIdx % n] : dataOfficer };
   if (req.kind === 'onfield') return { first: assessors[(clubIdx * 2) % n], second: assessors[(clubIdx * 2 + 5) % n] };
   return { first: assessors[itemIdx % n], second: assessors[(itemIdx + 3) % n] };
@@ -179,6 +181,7 @@ export async function autoComplete({ phases, leaveDisputes = 0, close = true, co
           // Staff items: the first assessor accepts the calculated suggestion where there is one.
           if (req.section === 'staff' && h.slot === 'first' && staffSuggest[req.id]?.score != null) s.score = staffSuggest[req.id].score;
           if (req.id === 'NN7' && cfg.key === 'riverside') s.score = 0.5; // on notice again: shows the downgrade rule
+          if (req.id === 'NN9' && cfg.key === 'riverside' && h.slot === 'second') s.score = firstScore.score === 3 ? 2 : 3; // left for a third assessor
           await as(h.assessor_id);
           await db.query(`insert into scores(club_id, req_id, slot, assessor_id, ticks, value, score, comment) values ($1,$2,$3,$4,$5,$6,$7,$8)`,
             [club.id, req.id, h.slot, h.assessor_id, s.ticks ? JSON.stringify(s.ticks) : null, s.value ?? null, s.score ?? 0,
@@ -211,20 +214,22 @@ export async function autoComplete({ phases, leaveDisputes = 0, close = true, co
       await db.query(`insert into scores(club_id, req_id, slot, assessor_id, ticks, score, comment) values ($1,$2,'third',$3,$4,$5,$6)`,
         [d.club_id, d.req_id, third, f.ticks ? JSON.stringify(f.ticks) : null, f.score ?? 0, 'Third assessment: reviewed both comments and the submitted evidence.']);
     }
-    if (comments) {
-      for (const club of clubs) {
-        const { rows: [{ open }] } = await db.query(
-          `select count(*)::int open from requirements q where q.section = $2 and item_applies($1, q.id)
-           and not exists (select 1 from resolutions r where r.club_id = $1 and r.req_id = q.id)`, [club.id, phase]);
-        const lead = (await db.query('select lead_id from club_leads where club_id = $1', [club.id])).rows[0]?.lead_id;
-        if (open || !lead) continue;
-        await as(lead);
-        await db.query(`insert into lead_comments(club_id, section, body) values ($1,$2,$3) on conflict do nothing`, [club.id, phase, COMMENTS[phase]]);
-      }
-    }
     if (close && !leaveDisputes) { await as(admin); await db.query('update phases set closed_at = now() where id = $1 and closed_at is null', [phase]); }
   }
   if (comments) {
+    // Section comments for every fully reconciled section that has none yet.
+    for (const club of clubs) {
+      const lead = (await db.query('select lead_id from club_leads where club_id = $1', [club.id])).rows[0]?.lead_id;
+      if (!lead) continue;
+      for (const p of framework.phases) {
+        const { rows: [{ open }] } = await db.query(
+          `select count(*)::int open from requirements q where q.section = $2 and item_applies($1, q.id)
+           and not exists (select 1 from resolutions r where r.club_id = $1 and r.req_id = q.id)`, [club.id, p.id]);
+        if (open) continue;
+        await as(lead);
+        await db.query(`insert into lead_comments(club_id, section, body) values ($1,$2,$3) on conflict do nothing`, [club.id, p.id, COMMENTS[p.id]]);
+      }
+    }
     for (const club of clubs) {
       const { rows: [{ open }] } = await db.query(
         `select count(*)::int open from requirements q where item_applies($1, q.id) and not exists (select 1 from resolutions r where r.club_id = $1 and r.req_id = q.id)`, [club.id]);
@@ -322,8 +327,8 @@ export async function seed({ issueLinks = true } = {}) {
 
   // Finished phases, with two Staff disputes left for the admin to send to a third assessor.
   await autoComplete({ phases: ['planning'], seed: 11 });
-  await autoComplete({ phases: ['nn'], close: false, seed: 12 });
-  await autoComplete({ phases: ['staff'], leaveDisputes: 2, comments: true, seed: 13 });
+  await autoComplete({ phases: ['staff'], seed: 13 });
+  await autoComplete({ phases: ['nn'], leaveDisputes: 1, seed: 12 });
 
   // Delivery submission period: a mix of club progress.
   const upload = async (key, reqId, name) => {

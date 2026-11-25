@@ -74,7 +74,7 @@
    "guidance": "Technical Director details and current qualification certificate.",
    "descriptor": "The following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n#1 Female Technical Lead – In line with the Football Australia and FQ strategic target of achieving 50/50 gender parity clubs are encouraged to create and fill a position of responsibility to be known as the Female Technical Lead. A Female Technical Lead is a female (coach), experienced or inexperienced, who has been identified by the club as someone with the potential to develop into a technical leadership role in the medium to long term.\n\n#2 Head of Sports Science and Medicine:- Formal non-tertiary Qualifications (Level 1/2/3 Strength and Conditioning or Sports Science Certificate, experience as a personal trainer)- Formal Tertiary Qualifications - Sports Science\n\nMedicine bachelor’s degree with relevant additional Post Graduation Courses- S&C Qualification acquired, experience or currently studying Bachelor degree.\n\n* An average score will be applied to age groups where there are boys and girls academy team, or multiple teams within the same age group.",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T02",
@@ -88,7 +88,7 @@
    "guidance": "Head of Youth Academy (U14-U18) details and qualification certificate.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T03",
@@ -102,7 +102,7 @@
    "guidance": "Head of Junior Academy (U9-U13) details and qualification certificate.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T04",
@@ -116,7 +116,7 @@
    "guidance": "Head of Girls Academy details and qualification certificate.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T05",
@@ -130,7 +130,7 @@
    "guidance": "Head of Goalkeeping details and qualification certificate.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T06",
@@ -144,7 +144,7 @@
    "guidance": "Your nominated Female Technical Lead and her current qualification.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T07",
@@ -158,7 +158,7 @@
    "guidance": "Head of Sports Science and Medicine details and qualification evidence.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T08",
@@ -172,7 +172,7 @@
    "guidance": "Head coaches for the U18 boys and girls teams.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T09",
@@ -186,7 +186,7 @@
    "guidance": "Head coaches for the U16 boys and girls teams.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T10",
@@ -200,7 +200,7 @@
    "guidance": "Head coaches for the U15 boys and girls teams.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T11",
@@ -214,7 +214,7 @@
    "guidance": "Head coaches for the U14 boys and girls teams.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T12",
@@ -228,7 +228,7 @@
    "guidance": "Head coaches for the U13 boys and girls teams.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T13",
@@ -242,7 +242,7 @@
    "guidance": "Head coaches for the U12 boys and girls teams.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T14",
@@ -256,7 +256,7 @@
    "guidance": "Head coaches for the U11 boys and girls teams.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T15",
@@ -270,7 +270,7 @@
    "guidance": "Head coaches for the U10 boys and girls teams.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T16",
@@ -284,7 +284,7 @@
    "guidance": "Head coach for the U9 boys team.",
    "descriptor": "Scored against the qualification standard for this position. See Technical Director entry for the mandatory fields.\n\nThe following information is mandatory for each technical position:1. Full name2. Gender3. FA number4. Email address\n\n5. Current valid highest qualification (if UEFA licence it must be AFC recognised via FA) *6. Number of years in the current qualification7. Expiry date of the licence (dd/mm/yyyy)8. Blue Card number9. Blue Card expiry date\n\n10. Coach Retained Y/N\n\n11. Years at the Club\n\n12. Employment Type (Part time\n\nFull time /Casual) - for technical lead only\n\n13. Additional Comment (i.e. Playing and coaching experience, etc.)\n\n14. Other Relevant Qualification (i.e. teaching)\n\n",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T17",
@@ -298,7 +298,7 @@
    "guidance": "Coaching background and years in current qualification for each academy coach.",
    "descriptor": "Clubs are required to list the coaching background, history, and number of years of the current valid qualifications for all academy coaches and academy goalkeeping coaches. This may also include relevant past experiences and/or significant relevant tertiary education. Coaches operating across multiple age groups will be scored per age group. Age groups where there are boys' and girls' coaches identified with an asterisk (i.e., u11 Boys coach and u11 Girls coach, u18 Boys coach and u18 Girls coach, etc.) will take an average score across the two programs. Technical Lead positions do not score in this area.",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "T18",
@@ -312,7 +312,7 @@
    "guidance": "Employment type (full time, part time, casual) for each Technical Lead.",
    "descriptor": "Technical Lead staff will also be scored based on whether they are Full Time or Part Time within the club’s program. Clubs will be rewarded for employing a higher number of Full Time Technical Leads. Position Descriptions must be uploaded as part of the club’s NN07 submission to receive points in this area.",
    "type": "direct",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "P1",

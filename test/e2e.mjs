@@ -114,7 +114,7 @@ for (const p of ['/assessor', '/admin', '/admin/leaderboard']) {
   expect((await club.content()).includes('Not allowed'), `club blocked from ${p}`);
 }
 
-console.log('Admin: assign a third assessor to a Staff disagreement');
+console.log('Admin: assign a third assessor to a disagreement (Riverside NN9)');
 const admin = await login('admin@fq-assess.example');
 await shot(admin, 'admin-overview');
 await admin.goto(`${BASE}/admin/reconcile`);
