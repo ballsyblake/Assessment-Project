@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
-import { openDb, sys, asUser, resetDb } from './db.js';
+import { openDb, sys, asUser, resetDb, schemaVersion } from './db.js';
 import { seed, autoComplete } from './seed.js';
 import { layout, html, NAV, fmtDate } from './html.js';
 import { linkValid, requestCode, verifyCode, userForSession, endSession, issueLink, secureCookies } from './auth.js';
@@ -19,6 +19,16 @@ const COOKIE = 'cap_session';
 export async function createApp(opts = {}) {
   const { fresh } = await openDb(opts);
   if (fresh) await seed();
+  else if (DEMO) {
+    // Demo deployments: if the schema or framework changed since the data was created,
+    // rebuild the demo database so an update never leaves the live demo broken.
+    const { rows } = await sys().query(`select value from settings where key = 'schema_version'`).catch(() => ({ rows: [] }));
+    if (rows[0]?.value !== schemaVersion()) {
+      console.log('Schema or framework changed: rebuilding demo data');
+      await resetDb();
+      await seed();
+    }
+  }
 
   const app = express();
   app.disable('x-powered-by');

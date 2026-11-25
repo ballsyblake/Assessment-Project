@@ -1,6 +1,6 @@
 // Fictional clubs, people and dummy evidence (spec section 8). No real clubs or people.
 // autoComplete() is reused by the demo "fast-forward" so a whole cycle can be shown.
-import { sys } from './db.js';
+import { sys, schemaVersion } from './db.js';
 import { catalogRows, framework } from './catalog.js';
 import { issueLink } from './auth.js';
 
@@ -267,6 +267,7 @@ export async function seed({ issueLinks = true } = {}) {
     cycle: '2027', internal_deadline: daysFromNow(-1), released_at: '',
     partial_pools: (framework.partialPlanning?.pools ?? []).join(','), max_optional: String(framework.partialPlanning?.maxOptional ?? 0),
     partial_value: String(framework.scoring?.partialValue ?? 0.5),
+    schema_version: schemaVersion(),
   };
   for (const [k, v] of Object.entries(settings)) await db.query('insert into settings(key, value) values ($1,$2)', [k, v]);
 

@@ -1,5 +1,6 @@
 import { PGlite } from '@electric-sql/pglite';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -17,6 +18,12 @@ export async function openDb({ dataDir = dataDirDefault(), memory = false } = {}
     await db.exec(fs.readFileSync(path.join(here, 'schema.sql'), 'utf8'));
   }
   return { db, fresh };
+}
+
+// Fingerprint of the schema and framework file, stored with the data so a demo can detect drift.
+export function schemaVersion() {
+  const fw = process.env.FRAMEWORK_FILE ?? path.join(here, '..', 'data', 'frameworks', 'fq-tier1-2027.json');
+  return crypto.createHash('sha256').update(fs.readFileSync(path.join(here, 'schema.sql'))).update(fs.readFileSync(fw)).digest('hex').slice(0, 16);
 }
 
 export const dataDirDefault = () => process.env.DATA_DIR ?? path.join(here, '..', 'data', 'pgdata');
