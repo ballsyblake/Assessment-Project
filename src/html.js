@@ -51,16 +51,22 @@ export function shield(rating, size = 96) {
 }
 
 export function layout({ title, user, nav = [], active = '', body, flash, error }) {
+  // Highlight the menu item whose address is the longest match for the current page,
+  // so sub-pages (e.g. /admin/reconcile/3) highlight their section.
+  const path = String(active).split('?')[0];
+  const current = nav.map(([href]) => href).filter((h) => path === h || path.startsWith(`${h}/`))
+    .sort((a, b) => b.length - a.length)[0] ?? '';
   return html`<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title} · Club Assessment</title><link rel="stylesheet" href="/static/style.css"></head>
 <body>
 <header class="top"><div class="wrap top-in">
   <a class="brand" href="/">Club Assessment <span>Prototype</span></a>
-  ${nav.length ? html`<nav>${nav.map(([href, label]) => html`<a href="${href}" class="${active === href ? 'on' : ''}">${label}</a>`)}</nav>` : ''}
   ${user ? html`<div class="who"><span>${user.name} · ${user.role === 'club' ? 'Club' : user.role === 'admin' ? 'Admin' : 'Assessor'}</span>
     <form method="post" action="/logout"><button class="link">Sign out</button></form></div>` : ''}
-</div></header>
+</div>
+${nav.length ? html`<nav class="navbar" aria-label="Main"><div class="wrap">${nav.map(([href, label]) => html`<a href="${href}" class="${current === href ? 'on' : ''}" ${current === href ? raw('aria-current="page"') : ''}>${label}</a>`)}</div></nav>` : ''}
+</header>
 <main class="wrap">
   ${flash ? html`<div class="flash ok">${flash}</div>` : ''}
   ${error ? html`<div class="flash err">${error}</div>` : ''}

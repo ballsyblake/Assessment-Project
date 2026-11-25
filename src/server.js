@@ -77,7 +77,7 @@ export async function createApp(opts = {}) {
     try {
       req.user = await userForSession(req.cookies[COOKIE]);
       res.page = (title, body, extra = {}) => res.send(String(layout({
-        title, user: req.user, nav: req.user ? NAV[req.user.role] : [], active: extra.active ?? req.path,
+        title, user: req.user, nav: req.user ? NAV[req.user.role] : [], active: extra.active ?? req.baseUrl + req.path,
         body, flash: req.query.msg, error: extra.error ?? req.query.err,
       })));
       // Run fn inside a transaction as the signed-in user's DB role (RLS applies).
