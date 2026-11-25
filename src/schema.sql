@@ -110,6 +110,7 @@ create table staff_rows (
   blue_card text,
   blue_card_expiry date,
   years_at_club int,
+  qual_years text,                  -- years holding the current qualification (experience score)
   employment_type text,
   status text not null default 'submitted' check (status in ('submitted','approved','returned','not_accepted')),
   return_comment text,
@@ -186,12 +187,32 @@ create table resolutions (
   club_id int not null references clubs(id),
   req_id text not null references requirements(id),
   final_score numeric(5,1) not null check (final_score >= 0),
-  method text not null check (method in ('agreed','single','third','admin')),
+  method text not null check (method in ('agreed','single','third','admin','review')),
+  review_from numeric(5,1),          -- score before an FQ review changed it (review outcomes arrive by email)
   tick_mismatch boolean not null default false,
   note text,
   resolved_by int references users(id),
   resolved_at timestamptz not null default now(),
   primary key (club_id, req_id)
+);
+
+-- Admin override of a club's shield rating, with a reason (e.g. discretion on threshold downgrades).
+create table rating_overrides (
+  club_id int primary key references clubs(id),
+  rating text not null,
+  reason text not null check (length(trim(reason)) > 0),
+  set_by int references users(id),
+  set_at timestamptz not null default now()
+);
+
+-- The lead's own choice of top 5 strengths / areas to improve (suggestions are used otherwise).
+create table lead_highlights (
+  club_id int not null references clubs(id),
+  kind text not null check (kind in ('strengths','improve')),
+  items text[] not null check (cardinality(items) between 1 and 5),
+  updated_by int references users(id),
+  updated_at timestamptz not null default now(),
+  primary key (club_id, kind)
 );
 
 create table prior_scores (
@@ -522,7 +543,16 @@ begin
   if current_user = 'app_admin' then
     if not item_locked(new.club_id, new.req_id) then raise exception 'Both assessors must lock in first'; end if;
     if (select closed_at from phases p join requirements q on q.section = p.id where q.id = new.req_id) is not null then
-      raise exception 'This phase is closed';
+      -- After release, FQ can apply review outcomes (agreed by email) until the rating is confirmed.
+      if not exists (select 1 from results where club_id = new.club_id and released_at is not null and confirmed_at is null) then
+        raise exception 'This phase is closed';
+      end if;
+      new.method := 'review';
+      if tg_op = 'UPDATE' then new.review_from := coalesce(old.review_from, old.final_score); end if;
+      if coalesce(trim(new.note), '') = '' then raise exception 'A reason is required'; end if;
+      new.resolved_by := app_uid();
+      new.resolved_at := now();
+      return new;
     end if;
     if new.final_score > (select max_score from requirements where id = new.req_id) then raise exception 'Final score exceeds maximum'; end if;
     if coalesce(trim(new.note), '') = '' then raise exception 'A reason is required'; end if;
@@ -679,6 +709,8 @@ create trigger audit_ext after insert or update on extensions for each row execu
 create trigger audit_results after insert or update on results for each row execute function trg_audit();
 create trigger audit_settings after insert or update on settings for each row execute function trg_audit();
 create trigger audit_users after insert or update on users for each row execute function trg_audit();
+create trigger audit_overrides after insert or update or delete on rating_overrides for each row execute function trg_audit();
+create trigger audit_highlights after insert or update or delete on lead_highlights for each row execute function trg_audit();
 
 -- ================================================================ grants
 grant usage on all sequences in schema public to app_club, app_assessor, app_admin;
@@ -692,11 +724,11 @@ grant insert (email, name, role, club_id) on users to app_club;
 grant select (id, club_id, req_id, status, return_comment, selected, flagged_at, upload_until, updated_at) on club_items to app_club;
 grant update (status, selected) on club_items to app_club;
 grant select (id, club_id, position, person, gender, team, qualification, qual_expiry, fa_number, blue_card,
-              blue_card_expiry, years_at_club, employment_type, status, return_comment, updated_at) on staff_rows to app_club;
+              blue_card_expiry, years_at_club, qual_years, employment_type, status, return_comment, updated_at) on staff_rows to app_club;
 grant insert (club_id, position, person, gender, team, qualification, qual_expiry, fa_number, blue_card,
-              blue_card_expiry, years_at_club, employment_type) on staff_rows to app_club;
+              blue_card_expiry, years_at_club, qual_years, employment_type) on staff_rows to app_club;
 grant update (position, person, gender, team, qualification, qual_expiry, fa_number, blue_card,
-              blue_card_expiry, years_at_club, employment_type, status) on staff_rows to app_club;
+              blue_card_expiry, years_at_club, qual_years, employment_type, status) on staff_rows to app_club;
 grant delete on staff_rows to app_club;
 grant select, insert, delete on files to app_club;
 grant select on results, extensions, lead_comments to app_club;
@@ -728,6 +760,8 @@ grant select on scores to app_admin;
 grant update (deadline, closed_at) on phases to app_admin;
 grant select, insert, update on settings, lead_comments to app_admin;
 grant select, insert, update on results to app_admin;
+grant select, insert, update, delete on rating_overrides, lead_highlights to app_admin;
+grant select, insert, update, delete on lead_highlights to app_assessor;
 
 -- ================================================================ row level security
 alter table clubs enable row level security;
@@ -750,6 +784,11 @@ alter table lead_comments enable row level security;
 alter table settings enable row level security;
 alter table results enable row level security;
 alter table audit_log enable row level security;
+alter table rating_overrides enable row level security;
+alter table lead_highlights enable row level security;
+create policy overrides_admin on rating_overrides for all to app_admin using (true) with check (true);
+create policy highlights_lead on lead_highlights for all to app_assessor using (is_lead_for(club_id)) with check (is_lead_for(club_id));
+create policy highlights_admin on lead_highlights for all to app_admin using (true) with check (true);
 
 create policy req_all on requirements for select using (true);
 create policy phases_all on phases for select using (true);

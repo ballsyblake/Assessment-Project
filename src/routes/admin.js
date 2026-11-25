@@ -4,9 +4,10 @@ import { html, progressBar, fmtDate, fmtNum, fmtDay, TICK_LABEL } from '../html.
 import { sectionLabel, framework } from '../catalog.js';
 import {
   getReqs, getClub, getItems, getFiles, getStaff, getPhases, getSettings, submissionProgress, sumProgress,
-  scoringStatus, reconciliation, clubResult, leaderboard, assessorStats,
+  scoringStatus, reconciliation, clubResult, leaderboard, assessorStats, republish,
 } from '../model.js';
 import { evidenceBlock, staffTable } from './review.js';
+import { suggestStaffScores, staffTotal } from '../staffCalc.js';
 import { resultsView } from './club.js';
 import { issueLink } from '../auth.js';
 import { sendMail } from '../mail.js';
@@ -19,7 +20,26 @@ const STATE = {
   resolved: ['b-done', 'Final'], disputed: ['b-bad', 'Scores differ: needs third assessor'], third: ['b-submitted', 'With third assessor'],
   scoring: ['b-muted', 'Scoring in progress'], unassigned: ['b-warn', 'Not assigned'],
 };
-const METHOD = { agreed: 'Both agreed', single: 'Single assessor', third: 'Third assessor', admin: 'Admin override' };
+const METHOD = { agreed: 'Both agreed', single: 'Single assessor', third: 'Third assessor', admin: 'Admin override', review: 'Changed after review' };
+const scoreField = (x) => (x.type === 'threshold' ? html`<select name="score" required><option value="">Outcome...</option>${(framework.thresholdOutcomes ?? []).map((o) => html`<option value="${o.code}">${o.label}</option>`)}</select>`
+  : x.type === 'yesno' ? html`<select name="score" required><option value="1">Met</option><option value="0">Not met</option></select>`
+  : html`<input type="number" name="score" step="0.1" min="0" max="${x.max_score}" required placeholder="Score" style="width:72px">`);
+
+// Calculated staff qualification breakdown from the club's staff table (suggestions, not final scores).
+function staffSummary(staff, reqs) {
+  const sg = suggestStaffScores(staff);
+  const items = reqs.filter((q) => q.section === 'staff');
+  const total = staffTotal(sg, reqs);
+  const max = items.reduce((t, q) => t + q.max_score * q.weight, 0);
+  return html`<h3>Calculated from the staff table</h3>
+    <p class="small muted">Suggested scores using FQ's lookup tables and the automatic rules. Assessors confirm each item; final scores come from them.</p>
+    <div class="tablewrap"><table><tr><th>Item</th><th>Position</th><th class="num">Suggested</th><th class="num">Weighting</th><th class="num">Points</th><th>Working</th></tr>
+      ${items.map((q) => { const x = sg[q.id] ?? { score: null, notes: [] }; return html`<tr><td>${q.id}</td><td>${q.name}</td>
+        <td class="num">${x.score === null ? html`<span class="badge b-warn">Check</span>` : `${x.score} / ${q.max_score}`}</td><td class="num">${q.weight}</td>
+        <td class="num">${x.score === null ? '–' : fmtNum(x.score * q.weight)}</td><td class="small">${x.notes.join('; ')}</td></tr>`; })}
+      <tr class="total"><td colspan="4"><strong>Calculated total</strong></td><td class="num" style="white-space:nowrap"><strong>${fmtNum(total)} / ${max}</strong></td><td></td></tr>
+    </table></div>`;
+}
 
 export default function adminRoutes() {
   const r = express.Router();
@@ -108,7 +128,7 @@ export default function adminRoutes() {
       <p><a href="/admin">&larr; Overview</a></p>
       <h1>${d.club.name}</h1><p class="sub">Admin view: evidence and verification. Admins do not score.</p>
       <div class="tabs">${d.phases.map((p) => html`<a href="/admin/club/${clubId}?phase=${p.id}" class="${p.id === phase ? 'on' : ''}">${p.label}</a>`)}</div>
-      ${phase === 'staff' ? staffTable({ staff: d.staff, files: d.files, clubId, canAct: true }) : ''}
+      ${phase === 'staff' ? html`${staffTable({ staff: d.staff, files: d.files, clubId, canAct: true })}${staffSummary(d.staff, d.reqs)}` : ''}
       ${d.reqs.filter((q) => d.applies[q.id]).map((q) => {
         const sl = d.slots.filter((s) => s.req_id === q.id);
         return html`<div class="card" id="${q.id}"><div class="row"><span style="font-weight:700;color:var(--brand)">${q.id}</span><strong>${q.name}</strong><span class="spacer"></span>
@@ -301,6 +321,7 @@ export default function adminRoutes() {
     const phase = req.query.phase ?? 'planning';
     const d = await req.db(async (tx) => ({
       club: await getClub(tx, clubId), rows: await reconciliation(tx, clubId, phase), phases: await getPhases(tx),
+      result: (await tx.query('select released_at, confirmed_at from results where club_id = $1', [clubId])).rows[0] ?? null,
       criteria: Object.fromEntries((await tx.query('select req_id, criteria from requirement_criteria')).rows.map((c) => [c.req_id, c.criteria])),
       assessors: (await tx.query(`select id, name from users where role = 'assessor' and active order by name`)).rows,
     }), 'Admin reconciliation');
@@ -339,14 +360,14 @@ export default function adminRoutes() {
             ${x.third_name ? html`<div class="small muted">Third: ${x.third_name}</div>` : ''}${ticksTable(x)}</td>
           <td>${x.final_score !== null ? html`<strong>${scoreText(x, x.final_score)}</strong><div class="small muted">${METHOD[x.method]}${x.resolver ? ` · ${x.resolver}` : ''}</div>
             ${x.note && x.method !== 'agreed' && x.method !== 'single' ? html`<div class="small">${x.note}</div>` : ''}` : ''}</td>
-          <td>${ph.closed ? '' : html`
+          <td>${ph.closed ? (d.result?.released_at && !d.result?.confirmed_at && x.final_score !== null ? html`<form method="post" action="/admin/reconcile/${clubId}/${x.id}/override" class="inline">
+              ${scoreField(x)}<input name="note" required placeholder="Review outcome (from email)" style="width:170px"><button class="small secondary">Apply review outcome</button></form>
+              ${x.method === 'review' ? html`<div class="small muted">Changed after review from ${scoreText(x, x.review_from)}</div>` : ''}` : '') : html`
             ${(x.state === 'disputed' || x.state === 'third') ? html`<form method="post" action="/admin/reconcile/${clubId}/${x.id}/third" class="inline">
               <select name="assessor_id" required><option value="">Third assessor...</option>${eligible.map((a) => html`<option value="${a.id}" ${x.third_id === a.id ? 'selected' : ''}>${a.name}</option>`)}</select>
               <button class="small">${x.third_id ? 'Reassign' : 'Assign'}</button></form>` : ''}
             ${x.state !== 'scoring' && x.state !== 'unassigned' ? html`<form method="post" action="/admin/reconcile/${clubId}/${x.id}/override" class="inline">
-              ${x.type === 'threshold' ? html`<select name="score" required><option value="">Outcome...</option>${(framework.thresholdOutcomes ?? []).map((o) => html`<option value="${o.code}">${o.label}</option>`)}</select>`
-                : x.type === 'yesno' ? html`<select name="score" required><option value="1">Met</option><option value="0">Not met</option></select>`
-                : html`<input type="number" name="score" step="0.1" min="0" max="${x.max_score}" required placeholder="Score" style="width:72px">`}
+              ${scoreField(x)}
               <input name="note" required placeholder="Reason for override" style="width:150px"><button class="small secondary">Override</button></form>` : ''}
             ${x.state === 'unassigned' ? html`<a class="small" href="/admin/assignments?phase=${phase}">Assign assessors</a>` : ''}`}</td>
         </tr>`;
@@ -371,12 +392,16 @@ export default function adminRoutes() {
   r.post('/reconcile/:club/:req/override', async (req, res) => {
     const clubId = Number(req.params.club);
     const note = String(req.body.note ?? '').trim();
-    await req.db((tx) => tx.query(
-      `insert into resolutions(club_id, req_id, final_score, method, note) values ($1,$2,$3,'admin',$4)
-       on conflict (club_id, req_id) do update set final_score = excluded.final_score, method = 'admin', note = excluded.note`,
-      [clubId, req.params.req, Math.round(Number(req.body.score) * 10) / 10, note]), note);
+    const republished = await req.db(async (tx) => {
+      await tx.query(
+        `insert into resolutions(club_id, req_id, final_score, method, note) values ($1,$2,$3,'admin',$4)
+         on conflict (club_id, req_id) do update set final_score = excluded.final_score, method = 'admin', note = excluded.note`,
+        [clubId, req.params.req, Math.round(Number(req.body.score) * 10) / 10, note]);
+      return republish(tx, await getClub(tx, clubId));
+    }, note);
     const phase = (await sys().query('select section from requirements where id = $1', [req.params.req])).rows[0].section;
-    back(res, `/admin/reconcile/${clubId}?phase=${phase}&f=all`, `${req.params.req} overridden.`);
+    back(res, `/admin/reconcile/${clubId}?phase=${phase}&f=all`, republished
+      ? `${req.params.req} changed. The club's preliminary result has been updated.` : `${req.params.req} overridden.`);
   });
 
   // ---------------------------------------------------------------- leaderboard (admin only)
@@ -445,7 +470,9 @@ export default function adminRoutes() {
       const { rows: cm } = await tx.query('select section from lead_comments where club_id = $1', [c.id]);
       const missingComments = COMMENT_SECTIONS.filter((s) => !cm.some((x) => x.section === s));
       const unresolved = Object.values(status[c.id] ?? {}).reduce((a, s) => a + (s.applicable - s.resolved), 0);
-      list.push({ club: c, missingComments, unresolved, ready: !missingComments.length && !unresolved });
+      const projected = unresolved ? null : await clubResult(tx, c, reqs, await getItems(tx, c.id));
+      const confirmed = (await tx.query('select 1 from results where club_id = $1 and confirmed_at is not null', [c.id])).rowCount > 0;
+      list.push({ club: c, missingComments, unresolved, projected, confirmed, ready: !missingComments.length && !unresolved });
     }
     const deadline = settings.internal_deadline;
     const pastDeadline = Boolean(deadline) && new Date(deadline) <= new Date();
@@ -471,15 +498,38 @@ export default function adminRoutes() {
           ${g.pastDeadline ? html`<span class="badge b-approved">passed</span>` : html`<span class="badge b-warn">not reached</span>`}</dd>
         <dt>Phases</dt><dd>${g.openPhases.length ? html`<span class="badge b-warn">Open: ${g.openPhases.map((p) => p.label).join(', ')}</span>` : html`<span class="badge b-approved">All closed</span>`}</dd>
         <dt>Thresholds</dt><dd>${THRESHOLDS.map((t) => `${t.rating} ${t.min}%`).join(' · ')}</dd></dl></div>
-      <div class="tablewrap"><table><tr><th>Club</th><th>Scoring</th><th>Lead comments</th><th></th></tr>
+      <div class="tablewrap"><table><tr><th>Club</th><th>Scoring</th><th>Lead comments</th><th>Rating</th><th></th></tr>
         ${g.list.map((x) => html`<tr><td>${x.club.name}</td>
           <td>${x.unresolved ? html`<span class="badge b-bad">${x.unresolved} item(s) not final</span>` : html`<span class="badge b-approved">Complete</span>`}</td>
           <td>${x.missingComments.length ? html`<span class="badge b-warn">Missing: ${x.missingComments.map(sectionLabel).join(', ')}</span>` : html`<span class="badge b-approved">Complete</span>`}</td>
+          <td style="min-width:300px">${x.projected ? html`<strong>${x.projected.rating}</strong> <span class="small muted">${Math.round(x.projected.pct)}%</span>
+              ${x.projected.override ? html`<div class="small">Overridden (rule gives ${x.projected.ruleRating}): ${x.projected.override.reason}</div>`
+                : x.projected.downgradeReasons.length ? html`<div class="small muted">Score gives ${x.projected.scoreRating}; lowered: ${x.projected.downgradeReasons.join('; ')}</div>` : ''}
+              ${x.confirmed ? '' : html`<div><form method="post" action="/admin/rating-override/${x.club.id}" class="inline">
+                <select name="rating" style="width:170px"><option value="">Use rule</option>${['Gold', 'Silver', 'Bronze', 'Development Committed', 'Not rated'].map((r2) => html`<option ${x.projected.override?.rating === r2 ? 'selected' : ''}>${r2}</option>`)}</select>
+                <input name="reason" placeholder="Reason, shown to the club" style="width:170px"><button class="small secondary">Save</button></form></div>`}` : html`<span class="muted small">–</span>`}</td>
           <td><a class="btn small secondary" href="/admin/results/${x.club.id}">Preview</a></td></tr>`)}
       </table></div>
       ${released ? '' : html`<form method="post" action="/admin/release" class="card" onsubmit="return confirm('Release results to all clubs now? This cannot be undone.')">
         ${g.ok ? '' : html`<div class="warnbox">Release is blocked until the internal deadline has passed, every phase is closed, and every club's lead has written all section and overall comments.</div>`}
         <button ${g.ok ? '' : 'disabled'}>Release results to all clubs</button></form>`}`);
+  });
+
+  r.post('/rating-override/:club', async (req, res) => {
+    const clubId = Number(req.params.club);
+    const rating = String(req.body.rating ?? '');
+    const reason = String(req.body.reason ?? '').trim();
+    if (rating && !reason) throw new Error('Give a reason for overriding the rating.');
+    await req.db(async (tx) => {
+      if (rating) {
+        await tx.query(`insert into rating_overrides(club_id, rating, reason, set_by) values ($1,$2,$3,$4)
+          on conflict (club_id) do update set rating = excluded.rating, reason = excluded.reason, set_by = excluded.set_by, set_at = now()`, [clubId, rating, reason, req.user.id]);
+      } else {
+        await tx.query('delete from rating_overrides where club_id = $1', [clubId]);
+      }
+      await republish(tx, await getClub(tx, clubId));
+    }, reason || 'Rating override removed');
+    back(res, '/admin/release', rating ? 'Rating override saved.' : 'Override removed: the rule-based rating applies.');
   });
 
   r.post('/release/confirm', async (req, res) => {

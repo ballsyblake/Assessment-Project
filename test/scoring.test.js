@@ -57,3 +57,29 @@ test('top 5 lists: strengths are full marks, improvements are most points missed
   assert.deepEqual(r.strengths.map((l) => l.id), ['P1']);
   assert.equal(r.improve[0].id, 'P2');
 });
+
+test('pool A/C rolling average: assessed planning items average with last year; others carry forward', () => {
+  const clubA = { pool: 'A', current_shield: 'Silver' };
+  const preqs = [
+    { id: 'P1', section: 'planning', grp: 'G', name: 'A', type: 'ticks', max_score: 3, weight: 6, optional: true },
+    { id: 'P2', section: 'planning', grp: 'G', name: 'B', type: 'ticks', max_score: 4, weight: 8, mandatory: true },
+  ];
+  const r = computeResult({ reqs: preqs, club: clubA, items: { P1: { selected: false }, P2: { selected: true } }, finals: { P2: 4 }, prior: { P1: 2, P2: 3 } });
+  assert.deepEqual(r.lines.map((l) => [l.id, l.score, l.source]), [['P1', 2, 'carried forward'], ['P2', 3.5, 'rolling average']]);
+  const rB = computeResult({ reqs: preqs, club: { pool: 'B', current_shield: 'Silver' }, items: {}, finals: { P1: 3, P2: 4 }, prior: { P1: 2, P2: 3 } });
+  assert.equal(rB.lines.find((l) => l.id === 'P2').score, 4, 'pool B is not averaged');
+});
+
+test('admin rating override wins over the rule, and is reported', () => {
+  const r = computeResult({ reqs, club, items, finals: { P1: 3, P2: 4, D1: 3, NN1: 1, NN7: ON_NOTICE, NN8: 4 }, prior: { NN7: ON_NOTICE },
+    override: { rating: 'Gold', reason: 'Structure fixed mid-season' } });
+  assert.equal(r.ruleRating, 'Silver');
+  assert.equal(r.rating, 'Gold');
+  assert.equal(r.override.reason, 'Structure fixed mid-season');
+});
+
+test("lead's own top 5 lists replace the suggestions", () => {
+  const r = computeResult({ reqs, club, items, finals: { P1: 3, P2: 1, D1: 2, NN1: 1, NN7: 4, NN8: 4 }, prior: {}, highlights: { strengths: ['D1'] } });
+  assert.deepEqual(r.strengths.map((l) => l.id), ['D1']);
+  assert.deepEqual(r.suggested.strengths.map((l) => l.id), ['P1']);
+});

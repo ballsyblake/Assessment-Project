@@ -17,9 +17,19 @@ export const STAFF_POSITIONS = [
   'Head of Goalkeeping', 'Female Technical Lead', 'Head of Sports Science and Medicine',
   'Head Coach', 'Goalkeeping Coach', 'Assistant Coach',
 ];
-export const STAFF_TEAMS = ['', 'U9 Boys', 'U10 Boys', 'U10 Girls', 'U11 Boys', 'U11 Girls', 'U12 Boys', 'U12 Girls',
-  'U13 Boys', 'U13 Girls', 'U14 Boys', 'U14 Girls', 'U15 Boys', 'U15 Girls', 'U16 Boys', 'U16 Girls',
-  'U18 Boys', 'U18 Girls'];
+export const STAFF_TEAMS = ['', ...(framework.staffScoring?.teams ?? [])];
+// Qualification choices offered to clubs, grouped as in FQ's lookup tables.
+export const QUALIFICATION_GROUPS = (() => {
+  const sc = framework.staffScoring;
+  if (!sc) return [];
+  const coach = sc.coachTable.map((t) => t.qualification);
+  return [
+    ['Coaching qualifications', coach],
+    ['Technical Director only', sc.tdTable.map((t) => t.qualification).filter((q) => !coach.includes(q))],
+    ['Sports science and medicine', sc.sportsScienceTable.map((t) => t.qualification)],
+  ];
+})();
+export const QUAL_YEARS = framework.staffScoring?.experienceTable.map((t) => t.years.replace(/\s+/g, ' ')) ?? [];
 
 export function catalogRows() {
   return framework.items.map((it, i) => ({

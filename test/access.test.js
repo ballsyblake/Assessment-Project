@@ -173,3 +173,27 @@ test('club contact cannot invite a third person or create staff accounts', async
   await fails(q(c, `insert into users(email, name, role, club_id) values ('three@westfield-city.example', 'Three', 'club', $1)`, [c.club_id]), /at most two/);
   await fails(q(c, `insert into users(email, name, role, club_id) values ('x@x.example', 'X', 'admin', null)`), /row-level security|Invalid|check constraint/);
 });
+
+test('rating overrides are admin-only; lead highlights only for the lead\'s own club', async () => {
+  const c = await user('td@riverside-rovers.example');
+  await fails(q(c, 'select * from rating_overrides'), /permission denied/);
+  await fails(q(c, 'select * from lead_highlights'), /permission denied/);
+  const lead = await user('sam.reid@fq-assess.example'); // Riverside's lead
+  await q(lead, `insert into lead_highlights(club_id, kind, items) values ($1,'strengths','{P1}')`, [ids.clubIds.riverside]);
+  await fails(q(lead, `insert into lead_highlights(club_id, kind, items) values ($1,'strengths','{P1}')`, [ids.clubIds.coastal]), /row-level security/);
+  await fails(q(lead, 'select * from rating_overrides'), /permission denied/);
+});
+
+test('after release (before confirmation) a closed-phase score can change only as a review outcome', async () => {
+  const admin = await user('admin@fq-assess.example');
+  const club = ids.clubIds.northgate;
+  await fails(q(admin, `update resolutions set final_score = 1, note = 'x' where club_id = $1 and req_id = 'P1'`, [club]), /phase is closed/);
+  await sys().query(`insert into results(club_id, total, max_total, pct, rating, nn_met, details, released_at) values ($1,1,2,50,'Bronze',true,'{}',now())`, [club]);
+  const [before] = (await sys().query(`select final_score from resolutions where club_id = $1 and req_id = 'P1'`, [club])).rows;
+  await q(admin, `update resolutions set final_score = 3, note = 'Review: evidence overlooked' where club_id = $1 and req_id = 'P1'`, [club]);
+  const [after] = (await sys().query(`select method, final_score, review_from from resolutions where club_id = $1 and req_id = 'P1'`, [club])).rows;
+  assert.deepEqual([after.method, Number(after.final_score), Number(after.review_from)], ['review', 3, Number(before.final_score)]);
+  await sys().query('update results set confirmed_at = now() where club_id = $1', [club]);
+  await fails(q(admin, `update resolutions set final_score = 2, note = 'late' where club_id = $1 and req_id = 'P1'`, [club]), /phase is closed/);
+  await sys().query('delete from results');
+});

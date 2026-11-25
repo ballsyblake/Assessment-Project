@@ -97,6 +97,24 @@ The tick criteria in that file are **placeholders** drafted from the 2027 descri
 
 **Phases.** Each section is a phase with its own submission deadline. After the deadline, club uploads lock unless the admin grants an extension (per club and phase) or reopens an item with upload allowed for 7 days. The admin closes a phase once every item at every club is final.
 
+**Staff qualifications.**
+- Clubs pick each person's qualification and years held from FQ's lists.
+- The platform calculates a suggested score for each Technical Staff item, using FQ's lookup tables and the automatic rules (`src/staffCalc.js`, tables in the framework file). Age groups average over the coaches listed, so no "case" number is needed.
+- Assessors see the suggestion with its working, already filled in, and confirm or adjust it. The judgement rules, such as "Other" qualifications and heads coaching in their own phase, remain with them.
+- The admin sees the calculated total on the club's Staff tab.
+- Checked against the 2026 rubric workbooks: Brisbane Strikers 188 (FQ 188), Brisbane City 204.1 (FQ 203.67), once the sports science category is entered.
+
+**Rolling average (Pools A and C).** Planning items assessed this year score the average of this year and last year. Items not chosen keep last year's score. The report shows both figures.
+
+**Ratings.**
+- Non-negotiables NN1 to NN6 are Yes/No compliance items and do not change the rating.
+- NN7 to NN9 are shield thresholds. Being on notice for the same one two years running, or for more than one in a year, lowers the shield by one level.
+- The admin can override any club's rating on the Release page, with a reason that is shown to the club.
+
+**Reviews.** Review requests and outcomes are handled by FQ's official email. After release and before confirmation, the admin applies each agreed outcome on the Reconciliation page with a note. The club's preliminary report updates, and the item shows "Changed after review (+n)". "Confirm ratings" then makes the ratings final, skipping any club with non-negotiable documents outstanding.
+
+**Top 5 lists.** Suggested automatically: strengths are items at full marks, highest weighting first; areas to improve are those with the most points missed. The lead can replace either list with their own choice on their club page.
+
 **Leads (CDAs).**
 - A lead sees their clubs' submission progress, and final scores once a section is reconciled.
 - A lead never sees individual assessors' scores.
@@ -129,7 +147,7 @@ The tick criteria in that file are **placeholders** drafted from the 2027 descri
 npm test
 ```
 
-14 database-level tests run as each role, with no UI involved: access, blind scoring, tick and value scoring maths, assignment rules, the lock and third-assessor flow, deadlines and extensions, lead visibility, comment and phase-close gates.
+Database tests run as each role (plus unit tests for the scoring engine and the staff calculator), with no UI involved: access, blind scoring, tick and value scoring maths, assignment rules, the lock and third-assessor flow, deadlines and extensions, lead visibility, comment and phase-close gates.
 
 ```bash
 npm run reset && npm start

@@ -6,7 +6,7 @@ import { num } from './db.js';
 
 const CLUB_ITEM_COLS = 'id, club_id, req_id, status, return_comment, selected, flagged_at, upload_until, updated_at';
 const CLUB_STAFF_COLS = `id, club_id, position, person, gender, team, qualification, qual_expiry, fa_number, blue_card,
-  blue_card_expiry, years_at_club, employment_type, status, return_comment, updated_at`;
+  blue_card_expiry, years_at_club, qual_years, employment_type, status, return_comment, updated_at`;
 const isClubRole = async (tx) => (await tx.query('select current_user as u')).rows[0].u === 'app_club';
 
 export async function getReqs(tx) {
@@ -90,7 +90,7 @@ export async function reconciliation(tx, clubId, phase) {
        from slots s join users u on u.id = s.assessor_id where s.club_id = $1 and s.req_id = q.id) holders,
       (select json_agg(json_build_object('slot', x.slot, 'score', x.score, 'ticks', x.ticks, 'value', x.value, 'comment', x.comment))
        from scores x where x.club_id = $1 and x.req_id = q.id) scores,
-      r.final_score, r.method, r.note, r.tick_mismatch, ru.name resolver,
+      r.final_score, r.method, r.note, r.tick_mismatch, r.review_from, ru.name resolver,
       t.assessor_id third_id, tu.name third_name
     from requirements q
     left join resolutions r on r.club_id = $1 and r.req_id = q.id
@@ -120,7 +120,27 @@ export async function finalsFor(tx, clubId) {
 }
 
 export async function clubResult(tx, club, reqs, items, sections = null) {
-  return computeResult({ reqs, club, items, ...(await finalsFor(tx, club.id)), sections });
+  const role = (await tx.query('select current_user as u')).rows[0].u;
+  // Overrides are admin-only data; leads read their own highlights.
+  const override = role === 'app_admin' ? (await tx.query('select rating, reason from rating_overrides where club_id = $1', [club.id])).rows[0] ?? null : null;
+  const hl = role === 'app_club' ? [] : (await tx.query('select kind, items from lead_highlights where club_id = $1', [club.id])).rows;
+  const { rows: rv } = await tx.query('select req_id, review_from from resolutions where club_id = $1 and method = $2', [club.id, 'review']);
+  return computeResult({ reqs, club, items, ...(await finalsFor(tx, club.id)), sections, override,
+    highlights: Object.fromEntries(hl.map((h) => [h.kind, h.items])),
+    reviewFrom: Object.fromEntries(rv.map((x) => [x.req_id, num(x.review_from)])) });
+}
+
+// Recalculate a released (not yet confirmed) result after a review change or rating override.
+export async function republish(tx, club) {
+  const { rows: [r] } = await tx.query('select * from results where club_id = $1 and released_at is not null and confirmed_at is null', [club.id]);
+  if (!r) return false;
+  const reqs = await getReqs(tx);
+  const items = await getItems(tx, club.id);
+  const rr = await clubResult(tx, club, reqs, items);
+  const comments = Object.fromEntries((await tx.query('select section, body from lead_comments where club_id = $1', [club.id])).rows.map((c) => [c.section, c.body]));
+  await tx.query('update results set total = $2, max_total = $3, pct = $4, rating = $5, nn_met = $6, details = $7 where club_id = $1',
+    [club.id, rr.total, rr.max, rr.pct, rr.rating, rr.nnMet, JSON.stringify({ ...rr, comments })]);
+  return true;
 }
 
 // Admin-only leaderboard from closed phases. Counts only resolved items (both assessors locked).

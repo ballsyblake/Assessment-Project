@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import { html, statusBadge, progressBar, fmtDate, fmtDay, kb, shield, fmtNum } from '../html.js';
-import { SECTIONS, sectionLabel, applicable, STAFF_POSITIONS, STAFF_TEAMS, framework } from '../catalog.js';
+import { SECTIONS, sectionLabel, applicable, STAFF_POSITIONS, STAFF_TEAMS, QUALIFICATION_GROUPS, QUAL_YEARS, framework } from '../catalog.js';
 import { getReqs, getClub, getItems, getFiles, getStaff, getPhases, submissionProgress } from '../model.js';
 import { issueLink } from '../auth.js';
 
@@ -185,30 +185,32 @@ export default function clubRoutes() {
         <label>Person<br><input name="person" required value="${s.person ?? ''}"></label>
         <label>Role<br><select name="position" required>${STAFF_POSITIONS.map((p) => html`<option ${s.position === p ? 'selected' : ''}>${p}</option>`)}</select></label>
         <label>Team<br><select name="team">${STAFF_TEAMS.map((t) => html`<option value="${t}" ${s.team === t ? 'selected' : ''}>${t || '(none)'}</option>`)}</select></label>
-        <label>Qualification<br><input name="qualification" required value="${s.qualification ?? ''}" placeholder="e.g. AFC B Diploma"></label>
+        <label>Current highest qualification<br><select name="qualification" required><option value=""></option>
+          ${QUALIFICATION_GROUPS.map(([g, qs]) => html`<optgroup label="${g}">${qs.map((q) => html`<option ${s.qualification === q ? 'selected' : ''}>${q}</option>`)}</optgroup>`)}</select></label>
+        <label>Years holding this qualification<br><select name="qual_years"><option value=""></option>${QUAL_YEARS.map((y) => html`<option ${s.qual_years === y ? 'selected' : ''}>${y}</option>`)}</select></label>
         <label>Qualification expiry<br><input type="date" name="qual_expiry" value="${dateVal(s.qual_expiry)}"></label>
         <label>Gender<br><select name="gender"><option value=""></option>${['F', 'M', 'X'].map((g) => html`<option ${s.gender === g ? 'selected' : ''}>${g}</option>`)}</select></label>
         <label>FA number<br><input name="fa_number" value="${s.fa_number ?? ''}"></label>
         <label>Blue card number<br><input name="blue_card" value="${s.blue_card ?? ''}"></label>
         <label>Blue card expiry<br><input type="date" name="blue_card_expiry" value="${dateVal(s.blue_card_expiry)}"></label>
         <label>Years at club<br><input type="number" min="0" name="years_at_club" value="${s.years_at_club ?? ''}"></label>
-        <label>Employment type<br><select name="employment_type">${['', 'Full time', 'Part time', 'Casual', 'Volunteer'].map((e) => html`<option ${s.employment_type === e ? 'selected' : ''}>${e}</option>`)}</select></label>
+        <label>Employment type<br><select name="employment_type">${['', 'Full Time', 'Part Time', 'Casual', 'Volunteer'].map((e) => html`<option ${s.employment_type === e ? 'selected' : ''}>${e}</option>`)}</select></label>
         <label>Certificate${s.id ? ' (optional)' : ''}<br><input type="file" name="certificate" ${s.id ? '' : 'required'}></label>
       </div>`;
     res.page('Staff qualifications', html`
       <div class="row"><h1>Staff qualifications</h1><span class="spacer"></span>${deadlineNote(phase, d.ext.find((e) => e.phase === 'staff'))}</div>
       <p class="sub">One row per person and role, with their qualification certificate attached.</p>
       <div class="tablewrap"><table>
-        <tr><th>Person</th><th>Role</th><th>Team</th><th>Qualification</th><th>Blue card</th><th>Certificate</th><th>Status</th><th></th></tr>
+        <tr><th>Person</th><th>Role</th><th>Team</th><th>Qualification</th><th>Years held</th><th>Blue card</th><th>Certificate</th><th>Status</th><th></th></tr>
         ${x.staff.map((s) => html`<tr>
-          <td>${s.person}</td><td>${s.position}</td><td>${s.team}</td><td>${s.qualification}</td><td class="mono">${s.blue_card}</td>
+          <td>${s.person}</td><td>${s.position}</td><td>${s.team}</td><td>${s.qualification}</td><td>${s.qual_years}</td><td class="mono">${s.blue_card}</td>
           <td>${x.files.filter((f) => f.staff_row_id === s.id).map((f) => html`<a href="/files/${f.id}">${f.filename}</a><br>`)}</td>
           <td>${statusBadge(s.status)}${s.return_comment && ['returned', 'not_accepted'].includes(s.status) ? html`<div class="comment small">${s.return_comment}</div>` : ''}</td>
           <td>${LOCKED.includes(s.status) || !open ? html`<span class="small muted">Locked</span>` : html`
             <a class="btn small secondary" href="/club/staff?edit=${s.id}#edit">Edit</a>
             <form class="inline" method="post" action="/club/staff/${s.id}/delete"><button class="small secondary">Delete</button></form>`}</td>
         </tr>`)}
-        ${x.staff.length ? '' : html`<tr><td colspan="8" class="muted">No staff added yet.</td></tr>`}
+        ${x.staff.length ? '' : html`<tr><td colspan="9" class="muted">No staff added yet.</td></tr>`}
       </table></div>
       ${!open ? html`<div class="warnbox">The submission deadline for staff qualifications has passed.</div>`
         : editing ? html`<div class="card" id="edit"><h2 style="margin-top:0">Edit row</h2>
@@ -220,14 +222,15 @@ export default function clubRoutes() {
   });
 
   const staffFields = (b) => [b.position, b.person.trim(), b.gender || null, b.team || null, b.qualification.trim(), b.qual_expiry || null,
-    b.fa_number || null, b.blue_card || null, b.blue_card_expiry || null, b.years_at_club ? Number(b.years_at_club) : null, b.employment_type || null];
+    b.fa_number || null, b.blue_card || null, b.blue_card_expiry || null, b.years_at_club ? Number(b.years_at_club) : null, b.employment_type || null,
+    b.qual_years || null];
 
   r.post('/staff', upload.single('certificate'), async (req, res) => {
     if (!req.file) throw new Error('Attach the certificate for this person.');
     await req.db(async (tx) => {
       const { rows: [row] } = await tx.query(
-        `insert into staff_rows(position, person, gender, team, qualification, qual_expiry, fa_number, blue_card, blue_card_expiry, years_at_club, employment_type, club_id)
-         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) returning id`, [...staffFields(req.body), req.user.club_id]);
+        `insert into staff_rows(position, person, gender, team, qualification, qual_expiry, fa_number, blue_card, blue_card_expiry, years_at_club, employment_type, qual_years, club_id)
+         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id`, [...staffFields(req.body), req.user.club_id]);
       await tx.query(`insert into files(club_id, staff_row_id, filename, mime, size, data, uploaded_by) values ($1,$2,$3,$4,$5,$6,$7)`,
         [req.user.club_id, row.id, req.file.originalname.slice(0, 200), req.file.mimetype, req.file.size, req.file.buffer, req.user.id]);
     }, 'Club added staff row');
@@ -238,7 +241,7 @@ export default function clubRoutes() {
     await req.db(async (tx) => {
       const { rowCount } = await tx.query(
         `update staff_rows set position=$1, person=$2, gender=$3, team=$4, qualification=$5, qual_expiry=$6, fa_number=$7, blue_card=$8,
-           blue_card_expiry=$9, years_at_club=$10, employment_type=$11 where id=$12`, [...staffFields(req.body), Number(req.params.id)]);
+           blue_card_expiry=$9, years_at_club=$10, employment_type=$11, qual_years=$12 where id=$13`, [...staffFields(req.body), Number(req.params.id)]);
       if (!rowCount) throw new Error('Row not found');
       if (req.file) {
         await tx.query(`insert into files(club_id, staff_row_id, filename, mime, size, data, uploaded_by) values ($1,$2,$3,$4,$5,$6,$7)`,
@@ -327,7 +330,8 @@ export function resultsView(result, club, { preview = false } = {}) {
       <span class="spacer"></span>
       <button class="secondary noprint" onclick="window.print()">Print or save as PDF</button>
     </div>
-    ${det.downgradeReasons?.length ? html`<div class="warnbox">* The club has been awarded a ${result.rating} shield instead of ${det.scoreRating}, as it was ${det.downgradeReasons.join(' and ')}.</div>` : ''}
+    ${det.override ? html`<div class="warnbox">* Rating determined by FQ: ${det.override.reason}</div>`
+      : det.downgradeReasons?.length ? html`<div class="warnbox">* The club has been awarded a ${result.rating} shield instead of ${det.scoreRating}, as it was ${det.downgradeReasons.join(' and ')}.</div>` : ''}
 
     <h2>Club audit summary</h2>
     <div class="grid" style="grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:start">
@@ -351,11 +355,14 @@ export function resultsView(result, club, { preview = false } = {}) {
         <div class="tablewrap"><table class="report">
           ${areas.map((a) => html`
             <tr class="area-head"><th colspan="2">${a.name}</th><th class="num">Club score</th><th class="num">Weighting</th><th class="num">Points</th></tr>
-            ${a.lines.map((l) => html`<tr><td class="code-cell">${l.id}</td><td>${l.name}${l.source === 'carried forward' ? html` <span class="badge b-muted">carried forward</span>` : ''}</td>
+            ${a.lines.map((l) => html`<tr><td class="code-cell">${l.id}</td><td>${l.name}${l.source === 'carried forward' ? html` <span class="badge b-muted">carried forward</span>` : ''}
+              ${l.source === 'rolling average' ? html` <span class="badge b-muted">2-year average</span><div class="small muted">This year ${fmtNum(l.current)} · last year ${fmtNum(l.prior)}</div>` : ''}
+              ${l.reviewedFrom !== null && l.reviewedFrom !== undefined ? html` <span class="badge b-submitted">Changed after review (${l.current - l.reviewedFrom > 0 ? '+' : ''}${fmtNum(l.current - l.reviewedFrom)})</span>` : ''}</td>
               <td class="num">${fmtNum(l.score)}</td><td class="num">${l.weight}</td><td class="num">${fmtNum(l.points)}</td></tr>`)}
             <tr class="area-total"><td colspan="2">Area: ${fmtNum(a.points)} of ${fmtNum(a.max)} · ${fmtNum(a.missed)} points missed</td>
               <td colspan="3" class="num"><span class="grade ${pctClass(a.pct)}">${a.pct}%</span></td></tr>`)}
         </table></div>
+        ${s === 'planning' && det.rolling ? html`<p class="small muted">Pool ${club.pool}: planning uses a two-year rolling average. Items assessed this year score the average of this year and last year; items not chosen keep last year's score.</p>` : ''}
         ${areas.length > 1 ? html`<div class="card">${bars(areas.map((a) => ({ label: a.name, pct: a.pct, colour: SECTION_COLOUR[s] })))}</div>` : ''}
         ${comments[s] ? html`<h3>${sectionLabel(s)} summary</h3><div class="lead-comment">${comments[s]}</div>` : ''}
       </section>`;

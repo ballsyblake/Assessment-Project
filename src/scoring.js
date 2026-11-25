@@ -34,7 +34,8 @@ export function shieldAdjustment(thresholds) {
   return { downgrade: reasons.length ? (framework.thresholdRule?.downgradeLevels ?? 1) : 0, reasons };
 }
 
-export function computeResult({ reqs, club, items, finals, prior, sections = null }) {
+export function computeResult({ reqs, club, items, finals, prior, sections = null, override = null, highlights = {}, reviewFrom = {} }) {
+  const rolling = framework.partialPlanning?.rollingAverage && framework.partialPlanning.pools?.includes(club.pool);
   const lines = [];
   const compliance = [];
   const thresholds = [];
@@ -50,12 +51,21 @@ export function computeResult({ reqs, club, items, finals, prior, sections = nul
       continue;
     }
     if (!a.applies && !a.carry) continue;
-    const raw = a.carry ? prior[r.id] : finals[r.id];
+    let raw = a.carry ? prior[r.id] : finals[r.id];
+    let source = a.carry ? 'carried forward' : 'assessed';
+    const current = finals[r.id] ?? null;
+    // Pools A/C: assessed planning items are averaged with last year's score (rolling two-year average).
+    if (rolling && r.section === 'planning' && !a.carry && raw !== undefined && raw !== null && prior[r.id] !== undefined && prior[r.id] !== null) {
+      raw = r1((Number(raw) + Number(prior[r.id])) / 2);
+      source = 'rolling average';
+    }
     const score = raw === undefined || raw === null ? null : Number(raw);
     const max = Number(r.max_score) * Number(r.weight);
     const points = score === null ? 0 : r1(score * r.weight);
     lines.push({ id: r.id, section: r.section, grp: r.grp, name: r.name, score, max_score: Number(r.max_score),
-      weight: Number(r.weight), points, max, missed: r1(max - points), source: a.carry ? 'carried forward' : 'assessed' });
+      weight: Number(r.weight), points, max, missed: r1(max - points), source,
+      current: current === null ? null : Number(current), prior: prior[r.id] ?? null,
+      reviewedFrom: reviewFrom[r.id] ?? null });
   }
   const sum = (ls) => ({ points: r1(ls.reduce((s, l) => s + l.points, 0)), max: ls.reduce((s, l) => s + l.max, 0) });
   const withPct = (t) => ({ ...t, missed: r1(t.max - t.points), pct: t.max ? Math.round((t.points / t.max) * 100) : 0 });
@@ -71,16 +81,24 @@ export function computeResult({ reqs, club, items, finals, prior, sections = nul
   const pctExact = totals.max ? (totals.points / totals.max) * 100 : 0;
   const scoreRating = ratingFor(pctExact);
   const adj = shieldAdjustment(thresholds);
-  const rating = adj.downgrade ? LEVELS[Math.max(0, LEVELS.indexOf(scoreRating) - adj.downgrade)] : scoreRating;
+  const ruleRating = adj.downgrade ? LEVELS[Math.max(0, LEVELS.indexOf(scoreRating) - adj.downgrade)] : scoreRating;
+  const rating = override?.rating ?? ruleRating;
 
   // Top 5 lists: strengths = full marks, highest weighting first; improve = most points missed.
-  const assessed = lines.filter((l) => l.source === 'assessed' && l.score !== null);
-  const strengths = assessed.filter((l) => l.score === l.max_score).sort((a, b) => b.weight - a.weight || b.points - a.points).slice(0, 5);
-  const improve = assessed.filter((l) => l.missed > 0).sort((a, b) => b.missed - a.missed || b.weight - a.weight).slice(0, 5);
+  const assessed = lines.filter((l) => l.source !== 'carried forward' && l.score !== null);
+  const suggested = {
+    strengths: assessed.filter((l) => l.score === l.max_score).sort((a, b) => b.weight - a.weight || b.points - a.points).slice(0, 5),
+    improve: assessed.filter((l) => l.missed > 0).sort((a, b) => b.missed - a.missed || b.weight - a.weight).slice(0, 5),
+  };
+  // The lead may choose their own lists; otherwise the suggestions are used.
+  const pickLines = (ids) => ids.map((id) => lines.find((l) => l.id === id)).filter(Boolean);
+  const strengths = highlights.strengths?.length ? pickLines(highlights.strengths) : suggested.strengths;
+  const improve = highlights.improve?.length ? pickLines(highlights.improve) : suggested.improve;
 
   return {
-    total: totals.points, max: totals.max, missed: totals.missed, pct: r1(pctExact), rating, scoreRating,
-    downgradeReasons: adj.reasons, nnMet: compliance.every((n) => n.met === true),
+    total: totals.points, max: totals.max, missed: totals.missed, pct: r1(pctExact), rating, scoreRating, ruleRating,
+    downgradeReasons: adj.reasons, override: override ? { rating: override.rating, reason: override.reason } : null,
+    rolling: Boolean(rolling), suggested, nnMet: compliance.every((n) => n.met === true),
     lines, bySection, areas, compliance, thresholds, nn: compliance, strengths, improve,
   };
 }

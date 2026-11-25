@@ -3,7 +3,8 @@ import { num } from '../db.js';
 import { html, raw, progressBar, fmtDate, fmtDay, fmtNum, TICK_LABEL } from '../html.js';
 import { sectionLabel, framework } from '../catalog.js';
 import { scoreText } from '../scoring.js';
-import { getReqs, getClub, getItems, getFiles, getStaff, getPhases, submissionProgress, sumProgress } from '../model.js';
+import { suggestStaffScores } from '../staffCalc.js';
+import { getReqs, getClub, getItems, getFiles, getStaff, getPhases, submissionProgress, sumProgress, clubResult } from '../model.js';
 import { evidenceBlock, staffTable } from './review.js';
 
 const PHASE_IDS = framework.phases.map((p) => p.id);
@@ -120,13 +121,15 @@ export default function assessorRoutes() {
     const { rows: [lock] } = await tx.query('select locked_at from score_locks where club_id = $1 and phase = $2', [clubId, phase]);
     const phases = await getPhases(tx);
     const staffSlot = phase === 'staff' && mySlots.length > 0;
+    const staffRows = staffSlot ? await getStaff(tx, clubId) : [];
     return {
       club, reqs, mySlots, items, phase: phases.find((p) => p.id === phase), lock: lock?.locked_at,
       crit: Object.fromEntries(crit.map((c) => [c.req_id, c])),
       mine: Object.fromEntries(scores.filter((s) => s.assessor_id === req.user.id && s.slot !== 'third').map((s) => [s.req_id, s])),
       prior: Object.fromEntries(prior.map((p) => [p.req_id, num(p.score)])),
       files: await getFiles(tx, clubId), names: Object.fromEntries(names.map((n) => [n.id, n.name])),
-      staff: staffSlot ? await getStaff(tx, clubId) : [],
+      staff: staffRows,
+      suggest: staffSlot ? suggestStaffScores(staffRows) : {},
     };
   });
 
@@ -241,7 +244,7 @@ export default function assessorRoutes() {
           return html`<tr><td>${i + 1}</td><td class="small">${c}</td><td class="${a} ${a !== b ? 'diff' : ''}">${TICK_LABEL[a] ?? ''}</td><td class="${b} ${a !== b ? 'diff' : ''}">${TICK_LABEL[b] ?? ''}</td></tr>`;
         })}</table></div>` : ''}
       <h2>Evidence</h2>
-      ${d.q.section === 'staff' ? html`<div class="guid">${d.q.guidance}</div>${staffTable({ staff: d.staff, files: d.allFiles, clubId: d.club.id, canAct: false })}`
+      ${d.q.section === 'staff' ? html`<div class="guid">${d.q.guidance}</div>${suggestStaffScores(d.staff)[d.q.id] ? suggestionBox(suggestStaffScores(d.staff)[d.q.id], d.q) : ''}${staffTable({ staff: d.staff, files: d.allFiles, clubId: d.club.id, canAct: false })}`
         : evidenceBlock({ q: d.q, it: d.item ?? { status: 'not_started' }, files: d.files, names: {}, clubId: d.club.id, canAct: false })}
       <details><summary>Descriptor</summary><div class="criteria">${d.crit.descriptor}</div></details>
       <h2>Your decision</h2>
@@ -288,7 +291,11 @@ export default function assessorRoutes() {
          left join resolutions r on r.club_id = $1 and r.req_id = q.id`, [clubId]);
       const { rows: cm } = await tx.query('select * from lead_comments where club_id = $1', [clubId]);
       const { rows: [released] } = await tx.query('select released_for($1) r', [clubId]);
-      return { club, reqs, items, staff, res, comments: Object.fromEntries(cm.map((c) => [c.section, c])), phases: await getPhases(tx), released: released.r };
+      const all = res.filter((x) => x.applies).every((x) => x.final_score !== null);
+      const result = all ? await clubResult(tx, club, reqs, items) : null;
+      const { rows: hl } = await tx.query('select kind, items from lead_highlights where club_id = $1', [clubId]);
+      return { club, reqs, items, staff, res, comments: Object.fromEntries(cm.map((c) => [c.section, c])), phases: await getPhases(tx), released: released.r,
+        result, picks: Object.fromEntries(hl.map((h) => [h.kind, h.items])) };
     });
     if (!d) return res.status(404).page('Not found', html`<h1>Not your club</h1>`, { active: '/assessor' });
     const prog = submissionProgress(d.reqs, d.club, d.items, d.staff);
@@ -313,7 +320,20 @@ export default function assessorRoutes() {
           ${commentForm(d, p.id, done)}
         </div>`;
       })}
-      <div class="card"><strong>Overall comment</strong>${commentForm(d, 'overall', sectionDone('overall'))}</div>`, { active: '/assessor' });
+      <div class="card"><strong>Overall comment</strong>${commentForm(d, 'overall', sectionDone('overall'))}</div>
+      ${d.result ? highlightsForm(d) : html`<div class="card"><strong>Top 5 strengths and areas to improve</strong><p class="small muted">Opens once every section is reconciled.</p></div>`}`, { active: '/assessor' });
+  });
+
+  r.post('/lead/:club/highlights', async (req, res) => {
+    const kind = req.body.kind === 'improve' ? 'improve' : 'strengths';
+    const picked = [].concat(req.body.items ?? []).map(String);
+    if (req.body.reset !== '1' && (picked.length < 1 || picked.length > 5)) throw new Error('Choose between one and five items.');
+    await req.db((tx) => (req.body.reset === '1'
+      ? tx.query('delete from lead_highlights where club_id = $1 and kind = $2', [Number(req.params.club), kind])
+      : tx.query(`insert into lead_highlights(club_id, kind, items, updated_by) values ($1,$2,$3,$4)
+          on conflict (club_id, kind) do update set items = excluded.items, updated_by = excluded.updated_by, updated_at = now()`,
+        [Number(req.params.club), kind, picked, req.user.id])), 'Lead top 5 selection');
+    res.redirect(`/assessor/lead/${req.params.club}?msg=${encodeURIComponent(req.body.reset === '1' ? 'Using the suggested list.' : 'Your list is saved.')}#highlights`);
   });
 
   r.post('/lead/:club/comment', async (req, res) => {
@@ -328,6 +348,28 @@ export default function assessorRoutes() {
   return r;
 }
 
+// Lead chooses the top 5 lists shown on the club's report; suggestions are preselected.
+function highlightsForm(d) {
+  const lines = d.result.lines.filter((l) => l.score !== null && l.source !== 'carried forward');
+  const block = (kind, title, hint) => {
+    const own = d.picks[kind];
+    const chosen = new Set(own ?? d.result.suggested[kind].map((l) => l.id));
+    return html`<div class="card"><div class="row"><strong>${title}</strong>
+      ${own ? html`<span class="badge b-submitted">Your choice</span>` : html`<span class="badge b-muted">Suggested</span>`}</div>
+      <p class="small muted">${hint} Choose up to five.</p>
+      ${d.released ? html`<ul>${[...chosen].map((id) => html`<li>${id} ${lines.find((l) => l.id === id)?.name ?? ''}</li>`)}</ul>` : html`
+      <form method="post" action="/assessor/lead/${d.club.id}/highlights"><input type="hidden" name="kind" value="${kind}">
+        <div style="max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:6px 10px">
+        ${lines.map((l) => html`<label class="small" style="display:block"><input type="checkbox" name="items" value="${l.id}" ${chosen.has(l.id) ? 'checked' : ''}>
+          ${l.id} ${l.name} <span class="muted">· ${fmtNum(l.score)}/${l.max_score} · ${fmtNum(l.missed)} pts missed</span></label>`)}</div>
+        <div class="row" style="margin-top:6px"><button class="small">Save my list</button>
+          ${own ? html`<button class="small secondary" name="reset" value="1" formnovalidate>Use suggested list</button>` : ''}</div></form>`}</div>`;
+  };
+  return html`<h2 id="highlights">Top 5 lists for the report</h2>
+    ${block('strengths', 'Top 5 strengths', 'Suggested: items at full marks, highest weighting first.')}
+    ${block('improve', 'Top 5 areas to improve', 'Suggested: items with the most points missed.')}`;
+}
+
 function commentForm(d, section, ready) {
   const c = d.comments[section];
   if (d.released) return c ? html`<div class="lead-comment">${c.body}</div>` : '';
@@ -340,7 +382,14 @@ function commentForm(d, section, ready) {
 }
 
 // Inputs for one item, by scoring type. `form` attribute lets them live outside the form element.
-function scoreInputs(q, crit, mine, enabled, formId = 'scoreform') {
+export function suggestionBox(sg, q) {
+  return html`<div class="notice small"><strong>Suggested from the staff table: ${sg.score === null ? 'needs checking' : `${sg.score} / ${q.max_score}`}</strong>
+    ${sg.check ? html` <span class="badge b-warn">Check</span>` : ''}
+    <ul style="margin:4px 0 0 18px;padding:0">${sg.notes.map((n) => html`<li>${n}</li>`)}</ul>
+    <div class="muted">Confirm or adjust. Apply the judgement rules (for example "Other" qualifications, two roles in the same phase) yourself.</div></div>`;
+}
+
+function scoreInputs(q, crit, mine, enabled, formId = 'scoreform', suggested = null) {
   const f = formId ? `form="${formId}"` : '';
   const dis = enabled ? '' : 'disabled';
   if (q.type === 'ticks') {
@@ -362,7 +411,8 @@ function scoreInputs(q, crit, mine, enabled, formId = 'scoreform') {
     return html`<label class="small">Outcome<br><select name="s_${q.id}" ${raw(f)} ${dis}><option value=""></option>
       <option value="1" ${mine && num(mine.score) === 1 ? 'selected' : ''}>Met</option><option value="0" ${mine && num(mine.score) === 0 ? 'selected' : ''}>Not met</option></select></label>`;
   }
-  return html`<label class="small">Score (0-${q.max_score})<br><input type="number" min="0" max="${q.max_score}" step="0.1" name="s_${q.id}" value="${mine ? num(mine.score) : ''}" ${raw(f)} ${dis}></label>`;
+  const val = mine ? num(mine.score) : (enabled && suggested !== null && suggested !== undefined ? suggested : '');
+  return html`<label class="small">Score (0-${q.max_score})${!mine && val !== '' ? ' · prefilled with the suggestion' : ''}<br><input type="number" min="0" max="${q.max_score}" step="0.1" name="s_${q.id}" value="${val}" ${raw(f)} ${dis}></label>`;
 }
 
 function itemCard(q, d, scoringOpen) {
@@ -375,8 +425,9 @@ function itemCard(q, d, scoringOpen) {
       ${d.prior[q.id] !== undefined ? html`<span class="small muted">Last cycle: ${fmtNum(d.prior[q.id])}</span>` : ''}
       ${mine ? html`<span class="badge b-done">My score ${q.type === 'threshold' || q.type === 'yesno' ? scoreText(q, mine.score) : `${fmtNum(mine.score)} / ${q.max_score}`}</span>` : html`<span class="badge b-muted">Not scored</span>`}</div>
     ${q.kind !== 'staff' ? evidenceBlock({ q, it, files: d.files.filter((f) => f.req_id === q.id), names: d.names, clubId: d.club.id, canAct: !d.phase.closed }) : html`<div class="guid">${q.guidance}</div>`}
+    ${d.suggest?.[q.id] ? suggestionBox(d.suggest[q.id], q) : ''}
     <details><summary>Descriptor</summary><div class="criteria">${crit.descriptor}</div></details>
-    ${scoringOpen || mine ? html`${scoreInputs(q, crit, mine, scoringOpen)}
+    ${scoringOpen || mine ? html`${scoreInputs(q, crit, mine, scoringOpen, 'scoreform', d.suggest?.[q.id]?.score)}
       <label class="small">My comment<br><textarea name="c_${q.id}" form="scoreform" ${scoringOpen ? '' : 'disabled'} style="min-height:40px">${mine?.comment ?? ''}</textarea></label>`
       : html`<p class="small muted">Scoring opens after the submission deadline (${fmtDay(d.phase.deadline)}).</p>`}
   </div>`;

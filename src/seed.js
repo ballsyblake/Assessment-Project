@@ -2,6 +2,7 @@
 // autoComplete() is reused by the demo "fast-forward" so a whole cycle can be shown.
 import { sys, schemaVersion } from './db.js';
 import { catalogRows, framework } from './catalog.js';
+import { suggestStaffScores } from './staffCalc.js';
 import { issueLink } from './auth.js';
 
 export function makePdf(lines) {
@@ -52,14 +53,19 @@ const ADMIN = ['Alex Admin', 'admin@fq-assess.example'];
 const LEADS = { riverside: 0, coastal: 1, highland: 2, northgate: 3, bayside: 4, westfield: 5 };
 const OPTIONAL_PICKS = { coastal: ['P1', 'P8', 'P14'], bayside: ['P3', 'P6', 'P11'], highland: ['P1', 'P9', 'P15'], westfield: ['P4', 'P10', 'P14'] };
 
+// Staff table template: [position, team, gender]. Qualifications are chosen per club from the
+// framework's lookup tables, so the staff calculator has realistic inputs.
 const STAFF = [
-  ['Technical Director', '', 'AFC A Diploma', 'M'], ['Head of Youth Academy', '', 'AFC B Diploma', 'M'],
-  ['Head of Junior Academy', '', 'AFC C Diploma', 'F'], ['Head of Girls Academy', '', 'AFC B Diploma', 'F'],
-  ['Head of Goalkeeping', '', 'AFC GK B Diploma', 'M'], ['Female Technical Lead', '', 'AFC C Diploma', 'F'],
-  ['Head of Sports Science and Medicine', '', 'BSc Sport Science', 'M'], ['Head Coach', 'U18 Boys', 'AFC B Diploma', 'M'],
-  ['Head Coach', 'U16 Girls', 'AFC C Diploma', 'F'], ['Head Coach', 'U13 Boys', 'AFC C Diploma', 'M'],
-  ['Head Coach', 'U11 Girls', 'Skill Training Certificate', 'F'], ['Head Coach', 'U9 Boys', 'Skill Training Certificate', 'M'],
+  ['Technical Director', '', 'M'], ['Head of Youth Academy', '', 'M'], ['Head of Junior Academy', '', 'F'],
+  ['Head of Girls Academy', '', 'F'], ['Head of Goalkeeping', '', 'M'], ['Female Technical Lead', '', 'F'],
+  ['Head of Sports Science and Medicine', '', 'M'],
+  ['Head Coach', 'U18 Boys', 'M'], ['Head Coach', 'U17 Girls', 'F'], ['Head Coach', 'U16 Boys', 'M'], ['Head Coach', 'U15 Boys', 'M'],
+  ['Head Coach', 'U15 Girls', 'F'], ['Head Coach', 'U14 Boys', 'M'], ['Head Coach', 'U14 Girls', 'F'], ['Head Coach', 'U13 Boys', 'M'],
+  ['Head Coach', 'U13 Girls', 'F'], ['Head Coach', 'U12 Boys', 'M'], ['Head Coach', 'U11 Boys', 'M'], ['Head Coach', 'U11 Girls', 'F'],
+  ['Head Coach', 'U10 Boys', 'M'], ['Head Coach', 'U9 Boys', 'M'],
 ];
+const COACH_QUALS = ['A Diploma or Equivalent', 'B Diploma or Equivalent', 'C Diploma or Equivalent', 'Foundation of Football', 'Skill Training / Game Training / Senior Certificate'];
+const YEARS = ['> 5 years', '3-4 years', '1-2 years', '< 1 year'];
 const FIRST = ['Alex', 'Jordan', 'Morgan', 'Riley', 'Avery', 'Quinn', 'Drew', 'Harper', 'Reese', 'Rowan', 'Sky', 'Emerson'];
 const LAST = ['Baker', 'Chen', 'Doyle', 'Evans', 'Foster', 'Grant', 'Hughes', 'Ito', 'Jensen', 'Khan', 'Lopez', 'Moore'];
 const COMMENTS = {
@@ -134,6 +140,13 @@ export async function autoComplete({ phases, leaveDisputes = 0, close = true, co
     for (const [ci, club] of clubs.entries()) {
       const cfg = CLUBS.find((c) => c.name === club.name) ?? { q: 0.6 };
       const contact = (await db.query('select id from users where club_id = $1 order by id limit 1', [club.id])).rows[0]?.id ?? admin;
+      let staffSuggest = {};
+      if (phase === 'staff') {
+        const { rows: [{ n }] } = await db.query('select count(*)::int n from staff_rows where club_id = $1', [club.id]);
+        if (!n) await addStaff(club, contact, 'approved');
+        await db.query(`update staff_rows set status = 'approved', verification = 'verified' where club_id = $1 and status = 'submitted'`, [club.id]);
+        staffSuggest = suggestStaffScores((await db.query('select * from staff_rows where club_id = $1 order by id', [club.id])).rows);
+      }
       for (const [ii, req] of preqs.entries()) {
         const { rows: [{ applies }] } = await db.query('select item_applies($1,$2) as applies', [club.id, req.id]);
         if (!applies) continue;
@@ -163,6 +176,8 @@ export async function autoComplete({ phases, leaveDisputes = 0, close = true, co
         for (const h of holders) {
           if (have.find((x) => x.slot === h.slot)) continue;
           const s = genScore(req, cfg.q, rand, h.slot === 'second' ? firstScore : null);
+          // Staff items: the first assessor accepts the calculated suggestion where there is one.
+          if (req.section === 'staff' && h.slot === 'first' && staffSuggest[req.id]?.score != null) s.score = staffSuggest[req.id].score;
           if (req.id === 'NN7' && cfg.key === 'riverside') s.score = 0.5; // on notice again: shows the downgrade rule
           await as(h.assessor_id);
           await db.query(`insert into scores(club_id, req_id, slot, assessor_id, ticks, value, score, comment) values ($1,$2,$3,$4,$5,$6,$7,$8)`,
@@ -170,11 +185,6 @@ export async function autoComplete({ phases, leaveDisputes = 0, close = true, co
               h.slot === 'first' ? 'Evidence reviewed against the descriptor.' : 'Reviewed independently against the descriptor.']);
           if (h.slot === 'first') firstScore = { ticks: s.ticks, score: s.score };
         }
-      }
-      if (phase === 'staff') {
-        const { rows: [{ n }] } = await db.query('select count(*)::int n from staff_rows where club_id = $1', [club.id]);
-        if (!n) await addStaff(club, contact, 'approved');
-        await db.query(`update staff_rows set status = 'approved', verification = 'verified' where club_id = $1 and status = 'submitted'`, [club.id]);
       }
     }
     // locks
@@ -230,18 +240,28 @@ export async function autoComplete({ phases, leaveDisputes = 0, close = true, co
 async function addStaff(club, uploader, status) {
   const db = sys();
   const rand = rng(club.id * 13);
-  for (const [i, [position, team, qual, gender]] of STAFF.entries()) {
-    const person = `${FIRST[(i + club.id) % 12]} ${LAST[(i * 5 + club.id) % 12]}`;
+  const q = CLUBS.find((c) => c.name === club.name)?.q ?? 0.6;
+  const pick = (list) => list[Math.min(list.length - 1, Math.floor((1 - q) * list.length * 1.3 + rand() * 1.6))];
+  let tdName = null;
+  for (const [i, [position, team, gender]] of STAFF.entries()) {
+    let person = `${FIRST[(i + club.id) % 12]} ${LAST[(i * 5 + club.id) % 12]}`;
+    // The Technical Director also coaches the U14 boys: the calculator lowers that coaching score by 1.
+    if (position === 'Technical Director') tdName = person;
+    if (team === 'U14 Boys' && tdName) person = tdName;
+    const qual = position === 'Technical Director' ? (q > 0.75 ? 'A Diploma + 5+ years at the Current Club' : q > 0.55 ? 'A Diploma or Equivalent' : 'B Diploma or Equivalent')
+      : position === 'Head of Sports Science and Medicine' ? (q > 0.7 ? 'University Degree' : 'TAFE/Similar')
+      : position === 'Head of Goalkeeping' ? (q > 0.7 ? 'B Diploma GK or Level 2 GK' : 'C Diploma GK or Level 1 GK')
+      : i < 7 ? pick(COACH_QUALS.slice(0, 3)) : pick(COACH_QUALS);
+    const employment = i < 4 ? (q > 0.65 || i === 0 ? 'Full Time' : 'Part Time') : position === 'Head Coach' ? 'Casual' : 'Part Time';
     const { rows: [row] } = await db.query(
-      `insert into staff_rows(club_id, position, person, gender, team, qualification, qual_expiry, fa_number, blue_card,
+      `insert into staff_rows(club_id, position, person, gender, team, qualification, qual_years, qual_expiry, fa_number, blue_card,
          blue_card_expiry, years_at_club, employment_type, status, verification)
-       values ($1,$2,$3,$4,$5,$6,'2028-06-30',$7,$8,'2028-12-31',$9,$10,$11,$12) returning id`,
-      [club.id, position, person, gender, team || null, qual, String(10000000 + Math.floor(rand() * 9e7)), `BC${100000 + i}`,
-        1 + Math.floor(rand() * 6), position === 'Head Coach' ? 'Casual' : (i < 2 ? 'Full time' : 'Part time'),
-        status, status === 'approved' ? 'verified' : null]);
+       values ($1,$2,$3,$4,$5,$6,$7,'2028-06-30',$8,$9,'2028-12-31',$10,$11,$12,$13) returning id`,
+      [club.id, position, person, gender, team || null, qual, YEARS[Math.floor(rand() * 4)], String(10000000 + Math.floor(rand() * 9e7)), `BC${100000 + i}`,
+        1 + Math.floor(rand() * 6), employment, status, status === 'approved' ? 'verified' : null]);
     const data = makePdf([person, qual, 'Certificate (dummy)']);
     await db.query(`insert into files(club_id, staff_row_id, filename, mime, size, data, uploaded_by) values ($1,$2,$3,'application/pdf',$4,$5,$6)`,
-      [club.id, row.id, `${person.replace(' ', '_')}_certificate.pdf`, data.length, data, uploader]);
+      [club.id, row.id, `${person.replace(' ', '_')}_${i}_certificate.pdf`, data.length, data, uploader]);
   }
 }
 
