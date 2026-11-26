@@ -4,6 +4,7 @@ import { html, statusBadge, progressBar, fmtDate, fmtDay, kb, shield, fmtNum } f
 import { SECTIONS, sectionLabel, applicable, STAFF_POSITIONS, STAFF_TEAMS, QUALIFICATION_GROUPS, QUAL_YEARS, framework } from '../catalog.js';
 import { getReqs, getClub, getItems, getFiles, getStaff, getPhases, submissionProgress } from '../model.js';
 import { issueLink } from '../auth.js';
+import { saveFile, removeFiles } from '../storage.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024, files: 10 } });
 const back = (res, target, msg) => {
@@ -140,16 +141,37 @@ export default function clubRoutes() {
 
   const sectionOf = async (req, id) => req.db(async (tx) => (await tx.query('select section from requirements where id = $1', [id])).rows[0]?.section);
 
+  // Store uploads (database or OneDrive), then record them under the club's access rules.
+  // If recording fails (deadline passed, item locked), the stored copies are removed again.
+  const CYCLE = (String(framework.id).match(/\d{4}/) ?? [new Date().getFullYear()])[0];
+  async function storeAndRecord(req, uploads, place, record) {
+    const where = await req.db(async (tx) => ({ club: (await getClub(tx, req.user.club_id)).name }));
+    const saved = [];
+    try {
+      for (const f of uploads) {
+        const s2 = await saveFile({ cycle: CYCLE, club: where.club, section: place.section, item: place.item, filename: f.originalname.slice(0, 200), buffer: f.buffer });
+        saved.push({ f, s: s2 });
+      }
+      return await record(saved);
+    } catch (e) {
+      await removeFiles(saved.filter((x) => x.s.storage !== 'db').map((x) => ({ storage: x.s.storage, storage_key: x.s.key })));
+      throw e;
+    }
+  }
+  const insertFile = (tx, { reqId = null, staffRowId = null, f, s: st }, userId, clubId) => tx.query(
+    `insert into files(club_id, req_id, staff_row_id, filename, mime, size, data, storage, storage_key, storage_url, uploaded_by)
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+    [clubId, reqId, staffRowId, f.originalname.slice(0, 200), f.mimetype || 'application/octet-stream', f.size, st.data, st.storage, st.key, st.url ?? null, userId]);
+
   r.post('/item/:req/upload', upload.array('files', 10), async (req, res) => {
     const files = (req.files ?? []).filter((f) => ALLOWED.test(f.originalname));
     if (!files.length) throw new Error('Choose at least one file (PDF, Office, image, CSV, text or video).');
-    await req.db(async (tx) => {
-      for (const f of files) {
-        await tx.query(`insert into files(club_id, req_id, filename, mime, size, data, uploaded_by) values ($1,$2,$3,$4,$5,$6,$7)`,
-          [req.user.club_id, req.params.req, f.originalname.slice(0, 200), f.mimetype || 'application/octet-stream', f.size, f.buffer, req.user.id]);
-      }
+    const q = await req.db(async (tx) => (await tx.query('select id, name, section from requirements where id = $1', [req.params.req])).rows[0]);
+    if (!q) throw new Error('Unknown item');
+    await storeAndRecord(req, files, { section: sectionLabel(q.section), item: `${q.id} ${q.name}` }, (saved) => req.db(async (tx) => {
+      for (const x of saved) await insertFile(tx, { reqId: req.params.req, ...x }, req.user.id, req.user.club_id);
       await tx.query(`update club_items set status = 'submitted' where club_id = $1 and req_id = $2`, [req.user.club_id, req.params.req]);
-    }, 'Club upload');
+    }, 'Club upload'));
     back(res, `/club/s/${await sectionOf(req, req.params.req)}#${req.params.req}`, `${files.length} file(s) submitted for ${req.params.req}.`);
   });
 
@@ -159,13 +181,15 @@ export default function clubRoutes() {
   });
 
   r.post('/item/:req/file/:fid/delete', async (req, res) => {
-    await req.db(async (tx) => {
-      await tx.query('delete from files where id = $1 and req_id = $2', [Number(req.params.fid), req.params.req]);
+    const gone = await req.db(async (tx) => {
+      const { rows: removed } = await tx.query('delete from files where id = $1 and req_id = $2 returning storage, storage_key', [Number(req.params.fid), req.params.req]);
       const { rows: [{ n }] } = await tx.query('select count(*)::int n from files where club_id = $1 and req_id = $2', [req.user.club_id, req.params.req]);
       if (n === 0) {
         await tx.query(`update club_items set status = 'not_started' where club_id = $1 and req_id = $2 and status = 'submitted'`, [req.user.club_id, req.params.req]);
       }
+      return removed;
     }, 'Club removed file');
+    await removeFiles(gone);
     back(res, `/club/s/${await sectionOf(req, req.params.req)}`, 'File removed.');
   });
 
@@ -237,32 +261,35 @@ export default function clubRoutes() {
 
   r.post('/staff', upload.single('certificate'), async (req, res) => {
     if (!req.file) throw new Error('Attach the certificate for this person.');
-    await req.db(async (tx) => {
+    const fields = staffFields(req.body);
+    await storeAndRecord(req, [req.file], { section: 'Staff Qualifications', item: `Certificates - ${fields[1]}` }, ([x]) => req.db(async (tx) => {
       const { rows: [row] } = await tx.query(
         `insert into staff_rows(position, person, gender, team, qualification, qual_expiry, fa_number, blue_card, blue_card_expiry, years_at_club, employment_type, qual_years, club_id)
-         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id`, [...staffFields(req.body), req.user.club_id]);
-      await tx.query(`insert into files(club_id, staff_row_id, filename, mime, size, data, uploaded_by) values ($1,$2,$3,$4,$5,$6,$7)`,
-        [req.user.club_id, row.id, req.file.originalname.slice(0, 200), req.file.mimetype, req.file.size, req.file.buffer, req.user.id]);
-    }, 'Club added staff row');
+         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id`, [...fields, req.user.club_id]);
+      await insertFile(tx, { staffRowId: row.id, ...x }, req.user.id, req.user.club_id);
+    }, 'Club added staff row'));
     back(res, '/club/staff', 'Staff row added and submitted.');
   });
 
   r.post('/staff/:id', upload.single('certificate'), async (req, res) => {
-    await req.db(async (tx) => {
+    const fields = staffFields(req.body);
+    await storeAndRecord(req, req.file ? [req.file] : [], { section: 'Staff Qualifications', item: `Certificates - ${fields[1]}` }, (saved) => req.db(async (tx) => {
       const { rowCount } = await tx.query(
         `update staff_rows set position=$1, person=$2, gender=$3, team=$4, qualification=$5, qual_expiry=$6, fa_number=$7, blue_card=$8,
-           blue_card_expiry=$9, years_at_club=$10, employment_type=$11, qual_years=$12 where id=$13`, [...staffFields(req.body), Number(req.params.id)]);
+           blue_card_expiry=$9, years_at_club=$10, employment_type=$11, qual_years=$12 where id=$13`, [...fields, Number(req.params.id)]);
       if (!rowCount) throw new Error('Row not found');
-      if (req.file) {
-        await tx.query(`insert into files(club_id, staff_row_id, filename, mime, size, data, uploaded_by) values ($1,$2,$3,$4,$5,$6,$7)`,
-          [req.user.club_id, Number(req.params.id), req.file.originalname.slice(0, 200), req.file.mimetype, req.file.size, req.file.buffer, req.user.id]);
-      }
-    }, 'Club edited staff row');
+      for (const x of saved) await insertFile(tx, { staffRowId: Number(req.params.id), ...x }, req.user.id, req.user.club_id);
+    }, 'Club edited staff row'));
     back(res, '/club/staff', 'Row saved and resubmitted.');
   });
 
   r.post('/staff/:id/delete', async (req, res) => {
-    await req.db((tx) => tx.query('delete from staff_rows where id = $1', [Number(req.params.id)]), 'Club deleted staff row');
+    const gone = await req.db(async (tx) => {
+      const { rows } = await tx.query('select storage, storage_key from files where staff_row_id = $1', [Number(req.params.id)]);
+      await tx.query('delete from staff_rows where id = $1', [Number(req.params.id)]);
+      return rows;
+    }, 'Club deleted staff row');
+    await removeFiles(gone);
     back(res, '/club/staff', 'Row deleted.');
   });
 

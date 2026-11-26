@@ -8,6 +8,8 @@ import {
 } from '../model.js';
 import { evidenceBlock, staffTable } from './review.js';
 import { suggestStaffScores, staffTotal } from '../staffCalc.js';
+import crypto from 'node:crypto';
+import { onedriveConfigured, readConnection, isConnected, authorizeUrl, completeSignIn, disconnect, redirectUri, saveFile, readFile, removeFiles } from '../storage.js';
 import { resultsView } from './club.js';
 import { issueLink } from '../auth.js';
 import { sendMail } from '../mail.js';
@@ -620,6 +622,91 @@ export default function adminRoutes() {
       await sys().query('delete from sessions where user_id = $1', [Number(req.params.id)]);
     }
     back(res, '/admin/users', 'Updated.');
+  });
+
+  // ---------------------------------------------------------------- storage (OneDrive)
+  r.get('/storage', async (req, res) => {
+    const counts = await req.db(async (tx) => (await tx.query('select storage, count(*)::int n from files group by storage')).rows);
+    const n = Object.fromEntries(counts.map((c) => [c.storage, c.n]));
+    const conn = readConnection();
+    const access = process.env.ONEDRIVE_ACCESS === 'folder' ? 'folder' : 'appfolder';
+    res.page('Storage', html`
+      <h1>Document storage</h1>
+      <p class="sub">Where clubs' uploaded evidence is kept. People always open documents through the platform, which checks who may see them.</p>
+      <div class="card"><dl class="kv">
+        <dt>New uploads go to</dt><dd><strong>${isConnected() ? 'OneDrive' : 'The platform database'}</strong></dd>
+        <dt>Files in the database</dt><dd>${n.db ?? 0}</dd>
+        <dt>Files in OneDrive</dt><dd>${n.onedrive ?? 0}</dd>
+        ${conn ? html`<dt>Connected account</dt><dd>${conn.name} (${conn.account}), since ${fmtDate(conn.connectedAt)}</dd>
+          <dt>Folder</dt><dd>${conn.access === 'folder' ? `OneDrive > ${process.env.ONEDRIVE_FOLDER ?? 'Club Assessment'}` : 'OneDrive > Apps > (the app’s own folder)'}</dd>` : ''}
+      </dl></div>
+      ${!onedriveConfigured() ? html`<div class="warnbox"><strong>OneDrive is not set up yet.</strong> Add the app registration details to the hosting environment variables, then reload this page.</div>
+        <div class="card"><h2 style="margin-top:0">Set up (once)</h2><ol>
+          <li>In the Azure portal, open <strong>Microsoft Entra ID</strong>, then <strong>App registrations</strong>, then <strong>New registration</strong>.
+            Name it "Club Assessment Prototype", choose <em>Accounts in this organizational directory only</em>, and add a <em>Web</em> redirect URI:<br><code>${redirectUri()}</code></li>
+          <li>On the app's <strong>Certificates &amp; secrets</strong> page, create a client secret and copy its value.</li>
+          <li>On <strong>API permissions</strong>, add Microsoft Graph delegated permissions: <code>User.Read</code>, <code>offline_access</code> and
+            <code>${access === 'folder' ? 'Files.ReadWrite' : 'Files.ReadWrite.AppFolder'}</code>.</li>
+          <li>In the hosting service's variables, set <code>MS_CLIENT_ID</code> (Application ID), <code>MS_CLIENT_SECRET</code> (the secret value),
+            <code>MS_TENANT</code> (Directory ID) and <code>SECRET_KEY</code> (any long random text).</li>
+          <li>Reload this page and choose <strong>Connect OneDrive</strong>.</li></ol>
+          <p class="small muted">If your organisation does not let staff register apps or approve permissions, ask IT to do steps 1 to 3.</p></div>`
+      : !conn ? html`<div class="card"><p>Sign in with the Microsoft work account whose OneDrive should hold the documents.
+          The platform only asks for ${access === 'folder' ? 'access to your files' : 'its own app folder in your OneDrive'}.</p>
+          <a class="btn" href="/admin/storage/connect">Connect OneDrive</a></div>`
+      : html`<div class="card row">
+          <form method="post" action="/admin/storage/test"><button class="secondary">Test upload</button></form>
+          ${n.db ? html`<form method="post" action="/admin/storage/migrate" onsubmit="return confirm('Copy ${n.db} file(s) from the database to OneDrive?')"><button>Move ${n.db} existing file(s) to OneDrive</button></form>` : ''}
+          <span class="spacer"></span>
+          <form method="post" action="/admin/storage/disconnect" onsubmit="return confirm('Disconnect OneDrive? New uploads will go to the database.')"><button class="secondary" ${n.onedrive ? 'disabled title="Files are stored in OneDrive"' : ''}>Disconnect</button></form></div>
+        ${n.onedrive ? html`<p class="small muted">Disconnecting is disabled while files are stored in OneDrive; the platform needs the connection to open them.</p>` : ''}`}
+      <p class="small muted">This prototype stores documents in one person's OneDrive. For real club data, use an FQ-owned SharePoint site: the platform's storage works the same way.</p>`);
+  });
+
+  r.get('/storage/connect', (req, res) => {
+    if (!onedriveConfigured()) throw new Error('OneDrive is not set up yet.');
+    const state = crypto.randomBytes(16).toString('hex');
+    res.cookie('cap_oauth_state', state, { httpOnly: true, sameSite: 'lax', maxAge: 10 * 60 * 1000, secure: redirectUri().startsWith('https') });
+    res.redirect(authorizeUrl(state));
+  });
+
+  r.get('/storage/callback', async (req, res) => {
+    if (req.query.error) return back(res, '/admin/storage', `Microsoft sign-in was not completed: ${req.query.error_description ?? req.query.error}`);
+    if (!req.query.state || req.query.state !== req.cookies.cap_oauth_state) throw new Error('Sign-in could not be verified. Start again from the Storage page.');
+    res.clearCookie('cap_oauth_state');
+    const conn = await completeSignIn(String(req.query.code));
+    back(res, '/admin/storage', `OneDrive connected for ${conn.account}. New uploads will be stored there.`);
+  });
+
+  r.post('/storage/test', async (req, res) => {
+    const st = await saveFile({ cycle: 'Test', club: 'Connection test', section: 'Test', item: 'Test', filename: `test-${Date.now()}.txt`, buffer: Buffer.from('Club Assessment storage test') });
+    const back2 = await readFile({ storage: st.storage, storage_key: st.key, data: st.data });
+    await removeFiles([{ storage: st.storage, storage_key: st.key }]);
+    back(res, '/admin/storage', back2.toString() === 'Club Assessment storage test' ? 'Test passed: a file was written to OneDrive, read back and deleted.' : 'Test failed: the file read back did not match.');
+  });
+
+  r.post('/storage/migrate', async (req, res) => {
+    const files = await req.db(async (tx) => (await tx.query(
+      `select f.id, f.filename, f.data, c.name club, q.id req_id, q.name req_name, q.section, s.person
+       from files f join clubs c on c.id = f.club_id left join requirements q on q.id = f.req_id left join staff_rows s on s.id = f.staff_row_id
+       where f.storage = 'db' order by f.id`)).rows);
+    let moved = 0;
+    for (const f of files) {
+      const st = await saveFile({ cycle: (String(framework.id).match(/\d{4}/) ?? [''])[0], club: f.club,
+        section: f.req_id ? sectionLabel(f.section) : 'Staff Qualifications', item: f.req_id ? `${f.req_id} ${f.req_name}` : `Certificates - ${f.person}`,
+        filename: f.filename, buffer: Buffer.from(f.data) });
+      await req.db((tx) => tx.query(`update files set storage = $2, storage_key = $3, storage_url = $4, data = null where id = $1 and storage = 'db'`,
+        [f.id, st.storage, st.key, st.url ?? null]), 'Moved file to OneDrive');
+      moved++;
+    }
+    back(res, '/admin/storage', `${moved} file(s) moved to OneDrive.`);
+  });
+
+  r.post('/storage/disconnect', async (req, res) => {
+    const n = await req.db(async (tx) => (await tx.query(`select count(*)::int n from files where storage = 'onedrive'`)).rows[0].n);
+    if (n) throw new Error('Files are stored in OneDrive, so it cannot be disconnected.');
+    disconnect();
+    back(res, '/admin/storage', 'OneDrive disconnected. New uploads go to the database.');
   });
 
   // ---------------------------------------------------------------- audit

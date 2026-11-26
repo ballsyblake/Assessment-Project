@@ -127,10 +127,14 @@ create table files (
   filename text not null,
   mime text not null,
   size int not null,
-  data bytea not null,
+  data bytea,                        -- bytes, when stored in the database
+  storage text not null default 'db' check (storage in ('db','onedrive')),
+  storage_key text,                  -- OneDrive / SharePoint drive item id
+  storage_url text,
   uploaded_by int not null references users(id),
   uploaded_at timestamptz not null default now(),
-  check ((req_id is null) <> (staff_row_id is null))
+  check ((req_id is null) <> (staff_row_id is null)),
+  check (storage <> 'db' or data is not null)
 );
 
 -- The club's lead (Club Development Ambassador). Standing relationship for the season.
@@ -754,6 +758,7 @@ grant insert, update on clubs to app_admin;
 grant insert on club_items to app_admin;
 grant update (status, return_comment, verification, verified_by, verified_at, flagged_at, upload_until) on club_items to app_admin;
 grant update (status, return_comment, verification, verified_by) on staff_rows to app_admin;
+grant update (storage, storage_key, storage_url, data) on files to app_admin;
 grant select, insert, update, delete on slots, third_assignments, club_leads, extensions to app_admin;
 grant select, insert, update, delete on resolutions to app_admin;
 grant select on scores to app_admin;
@@ -832,6 +837,7 @@ create policy files_assessor on files for select to app_assessor
   using (my_slot(club_id, req_id) is not null or is_third_for(club_id, req_id) or is_lead_for(club_id)
          or (staff_row_id is not null and (holds_staff_slot(club_id) or is_third_on_staff(club_id))));
 create policy files_admin on files for select to app_admin using (true);
+create policy files_admin_move on files for update to app_admin using (true) with check (true);
 
 create policy leads_self on club_leads for select to app_assessor using (lead_id = app_uid());
 create policy leads_admin on club_leads for all to app_admin using (true) with check (true);

@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/server.js",
     "reset": "rm -rf data/pgdata && echo Database reset. It will be re-seeded on next start.",
-    "test": "node --test test/access.test.js test/scoring.test.js test/staff.test.js",
+    "test": "node --test test/access.test.js test/scoring.test.js test/staff.test.js test/storage.test.js",
     "e2e": "node test/e2e.mjs"
   },
   "repository": {

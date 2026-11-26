@@ -73,6 +73,33 @@ Only share the address and password with people you are demonstrating to. This d
 | `DEMO_MODE` | `0` removes the demo mailbox (`/dev`); only once real email is connected |
 | `FRAMEWORK_FILE` | Use a framework file kept outside the repo |
 
+## Document storage (OneDrive)
+
+Uploaded evidence is stored in the database until OneDrive is connected. After that, new uploads go to OneDrive, and existing files can be moved across. The database keeps each file's record, so access rules stay in the platform: people always open documents through it, never by a OneDrive link.
+
+Folders are created automatically:
+
+```
+Club Assessment 2027 / Riverside Rovers FC / Delivery / D4 Sport Science Monitoring, Support & Athletic Development / file.pdf
+Club Assessment 2027 / Riverside Rovers FC / Staff Qualifications / Certificates - <person> / certificate.pdf
+```
+
+Setup (once). The admin **Storage** page shows these steps with the exact redirect address:
+
+1. In the Azure portal, go to Microsoft Entra ID, then App registrations, then New registration.
+   - Choose "Accounts in this organizational directory only".
+   - Add a Web redirect URI: `https://<your-site>/admin/storage/callback`.
+2. Create a client secret on the app's Certificates & secrets page.
+3. Add the Microsoft Graph delegated permissions `User.Read`, `offline_access` and `Files.ReadWrite.AppFolder`.
+4. Set these hosting variables: `MS_CLIENT_ID`, `MS_CLIENT_SECRET`, `MS_TENANT` (Directory ID) and `SECRET_KEY` (any long random text).
+5. Open Admin, then Storage, then **Connect OneDrive**, and sign in with the work account. Then use **Test upload**, and optionally **Move existing files to OneDrive**.
+
+Notes:
+- By default the platform can only see its own app folder (`OneDrive > Apps > ...`). If your organisation's OneDrive does not support app folders, set `ONEDRIVE_ACCESS=folder` and grant `Files.ReadWrite` instead. Files then go to `OneDrive > Club Assessment` (or `ONEDRIVE_FOLDER`).
+- The sign-in token is encrypted and kept on the volume, next to the database, so demo resets don't disconnect OneDrive. Resetting the demo does not delete files already in OneDrive.
+- Removed files go to the OneDrive recycle bin, where they can be recovered for 93 days.
+- For real club data, use an FQ-owned SharePoint site rather than a personal OneDrive. The storage code is the same; only the drive it points to changes.
+
 ## How it works
 
 **Framework file.** All FQ-specific content lives in `data/frameworks/fq-tier1-2027.json`: line items, weightings, score ranges, tick criteria, outcome bands, thresholds, phases, the partial-planning rule and the O8/O12 rule. The code has no FQ item codes in it. Point `FRAMEWORK_FILE` at a file outside the repo to keep FQ material out of the codebase.

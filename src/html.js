@@ -84,6 +84,6 @@ export const NAV = {
     ['/club/s/outcomes', 'Outcomes'], ['/club/s/nn', 'Non-negotiables'], ['/club/results', 'Results'], ['/club/team', 'Contacts']],
   assessor: [['/assessor', 'My work']],
   admin: [['/admin', 'Overview'], ['/admin/phases', 'Phases'], ['/admin/assignments', 'Assignments'], ['/admin/reconcile', 'Reconciliation'],
-    ['/admin/leaderboard', 'Leaderboard'], ['/admin/assessors', 'Assessors'], ['/admin/release', 'Release'], ['/admin/users', 'People'],
+    ['/admin/leaderboard', 'Leaderboard'], ['/admin/assessors', 'Assessors'], ['/admin/release', 'Release'], ['/admin/users', 'People'], ['/admin/storage', 'Storage'],
     ['/admin/audit', 'Audit log']],
 };

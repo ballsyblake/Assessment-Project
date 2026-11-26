@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
 import { openDb, sys, asUser, resetDb, schemaVersion } from './db.js';
 import { seed, autoComplete } from './seed.js';
+import { readFile } from './storage.js';
 import { layout, html, NAV, fmtDate } from './html.js';
 import { linkValid, requestCode, verifyCode, userForSession, endSession, issueLink, secureCookies } from './auth.js';
 import clubRoutes from './routes/club.js';
@@ -201,11 +202,12 @@ export async function createApp(opts = {}) {
 
   // File download: any signed-in role; RLS decides whether the row is visible.
   app.get('/files/:id', need('club', 'assessor', 'admin'), async (req, res) => {
-    const f = await req.db(async (tx) => (await tx.query('select filename, mime, data from files where id = $1', [Number(req.params.id)])).rows[0]);
+    const f = await req.db(async (tx) => (await tx.query('select filename, mime, data, storage, storage_key from files where id = $1', [Number(req.params.id)])).rows[0]);
     if (!f) return res.status(404).page('Not found', html`<h1>File not found</h1>`);
+    const bytes = await readFile(f); // database or OneDrive; access was checked above
     res.setHeader('Content-Type', f.mime);
     res.setHeader('Content-Disposition', `inline; filename="${f.filename.replace(/[^\w.\- ]/g, '_')}"`);
-    res.send(Buffer.from(f.data));
+    res.send(bytes);
   });
 
   app.use((req, res) => res.status(404).page('Not found', html`<h1>Not found</h1>`));
