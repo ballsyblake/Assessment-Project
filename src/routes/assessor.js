@@ -383,13 +383,18 @@ function commentForm(d, section, ready) {
 
 // Inputs for one item, by scoring type. `form` attribute lets them live outside the form element.
 export function suggestionBox(sg, q) {
-  return html`<div class="notice small"><strong>Suggested from the staff table: ${sg.score === null ? 'needs checking' : `${sg.score} / ${q.max_score}`}</strong>
+  return html`<div class="notice small"><strong>${sg.score === null ? 'Your decision: not calculated from the staff table' : `Suggested from the staff table: ${sg.score} / ${q.max_score}`}</strong>
     ${sg.check ? html` <span class="badge b-warn">Check</span>` : ''}
     <ul style="margin:4px 0 0 18px;padding:0">${sg.notes.map((n) => html`<li>${n}</li>`)}</ul>
     <div class="muted">Confirm or adjust. Apply the judgement rules (for example "Other" qualifications, two roles in the same phase) yourself.</div></div>`;
 }
 
 function scoreInputs(q, crit, mine, enabled, formId = 'scoreform', suggested = null) {
+  if (q.id === framework.staffScoring?.ssItem) {
+    const fs = formId ? `form="${formId}"` : '';
+    return html`<label class="small" style="display:block">Sports science category (from the certificate)<br><select name="s_${q.id}" ${raw(fs)} ${enabled ? '' : 'disabled'}><option value=""></option>
+      ${framework.staffScoring.sportsScienceTable.map((t) => html`<option value="${t.score}" ${mine && num(mine.score) === Number(t.score) ? 'selected' : ''}>${t.qualification} (${t.score})</option>`)}</select></label><div style="height:6px"></div>`;
+  }
   const f = formId ? `form="${formId}"` : '';
   const dis = enabled ? '' : 'disabled';
   if (q.type === 'ticks') {

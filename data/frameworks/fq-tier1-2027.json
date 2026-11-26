@@ -2165,6 +2165,7 @@
    "U9 Boys"
   ],
   "rules": [
+   "Head of Sports Science and Medicine: the club enters the actual qualification and certificate; the assessor chooses the category (University Degree 3, TAFE/Similar 2, Conditioning training course 1, none 0)",
    "TD occupying Head of Junior/Youth Academy role - both scores remain",
    "TD coaching 1 team - that coaching score lowered by 1 point (applied automatically)",
    "Same person in two of TD / Head of Youth / Head of Junior / Head of Girls - only one full time / part time assessment counts (applied automatically)",
@@ -2177,6 +2178,7 @@
    "Head of Junior/Youth coaching 1 team in other phase and 1 in own phase - youth score remains, junior 0",
    "Academy coach coaching two teams - both scores remain; maximum 2 coaching roles, the 3rd (lowest) is removed (applied automatically)",
    "If the confirmed qualification score is 0, the experience score is 0 (applied automatically)"
-  ]
+  ],
+  "ssItem": "T07"
  }
 }

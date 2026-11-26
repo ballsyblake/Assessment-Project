@@ -26,7 +26,6 @@ export const QUALIFICATION_GROUPS = (() => {
   return [
     ['Coaching qualifications', coach],
     ['Technical Director only', sc.tdTable.map((t) => t.qualification).filter((q) => !coach.includes(q))],
-    ['Sports science and medicine', sc.sportsScienceTable.map((t) => t.qualification)],
   ];
 })();
 export const QUAL_YEARS = framework.staffScoring?.experienceTable.map((t) => t.years.replace(/\s+/g, ' ')) ?? [];

@@ -8,7 +8,7 @@ const rows = [
   { position: 'Head of Youth Academy', person: 'Ash Lee', gender: 'M', qualification: 'A Diploma or Equivalent', employment_type: 'Full Time' },
   { position: 'Head of Junior Academy', person: 'Bo Ray', gender: 'M', qualification: 'C Diploma or Equivalent', employment_type: 'Part Time' },
   { position: 'Female Technical Lead', person: 'Cy Fox', gender: 'M', qualification: 'B Diploma or Equivalent' },
-  { position: 'Head of Sports Science and Medicine', person: 'Di Orr', gender: 'F', qualification: 'TAFE/Similar' },
+  { position: 'Head of Sports Science and Medicine', person: 'Di Orr', gender: 'F', qualification: 'Certificate IV in Fitness' },
   { position: 'Head Coach', team: 'U14 Boys', person: 'Ash Lee', gender: 'M', qualification: 'A Diploma or Equivalent', qual_years: '> 5 years' },
   { position: 'Head Coach', team: 'U14 Girls', person: 'Em Kay', gender: 'F', qualification: 'C Diploma or Equivalent', qual_years: '1-2 years' },
   { position: 'Head Coach', team: 'U9 Boys', person: 'Bo Ray', gender: 'M', qualification: 'C Diploma or Equivalent', qual_years: '3-4 years' },
@@ -16,10 +16,12 @@ const rows = [
 ];
 const s = suggestStaffScores(rows);
 
-test('lookup tables: TD table, leadership column, sports science table', () => {
+test('lookup tables: TD table, leadership column; sports science left to the assessor', () => {
   assert.equal(s.T01.score, 2); // A Diploma in the TD table
   assert.equal(s.T02.score, 3);
-  assert.equal(s.T07.score, 2); // TAFE/Similar
+  assert.equal(s.T07.score, null);
+  assert.equal(s.T07.check, true);
+  assert.match(s.T07.notes[0], /Assessor to choose the category/);
 });
 test('Female Technical Lead who is not female scores 0', () => assert.equal(s.T06.score, 0));
 test('TD coaching a team is lowered by 1; age group averages its teams', () => {

@@ -13,6 +13,7 @@ const back = (res, target, msg) => {
 const ALLOWED = /\.(pdf|docx?|xlsx?|pptx?|csv|png|jpe?g|txt|mp4|mov)$/i;
 const today = () => new Date().toISOString().slice(0, 10);
 const LOCKED = ['approved', 'not_accepted'];
+const SS_ROLE = framework.staffScoring?.positions?.T07 ?? 'Head of Sports Science and Medicine';
 
 // Is the club allowed to upload for this item right now? (The database enforces the same rule.)
 function canUpload(phase, extension, item) {
@@ -185,8 +186,9 @@ export default function clubRoutes() {
         <label>Person<br><input name="person" required value="${s.person ?? ''}"></label>
         <label>Role<br><select name="position" required>${STAFF_POSITIONS.map((p) => html`<option ${s.position === p ? 'selected' : ''}>${p}</option>`)}</select></label>
         <label>Team<br><select name="team">${STAFF_TEAMS.map((t) => html`<option value="${t}" ${s.team === t ? 'selected' : ''}>${t || '(none)'}</option>`)}</select></label>
-        <label>Current highest qualification<br><select name="qualification" required><option value=""></option>
+        <label>Current highest qualification (coaching roles)<br><select name="qualification"><option value=""></option>
           ${QUALIFICATION_GROUPS.map(([g, qs]) => html`<optgroup label="${g}">${qs.map((q) => html`<option ${s.qualification === q ? 'selected' : ''}>${q}</option>`)}</optgroup>`)}</select></label>
+        <label>Sports science / medicine qualification<br><input name="ss_qualification" value="${s.position === SS_ROLE ? s.qualification ?? '' : ''}" placeholder="Only for Head of Sports Science and Medicine, e.g. Bachelor of Exercise Science"></label>
         <label>Years holding this qualification<br><select name="qual_years"><option value=""></option>${QUAL_YEARS.map((y) => html`<option ${s.qual_years === y ? 'selected' : ''}>${y}</option>`)}</select></label>
         <label>Qualification expiry<br><input type="date" name="qual_expiry" value="${dateVal(s.qual_expiry)}"></label>
         <label>Gender<br><select name="gender"><option value=""></option>${['F', 'M', 'X'].map((g) => html`<option ${s.gender === g ? 'selected' : ''}>${g}</option>`)}</select></label>
@@ -221,7 +223,13 @@ export default function clubRoutes() {
     `);
   });
 
-  const staffFields = (b) => [b.position, b.person.trim(), b.gender || null, b.team || null, b.qualification.trim(), b.qual_expiry || null,
+  // Head of Sports Science: the club types the actual qualification; FQ's assessor decides its category.
+  const qualificationOf = (b) => {
+    const q = String(b.position === SS_ROLE ? b.ss_qualification ?? '' : b.qualification ?? '').trim();
+    if (!q) throw new Error(b.position === SS_ROLE ? 'Type the sports science or medicine qualification (as written on the certificate).' : 'Choose the current highest qualification.');
+    return q;
+  };
+  const staffFields = (b) => [b.position, b.person.trim(), b.gender || null, b.team || null, qualificationOf(b), b.qual_expiry || null,
     b.fa_number || null, b.blue_card || null, b.blue_card_expiry || null, b.years_at_club ? Number(b.years_at_club) : null, b.employment_type || null,
     b.qual_years || null];
 

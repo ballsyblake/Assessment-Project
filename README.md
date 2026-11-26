@@ -29,8 +29,8 @@ Six fictional clubs, eight assessors, one data officer and one admin. Each club 
 | Phase | State |
 |---|---|
 | Planning | Finished and closed. Its leaderboard is visible to the admin |
-| Staff Qualifications | Scored and locked. Two Riverside items differ and need a third assessor |
-| Non-negotiables | All final. Ready for the admin to close |
+| Staff Qualifications | Scored by one assessor per club, all final. Ready for the admin to close |
+| Non-negotiables | All final except Riverside NN9, where the two assessors differ and a third assessor is needed |
 | Delivery | Submission period: clubs uploading, assessors can review evidence. Scoring opens after the deadline |
 | Outcomes | Submission period |
 
@@ -39,7 +39,7 @@ Suggested walkthrough:
 | Sign in as | Try |
 |---|---|
 | `td@riverside-rovers.example` (club) | Planning is locked after its deadline; upload Delivery evidence; fix the returned D3 |
-| `admin@fq-assess.example` | Reconciliation > Riverside > Staff: assign a third assessor. Phases: move the Delivery deadline to yesterday to open scoring |
+| `admin@fq-assess.example` | Reconciliation > Riverside > Non-negotiables: assign a third assessor to NN9. Phases: move the Delivery deadline to yesterday to open scoring |
 | The third assessor | My work > Third assessments: see both scores and comments, decide |
 | An assessor with Delivery items | My work > club: mark criteria Yes, Partial or No, save, lock |
 | `sam.reid@fq-assess.example` (Riverside's lead) | Clubs you lead: final scores per reconciled section, write feedback |
@@ -100,7 +100,8 @@ The tick criteria in that file are **placeholders** drafted from the 2027 descri
 **Staff qualifications.**
 - Clubs pick each person's qualification and years held from FQ's lists.
 - The platform calculates a suggested score for each Technical Staff item, using FQ's lookup tables and the automatic rules (`src/staffCalc.js`, tables in the framework file). Age groups average over the coaches listed, so no "case" number is needed.
-- Assessors see the suggestion with its working, already filled in, and confirm or adjust it. The judgement rules, such as "Other" qualifications and heads coaching in their own phase, remain with them.
+- Assessors see the suggestion with its working, already filled in, and confirm or adjust it.
+- Head of Sports Science and Medicine: the club types the actual qualification and attaches the certificate; the assessor chooses the category (University Degree 3, TAFE/Similar 2, Conditioning training course 1, none 0). This matches how the 2026 rubric was used. The judgement rules, such as "Other" qualifications and heads coaching in their own phase, remain with them.
 - The admin sees the calculated total on the club's Staff tab.
 - Checked against the 2026 rubric workbooks: Brisbane Strikers 188 (FQ 188), Brisbane City 204.1 (FQ 203.67), once the sports science category is entered.
 

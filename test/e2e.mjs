@@ -174,6 +174,27 @@ await fillAll(a2);
 await go(a2, 'button:has-text("Lock in Delivery")');
 expect((await flash(a2)).includes('locked in'), `${secondName} locked Delivery at Riverside`);
 
+console.log('Sports science: club types the qualification, assessor picks the category');
+await admin.goto(`${BASE}/admin/phases`);
+await admin.selectOption('select[name=club_id]', { label: 'Riverside Rovers FC' });
+await admin.selectOption('select[name=phase]', 'staff');
+await admin.fill('input[name=until]', new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10));
+await go(admin, 'button:has-text("Grant extension")');
+await club.goto(`${BASE}/club/staff`);
+await club.fill('input[name=person]', 'Robin Example');
+await club.selectOption('select[name=position]', 'Head of Sports Science and Medicine');
+await club.fill('input[name=ss_qualification]', 'Graduate Certificate in Strength and Conditioning');
+await club.locator('input[name=certificate]').setInputFiles(tmp);
+await go(club, 'button:has-text("Add and submit")');
+expect((await flash(club)).includes('added'), 'club added sports science row with free-text qualification (under an extension)');
+expect((await text(club)).includes('Graduate Certificate in Strength and Conditioning'), 'free-text qualification stored');
+const staffAssessor = await login('sam.reid@fq-assess.example');
+await staffAssessor.goto(`${BASE}/assessor/club/1?phase=staff`);
+expect((await text(staffAssessor)).includes('Sports science category (from the certificate)'), 'assessor chooses the sports science category');
+expect((await text(staffAssessor)).includes('Assessor to choose the category'), 'calculator leaves sports science to the assessor');
+await shot(staffAssessor, 'assessor-staff');
+await staffAssessor.context().close();
+
 console.log('Lead (CDA) writes feedback; never sees individual scores');
 const lead = await login('sam.reid@fq-assess.example');
 await lead.goto(`${BASE}/assessor/lead/1`);

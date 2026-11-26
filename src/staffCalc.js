@@ -54,8 +54,9 @@ export function suggestStaffScores(staff) {
   const ss = person(c.positions.T07);
   if (!ss) set('T07', 0, ['No Head of Sports Science and Medicine listed']);
   else {
-    const t = find(c.sportsScienceTable, 'qualification', ss.qualification);
-    set('T07', t?.score ?? null, [t ? `${ss.person}: ${ss.qualification} = ${t.score}` : `${ss.person}: "${ss.qualification}" needs checking against the sports science table`], !t);
+    // The assessor chooses the category from the certificate (not the club).
+    set('T07', null, [`${ss.person}: "${ss.qualification}". Assessor to choose the category from the certificate:
+      ${c.sportsScienceTable.map((t) => `${t.qualification} = ${t.score}`).join(', ')}`.replace(/\s+/g, ' ')], true);
   }
 
   // Coaching rows with automatic adjustments

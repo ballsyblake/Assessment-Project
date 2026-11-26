@@ -180,6 +180,7 @@ export async function autoComplete({ phases, leaveDisputes = 0, close = true, co
           const s = genScore(req, cfg.q, rand, h.slot === 'second' ? firstScore : null);
           // Staff items: the first assessor accepts the calculated suggestion where there is one.
           if (req.section === 'staff' && h.slot === 'first' && staffSuggest[req.id]?.score != null) s.score = staffSuggest[req.id].score;
+          if (req.id === framework.staffScoring?.ssItem) s.score = cfg.q > 0.7 ? 3 : 2; // assessor's category: degree or TAFE
           if (req.id === 'NN7' && cfg.key === 'riverside') s.score = 0.5; // on notice again: shows the downgrade rule
           if (req.id === 'NN9' && cfg.key === 'riverside' && h.slot === 'second') s.score = firstScore.score === 3 ? 2 : 3; // left for a third assessor
           await as(h.assessor_id);
@@ -254,7 +255,7 @@ async function addStaff(club, uploader, status) {
     if (position === 'Technical Director') tdName = person;
     if (team === 'U14 Boys' && tdName) person = tdName;
     const qual = position === 'Technical Director' ? (q > 0.75 ? 'A Diploma + 5+ years at the Current Club' : q > 0.55 ? 'A Diploma or Equivalent' : 'B Diploma or Equivalent')
-      : position === 'Head of Sports Science and Medicine' ? (q > 0.7 ? 'University Degree' : 'TAFE/Similar')
+      : position === 'Head of Sports Science and Medicine' ? (q > 0.7 ? 'Bachelor of Exercise and Sport Science' : 'Certificate IV in Fitness')
       : position === 'Head of Goalkeeping' ? (q > 0.7 ? 'B Diploma GK or Level 2 GK' : 'C Diploma GK or Level 1 GK')
       : i < 7 ? pick(COACH_QUALS.slice(0, 3)) : pick(COACH_QUALS);
     const employment = i < 4 ? (q > 0.65 || i === 0 ? 'Full Time' : 'Part Time') : position === 'Head Coach' ? 'Casual' : 'Part Time';
@@ -327,7 +328,7 @@ export async function seed({ issueLinks = true } = {}) {
 
   // Finished phases, with two Staff disputes left for the admin to send to a third assessor.
   await autoComplete({ phases: ['planning'], seed: 11 });
-  await autoComplete({ phases: ['staff'], seed: 13 });
+  await autoComplete({ phases: ['staff'], close: false, seed: 13 }); // complete, left for the admin to close
   await autoComplete({ phases: ['nn'], leaveDisputes: 1, seed: 12 });
 
   // Delivery submission period: a mix of club progress.
