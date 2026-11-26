@@ -85,6 +85,8 @@ function slotFor({ req, itemIdx, clubIdx, assessors, dataOfficer }) {
   const n = assessors.length;
   // Staff qualifications: one assessor per club confirms the calculated scores.
   if (req.section === 'staff') return { first: assessors[clubIdx % n] };
+  // Compliance non-negotiables (yes/no document checks): one assessor per club.
+  if (req.section === 'nn' && req.assessors === 1) return { first: assessors[(clubIdx + 2) % n] };
   if (req.assessors === 1) return { first: req.type === 'ticks' ? assessors[itemIdx % n] : dataOfficer };
   if (req.kind === 'onfield') return { first: assessors[(clubIdx * 2) % n], second: assessors[(clubIdx * 2 + 5) % n] };
   return { first: assessors[itemIdx % n], second: assessors[(itemIdx + 3) % n] };

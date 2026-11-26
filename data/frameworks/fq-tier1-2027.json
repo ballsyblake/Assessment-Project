@@ -1774,7 +1774,7 @@
    "guidance": "Fee breakdown using the FQ fee template.",
    "descriptor": "The club is required to provide a breakdown of fees using the FQ template to ensure comparability across all clubs. Additionally, it must provide a statement confirming that all academy development fees are exclusively used to support the club’s academy program",
    "type": "yesno",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "NN2",
@@ -1788,7 +1788,7 @@
    "guidance": "List of scholarship players and the scholarship amounts.",
    "descriptor": "The club is required to provide a list of players who have received a full or partial scholarship for the current season, in accordance with the licence agreement (if applicable).",
    "type": "yesno",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "NN3",
@@ -1802,7 +1802,7 @@
    "guidance": "Squadi export showing all coaches are registered.",
    "descriptor": "All club coaches across all programs must be registered in Squadi, the official system for the season. Registration for coaches is free of charge.\n\nAs part of the Technical Staff Qualification submission, the club is required to provide a list containing all coaches' details and their team allocations.",
    "type": "yesno",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "NN4",
@@ -1816,7 +1816,7 @@
    "guidance": "Complete player lists for every academy team.",
    "descriptor": "The club is required to provide a complete list of players by the deadline set by FQ before the season commences. If the squad list is incomplete or changes occur, regular updates must be provided to FQ's Competition and Technical Department. All teams must be fielded in accordance with the licence agreement.",
    "type": "yesno",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "NN5",
@@ -1830,7 +1830,7 @@
    "guidance": "Technical Director qualification or current enrolment evidence.",
    "descriptor": "Tier 1 Club Technical Directors must hold or be enrolled in the current season in the AFC/Football Australia 'A' Diploma or Licence, or an overseas equivalent. The Technical Director must reside in Queensland to attend training, games, meetings, and fulfil club duties.\n\nWhile the qualification remains a key requirement, Football Queensland recognises that other factors may contribute to a Technical Director's suitability for the role. These include previous experience as a Technical Director, coaching experience, the level of support provided by the club, the club's technical environment, and equity considerations.\n\nAny request for an exemption or consideration of exceptional circumstances will be assessed on a case-by-case basis, at the sole discretion of FQ, taking into account the supporting documentation and evidence provided by the club. An exemption is not automatic and will only be considered where sufficient justification is demonstrated.",
    "type": "yesno",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "NN6",
@@ -1844,7 +1844,7 @@
    "guidance": "Blue card numbers and expiry dates for all technical staff.",
    "descriptor": "As part of the Technical Staff Qualification submission, the club is required to provide a list including the full names, Blue Card numbers, and expiry dates of all coaches, support staff, and administrators involved in the academy program. The template provided by FQ must be used for this submission.",
    "type": "yesno",
-   "assessors": 2
+   "assessors": 1
   },
   {
    "id": "NN7",
