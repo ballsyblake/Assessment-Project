@@ -134,7 +134,7 @@ export function evidenceBlock({ q, it, files, names, clubId, canAct, isAdmin }) 
     <div class="guid">${q.guidance} <span class="small">Evidence: ${q.evidence}.</span></div>
     ${it.return_comment ? html`<div class="comment small"><strong>${it.status === 'not_accepted' ? 'Not accepted' : 'Returned'}:</strong> ${it.return_comment}</div>` : ''}
     ${files.length ? html`<ul class="files">${files.map((f) => html`<li><a href="/files/${f.id}" target="_blank">${f.filename}</a>
-      <span class="muted small">${kb(f.size)} · ${fmtDate(f.uploaded_at)}</span></li>`)}</ul>`
+      <span class="muted small">${kb(f.size)}, ${fmtDate(f.uploaded_at)}</span></li>`)}</ul>`
       : q.kind === 'document' ? html`<div class="small muted">No evidence uploaded.</div>` : ''}
     ${actions}`;
 }

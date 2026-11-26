@@ -46,7 +46,7 @@ export function shield(rating, size = 96) {
   return html`<svg class="shield" width="${size}" height="${size * 1.15}" viewBox="0 0 100 115" aria-label="${rating} rating">
     <path d="M50 4 L92 18 V55 C92 82 72 101 50 111 C28 101 8 82 8 55 V18 Z" fill="${c}" stroke="#1b2a41" stroke-width="3"/>
     <path d="M50 14 L82 25 V55 C82 76 67 91 50 99 C33 91 18 76 18 55 V25 Z" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
-    <text x="50" y="62" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="${rating.length > 8 ? 10 : 15}" fill="#fff">${rating.toUpperCase()}</text>
+    <text x="50" y="62" text-anchor="middle" font-family="Barlow Semi Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="${rating.length > 8 ? 10 : 15}" fill="#fff">${rating.toUpperCase()}</text>
   </svg>`;
 }
 
@@ -58,11 +58,14 @@ export function layout({ title, user, nav = [], active = '', body, flash, error 
     .sort((a, b) => b.length - a.length)[0] ?? '';
   return html`<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${title} · Club Assessment</title><link rel="stylesheet" href="/static/style.css"></head>
+<title>${title} – Club Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="/static/style.css"></head>
 <body>
 <header class="top"><div class="wrap top-in">
-  <a class="brand" href="/">Club Assessment <span>Prototype</span></a>
-  ${user ? html`<div class="who"><span>${user.name} · ${user.role === 'club' ? 'Club' : user.role === 'admin' ? 'Admin' : 'Assessor'}</span>
+  <a class="brand" href="/">Club Assessment <span>prototype</span></a>
+  ${user ? html`<div class="who"><span>${user.name} (${user.role === 'club' ? 'club contact' : user.role === 'admin' ? 'admin' : 'assessor'})</span>
     <form method="post" action="/logout"><button class="link">Sign out</button></form></div>` : ''}
 </div>
 ${nav.length ? html`<nav class="navbar" aria-label="Main"><div class="wrap">${nav.map(([href, label]) => html`<a href="${href}" class="${current === href ? 'on' : ''}" ${current === href ? raw('aria-current="page"') : ''}>${label}</a>`)}</div></nav>` : ''}

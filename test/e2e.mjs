@@ -151,7 +151,7 @@ await delRow.locator('input[type=date]').fill(yesterday);
 await go(admin, delRow.locator('button', { hasText: 'Save' }));
 await admin.goto(`${BASE}/admin/club/1?phase=delivery`);
 const holders = await admin.locator('#D1 .row .small.muted').innerText();
-const [firstName, secondName] = [holders.match(/first: ([^·]+)/)[1].trim(), holders.match(/second: (.+)$/)[1].trim()];
+const [firstName, secondName] = [holders.match(/first: ([^,]+)/)[1].trim(), holders.match(/second: (.+)$/)[1].trim()];
 console.log(`  D1 at Riverside: first ${firstName}, second ${secondName}`);
 
 const a1 = await login(emailOf(firstName));

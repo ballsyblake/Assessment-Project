@@ -57,7 +57,7 @@ export default function assessorRoutes() {
       const clubs = byPhase(p.id);
       if (!clubs.length) return '';
       const head = html`<div class="phase-head"><h2>${p.label}</h2>
-        ${p.closed ? html`<span class="badge b-done">Closed</span>` : p.submissionOpen ? html`<span class="badge b-submitted">Submission period · due ${fmtDay(p.deadline)}</span>`
+        ${p.closed ? html`<span class="badge b-done">Closed</span>` : p.submissionOpen ? html`<span class="badge b-submitted">Submission period, due ${fmtDay(p.deadline)}</span>`
           : html`<span class="badge b-warn">Scoring</span>`}</div>`;
       if (p.closed) return html`${head}<p class="small muted">Finished. ${clubs.length} club(s).</p>`;
       if (p.submissionOpen) {
@@ -68,7 +68,7 @@ export default function assessorRoutes() {
             const sub = docs.filter((i) => i.status && i.status !== 'not_started').length;
             const ok = docs.filter((i) => i.status === 'approved').length;
             return html`<tr><td><strong>${c.name}</strong></td><td class="small">${c.items.map((i) => i.req_id).join(', ')}</td>
-              <td style="min-width:180px">${docs.length ? html`${progressBar(ok, sub - ok, docs.length)}<span class="small muted">${sub} of ${docs.length} submitted · ${ok} verified</span>` : html`<span class="small muted">Observed or data items</span>`}</td>
+              <td style="min-width:180px">${docs.length ? html`${progressBar(ok, sub - ok, docs.length)}<span class="small muted">${sub} of ${docs.length} submitted, ${ok} verified</span>` : html`<span class="small muted">Observed or data items</span>`}</td>
               <td><a class="btn small secondary" href="/assessor/club/${c.id}?phase=${p.id}">Open</a></td></tr>`;
           })}</table></div>`;
       }
@@ -97,7 +97,7 @@ export default function assessorRoutes() {
       ${d.leadRows.length ? html`<h2>Clubs you lead</h2>
         <div class="tablewrap"><table><tr><th>Club</th><th>Submission</th><th>Feedback comments</th><th></th></tr>
         ${d.leadRows.map((l) => html`<tr><td><strong>${l.club.name}</strong><br><span class="small muted">Pool ${l.club.pool}</span></td>
-          <td style="min-width:180px">${progressBar(l.prog.approved, l.prog.submitted, l.prog.total)}<span class="small muted">${l.prog.approved} approved · ${l.prog.submitted} awaiting review</span></td>
+          <td style="min-width:180px">${progressBar(l.prog.approved, l.prog.submitted, l.prog.total)}<span class="small muted">${l.prog.approved} approved, ${l.prog.submitted} awaiting review</span></td>
           <td>${l.comments} of ${COMMENT_SECTIONS.length} written</td>
           <td><a class="btn small secondary" href="/assessor/lead/${l.club.id}">Open</a></td></tr>`)}
         </table></div>` : ''}
@@ -149,7 +149,7 @@ export default function assessorRoutes() {
     res.page(d.club.name, html`
       <p><a href="/assessor">&larr; My work</a></p>
       <div class="row"><div><h1>${d.club.name}</h1>
-        <p class="sub">${sectionLabel(phase)} · Pool ${d.club.pool} · current shield ${d.club.current_shield} · ${d.reqs.length} item(s) assigned to you</p></div>
+        <p class="sub">${sectionLabel(phase)}, Pool ${d.club.pool}, current shield ${d.club.current_shield}, ${d.reqs.length} item(s) assigned to you</p></div>
         <span class="spacer"></span>
         <div class="card" style="margin:0"><div class="small muted">My scoring</div>
           <div><strong>${scored}</strong> of ${d.reqs.length} scored</div>
@@ -235,8 +235,8 @@ export default function assessorRoutes() {
     res.page('Third assessment', html`
       <p><a href="/assessor">&larr; My work</a></p>
       <h1>Third assessment: ${d.q.id} ${d.q.name}</h1>
-      <p class="sub">${d.club.name} · max ${d.q.max_score} · weighting ${d.q.weight}. Read both assessors' comments, check the evidence, then mark the criteria yourself. Your score becomes the final score.</p>
-      <div class="grid">${['first', 'second'].map((sl) => s[sl] ? html`<div class="card"><div class="small muted">${sl} assessor · ${s[sl].name}</div>
+      <p class="sub">${d.club.name}, max ${d.q.max_score}, weighting ${d.q.weight}. Read both assessors' comments, check the evidence, then mark the criteria yourself. Your score becomes the final score.</p>
+      <div class="grid">${['first', 'second'].map((sl) => s[sl] ? html`<div class="card"><div class="small muted">${sl} assessor, ${s[sl].name}</div>
         <div class="stat">${scoreText(d.q, s[sl].score)}</div><div class="small">${s[sl].comment ?? html`<span class="muted">No comment</span>`}</div></div>` : '')}</div>
       ${criteria.length ? html`<h2>Criteria marks</h2><div class="tablewrap"><table class="cmp"><tr><th>#</th><th>Criterion</th><th>First</th><th>Second</th></tr>
         ${criteria.map((c, i) => {
@@ -311,7 +311,7 @@ export default function assessorRoutes() {
         const lines = d.reqs.filter((q) => q.section === p.id && resBy[q.id]?.applies);
         return html`<div class="card">
           <div class="row"><strong>${p.label}</strong>${done ? html`<span class="badge b-done">Reconciled</span>` : html`<span class="badge b-muted">In progress</span>`}<span class="spacer"></span>
-            <span class="small muted">${pr ? `${pr.approved} approved · ${pr.submitted} awaiting review of ${pr.total}` : ''}</span></div>
+            <span class="small muted">${pr ? `${pr.approved} approved, ${pr.submitted} awaiting review of ${pr.total}` : ''}</span></div>
           ${pr ? progressBar(pr.approved, pr.submitted, pr.total) : ''}
           ${done ? html`<details><summary>Final scores (${lines.length} items)</summary><div class="tablewrap"><table>
               <tr><th>Item</th><th>Line item</th><th class="num">Final</th></tr>
@@ -361,7 +361,7 @@ function highlightsForm(d) {
       <form method="post" action="/assessor/lead/${d.club.id}/highlights"><input type="hidden" name="kind" value="${kind}">
         <div style="max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:6px 10px">
         ${lines.map((l) => html`<label class="small" style="display:block"><input type="checkbox" name="items" value="${l.id}" ${chosen.has(l.id) ? 'checked' : ''}>
-          ${l.id} ${l.name} <span class="muted">· ${fmtNum(l.score)}/${l.max_score} · ${fmtNum(l.missed)} pts missed</span></label>`)}</div>
+          ${l.id} ${l.name} <span class="muted">· ${fmtNum(l.score)}/${l.max_score}, ${fmtNum(l.missed)} pts missed</span></label>`)}</div>
         <div class="row" style="margin-top:6px"><button class="small">Save my list</button>
           ${own ? html`<button class="small secondary" name="reset" value="1" formnovalidate>Use suggested list</button>` : ''}</div></form>`}</div>`;
   };
@@ -405,7 +405,7 @@ function scoreInputs(q, crit, mine, enabled, formId = 'scoreform', suggested = n
   }
   if (q.type === 'value') {
     return html`<label class="small">Measured value (${q.unit})<br><input type="number" step="0.1" name="v_${q.id}" value="${mine?.value ?? ''}" ${raw(f)} ${dis}></label>
-      <div class="small muted">Bands: ${(crit.bands ?? []).map((b) => `${b.min}+ = ${b.score}`).join(' · ')}</div>`;
+      <div class="small muted">Bands: ${(crit.bands ?? []).map((b) => `${b.min}+ = ${b.score}`).join(', ')}</div>`;
   }
   if (q.type === 'threshold') {
     return html`<label class="small">Shield threshold outcome<br><select name="s_${q.id}" ${raw(f)} ${dis}><option value=""></option>
@@ -417,7 +417,7 @@ function scoreInputs(q, crit, mine, enabled, formId = 'scoreform', suggested = n
       <option value="1" ${mine && num(mine.score) === 1 ? 'selected' : ''}>Met</option><option value="0" ${mine && num(mine.score) === 0 ? 'selected' : ''}>Not met</option></select></label>`;
   }
   const val = mine ? num(mine.score) : (enabled && suggested !== null && suggested !== undefined ? suggested : '');
-  return html`<label class="small">Score (0-${q.max_score})${!mine && val !== '' ? ' · prefilled with the suggestion' : ''}<br><input type="number" min="0" max="${q.max_score}" step="0.1" name="s_${q.id}" value="${val}" ${raw(f)} ${dis}></label>`;
+  return html`<label class="small">Score (0-${q.max_score})${!mine && val !== '' ? ', prefilled with the suggestion' : ''}<br><input type="number" min="0" max="${q.max_score}" step="0.1" name="s_${q.id}" value="${val}" ${raw(f)} ${dis}></label>`;
 }
 
 function itemCard(q, d, scoringOpen) {

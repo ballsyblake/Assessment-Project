@@ -80,9 +80,9 @@ export default function adminRoutes() {
       <div class="tablewrap"><table>
         <tr><th>Club</th><th>Submission</th>${d.phases.map((p) => html`<th>${p.label}</th>`)}<th></th></tr>
         ${d.list.map((s) => html`<tr>
-          <td><strong>${s.club.name}</strong><br><span class="small muted">Pool ${s.club.pool} · ${s.club.current_shield}<br>Lead: ${s.club.lead ?? 'none'}</span></td>
+          <td><strong>${s.club.name}</strong><br><span class="small muted">Pool ${s.club.pool}, ${s.club.current_shield}<br>Lead: ${s.club.lead ?? 'none'}</span></td>
           <td style="min-width:150px">${progressBar(s.prog.approved, s.prog.submitted, s.prog.total)}
-            <span class="small muted">${s.prog.approved} approved · ${s.prog.submitted} submitted / ${s.prog.total}</span></td>
+            <span class="small muted">${s.prog.approved} approved, ${s.prog.submitted} submitted / ${s.prog.total}</span></td>
           ${d.phases.map((p) => html`<td style="min-width:120px">${cell(s.status[p.id], p)}</td>`)}
           <td><a class="btn small secondary" href="/admin/club/${s.club.id}">Evidence</a>
             <a class="btn small" href="/admin/reconcile/${s.club.id}">Reconcile</a></td>
@@ -132,7 +132,7 @@ export default function adminRoutes() {
       ${d.reqs.filter((q) => d.applies[q.id]).map((q) => {
         const sl = d.slots.filter((s) => s.req_id === q.id);
         return html`<div class="card" id="${q.id}"><div class="row"><span style="font-weight:700;color:var(--brand)">${q.id}</span><strong>${q.name}</strong><span class="spacer"></span>
-          <span class="small muted">${sl.length ? sl.map((s) => `${s.slot}: ${d.names[s.assessor_id]}`).join(' · ') : 'Not assigned'}</span></div>
+          <span class="small muted">${sl.length ? sl.map((s) => `${s.slot}: ${d.names[s.assessor_id]}`).join(', ') : 'Not assigned'}</span></div>
           ${q.kind !== 'staff' ? evidenceBlock({ q, it: d.items[q.id] ?? { status: 'not_started' }, files: d.files.filter((f) => f.req_id === q.id), names: d.names, clubId, canAct: true, isAdmin: true }) : ''}</div>`;
       })}`, { active: '/admin' });
   });
@@ -351,14 +351,14 @@ export default function adminRoutes() {
           const holders = x.holders ?? [];
           const eligible = d.assessors.filter((a) => !holders.some((h) => h.assessor_id === a.id));
           return html`<tr id="${x.id}">
-          <td><strong>${x.id}</strong> ${x.name}<br><span class="small muted">max ${x.max_score} · x${x.weight}${x.assessors === 1 ? ' · single assessor' : ''}</span></td>
+          <td><strong>${x.id}</strong> ${x.name}<br><span class="small muted">max ${x.max_score}, x${x.weight}${x.assessors === 1 ? ', single assessor' : ''}</span></td>
           <td class="small">${holders.map((h) => html`${h.slot}: ${h.name} ${h.locked ? html`&#10003;` : html`<span class="muted">(open)</span>`}<br>`)}</td>
           <td class="num">${x.sc.first ? scoreText(x, x.sc.first.score) : '–'}${x.sc.first?.comment ? html`<div class="small muted" style="max-width:220px;text-align:left">${x.sc.first.comment}</div>` : ''}</td>
           <td class="num">${x.sc.second ? scoreText(x, x.sc.second.score) : '–'}${x.sc.second?.comment ? html`<div class="small muted" style="max-width:220px;text-align:left">${x.sc.second.comment}</div>` : ''}</td>
           <td><span class="badge ${STATE[x.state][0]}">${STATE[x.state][1]}</span>
             ${x.tick_mismatch ? html`<br><span class="badge b-warn">Same score, different criteria marks</span>` : ''}
             ${x.third_name ? html`<div class="small muted">Third: ${x.third_name}</div>` : ''}${ticksTable(x)}</td>
-          <td>${x.final_score !== null ? html`<strong>${scoreText(x, x.final_score)}</strong><div class="small muted">${METHOD[x.method]}${x.resolver ? ` · ${x.resolver}` : ''}</div>
+          <td>${x.final_score !== null ? html`<strong>${scoreText(x, x.final_score)}</strong><div class="small muted">${METHOD[x.method]}${x.resolver ? `, ${x.resolver}` : ''}</div>
             ${x.note && x.method !== 'agreed' && x.method !== 'single' ? html`<div class="small">${x.note}</div>` : ''}` : ''}</td>
           <td>${ph.closed ? (d.result?.released_at && !d.result?.confirmed_at && x.final_score !== null ? html`<form method="post" action="/admin/reconcile/${clubId}/${x.id}/override" class="inline">
               ${scoreField(x)}<input name="note" required placeholder="Review outcome (from email)" style="width:170px"><button class="small secondary">Apply review outcome</button></form>
@@ -497,7 +497,7 @@ export default function adminRoutes() {
           ${released ? '' : html`<button class="small secondary">Save</button>`}</form>
           ${g.pastDeadline ? html`<span class="badge b-approved">passed</span>` : html`<span class="badge b-warn">not reached</span>`}</dd>
         <dt>Phases</dt><dd>${g.openPhases.length ? html`<span class="badge b-warn">Open: ${g.openPhases.map((p) => p.label).join(', ')}</span>` : html`<span class="badge b-approved">All closed</span>`}</dd>
-        <dt>Thresholds</dt><dd>${THRESHOLDS.map((t) => `${t.rating} ${t.min}%`).join(' · ')}</dd></dl></div>
+        <dt>Thresholds</dt><dd>${THRESHOLDS.map((t) => `${t.rating} ${t.min}%`).join(', ')}</dd></dl></div>
       <div class="tablewrap"><table><tr><th>Club</th><th>Scoring</th><th>Lead comments</th><th>Rating</th><th></th></tr>
         ${g.list.map((x) => html`<tr><td>${x.club.name}</td>
           <td>${x.unresolved ? html`<span class="badge b-bad">${x.unresolved} item(s) not final</span>` : html`<span class="badge b-approved">Complete</span>`}</td>
@@ -584,7 +584,7 @@ export default function adminRoutes() {
       <h1>People</h1><p class="sub">Only pre-registered addresses can sign in. Issuing a new link cancels the person's previous link. Leads are assessor accounts linked to clubs on the Assignments page.</p>
       <div class="tablewrap"><table><tr><th>Name</th><th>Role</th><th>Email</th><th>Active link</th><th></th></tr>
         ${users.map((u) => html`<tr style="${u.active ? '' : 'opacity:.5'}"><td>${u.name}</td>
-          <td>${u.role}${u.club ? html`<br><span class="small muted">${u.club}${u.is_primary ? ' · primary' : ''}</span>` : ''}</td>
+          <td>${u.role}${u.club ? html`<br><span class="small muted">${u.club}${u.is_primary ? ', primary' : ''}</span>` : ''}</td>
           <td class="mono">${u.email}</td>
           <td class="small">${L[u.id] ? html`issued ${fmtDate(L[u.id].issued)}${L[u.id].used ? html`<br>last used ${fmtDate(L[u.id].used)}` : ''}` : html`<span class="muted">none</span>`}</td>
           <td><form method="post" action="/admin/users/${u.id}/link" class="inline"><button class="small" ${u.active ? '' : 'disabled'}>Issue new link</button></form>

@@ -52,24 +52,26 @@ export default function clubRoutes() {
     const link = (s) => (s === 'staff' ? '/club/staff' : `/club/s/${s}`);
     res.page('Dashboard', html`
       <h1>${d.club.name}</h1>
-      <p class="sub">${framework.name} · Pool ${d.club.pool}</p>
+      <p class="sub">${framework.name}, Pool ${d.club.pool}</p>
       ${extra.result ? html`<div class="notice row">${shield(extra.result.rating, 40)}<div><strong>Your results are available.</strong>
         <a href="/club/results">View results</a></div></div>` : ''}
       ${returned.length || extra.staff.some((s) => s.status === 'returned') ? html`<div class="warnbox"><strong>Needs your attention:</strong>
         item(s) returned with a comment from FQ.
         ${returned.map((i) => html` <a href="/club/s/${d.reqs.find((x) => x.id === i.req_id).section}#${i.req_id}">${i.req_id}</a>`)}
         ${extra.staff.some((s) => s.status === 'returned') ? html` <a href="/club/staff">staff table</a>` : ''}</div>` : ''}
-      <div class="grid">
+      <ul class="sections">
         ${SECTIONS.map((s) => {
           const p = prog[s.id];
           const ph = d.phases.find((x) => x.id === s.id);
-          return html`<a class="card" href="${link(s.id)}" style="text-decoration:none;color:inherit">
-            <div class="row"><strong>${s.label}</strong><span class="spacer"></span>${deadlineNote(ph, d.ext.find((e) => e.phase === s.id))}</div>
-            ${progressBar(p.approved, p.submitted, p.total, s.label)}
-            <div class="small muted">${p.approved} approved · ${p.submitted} awaiting review${p.returned ? html` · <span style="color:var(--warn)">${p.returned} returned</span>` : ''} · ${p.total} ${s.id === 'staff' ? 'positions' : 'items'}</div>
-          </a>`;
+
+          return html`<li><a href="${link(s.id)}">
+            <span class="name">${s.label}</span>
+            <span class="bar-cell">${progressBar(p.approved, p.submitted, p.total, s.label)}
+              <span class="counts">${p.approved} of ${p.total} ${s.id === 'staff' ? 'positions' : 'items'} approved${p.submitted ? `, ${p.submitted} awaiting review` : ''}${p.returned ? html`, <strong style="color:var(--amber)">${p.returned} returned</strong>` : ''}</span></span>
+            <span class="when">${deadlineNote(ph, d.ext.find((e) => e.phase === s.id))}</span>
+          </a></li>`;
         })}
-      </div>
+      </ul>
       <div class="legend"><span><i style="background:var(--ok)"></i>Approved</span><span><i style="background:var(--ok-soft)"></i>Submitted, awaiting review</span></div>
       <p class="small muted" style="margin-top:20px">Uploads close at each section's deadline. Items observed by FQ, and outcomes FQ assesses from its own data, are shown for information only. Results are released by FQ at the end of the cycle.</p>
     `);
@@ -121,7 +123,7 @@ export default function clubRoutes() {
                   : html`<span class="badge b-muted">Carried forward</span> <span class="muted small">Last cycle's score is kept.</span> ${open ? html`<button class="small secondary" ${chosen >= maxOpt ? 'disabled' : ''}>Choose this item</button>` : ''}`}
               </form>` : ''}
             ${fl.length ? html`<ul class="files">${fl.map((f) => html`<li>
-              <a href="/files/${f.id}">${f.filename}</a><span class="muted small">${kb(f.size)} · ${fmtDate(f.uploaded_at)}</span>
+              <a href="/files/${f.id}">${f.filename}</a><span class="muted small">${kb(f.size)}, ${fmtDate(f.uploaded_at)}</span>
               ${!locked && open ? html`<form method="post" action="/club/item/${q.id}/file/${f.id}/delete"><button class="small secondary">Remove</button></form>` : ''}
             </li>`)}</ul>` : ''}
             ${isDoc && !locked && it.selected && open ? html`<form class="inline" method="post" action="/club/item/${q.id}/upload" enctype="multipart/form-data">
@@ -359,15 +361,15 @@ export function resultsView(result, club, { preview = false } = {}) {
       const areas = det.areas?.[s] ?? [];
       return html`<section class="report-section">
         <div class="phase-head"><h2><span class="swatch" style="background:${SECTION_COLOUR[s]}"></span>${sectionLabel(s)}</h2>
-          <span class="muted">${fmtNum(b.points)} of ${fmtNum(b.max)} points · <span class="grade ${pctClass(b.pct)}">${b.pct}%</span></span></div>
+          <span class="muted">${fmtNum(b.points)} of ${fmtNum(b.max)} points, <span class="grade ${pctClass(b.pct)}">${b.pct}%</span></span></div>
         <div class="tablewrap"><table class="report">
           ${areas.map((a) => html`
             <tr class="area-head"><th colspan="2">${a.name}</th><th class="num">Club score</th><th class="num">Weighting</th><th class="num">Points</th></tr>
             ${a.lines.map((l) => html`<tr><td class="code-cell">${l.id}</td><td>${l.name}${l.source === 'carried forward' ? html` <span class="badge b-muted">carried forward</span>` : ''}
-              ${l.source === 'rolling average' ? html` <span class="badge b-muted">2-year average</span><div class="small muted">This year ${fmtNum(l.current)} · last year ${fmtNum(l.prior)}</div>` : ''}
+              ${l.source === 'rolling average' ? html` <span class="badge b-muted">2-year average</span><div class="small muted">This year ${fmtNum(l.current)}, last year ${fmtNum(l.prior)}</div>` : ''}
               ${l.reviewedFrom !== null && l.reviewedFrom !== undefined ? html` <span class="badge b-submitted">Changed after review (${l.current - l.reviewedFrom > 0 ? '+' : ''}${fmtNum(l.current - l.reviewedFrom)})</span>` : ''}</td>
               <td class="num">${fmtNum(l.score)}</td><td class="num">${l.weight}</td><td class="num">${fmtNum(l.points)}</td></tr>`)}
-            <tr class="area-total"><td colspan="2">Area: ${fmtNum(a.points)} of ${fmtNum(a.max)} · ${fmtNum(a.missed)} points missed</td>
+            <tr class="area-total"><td colspan="2">Area: ${fmtNum(a.points)} of ${fmtNum(a.max)}, ${fmtNum(a.missed)} points missed</td>
               <td colspan="3" class="num"><span class="grade ${pctClass(a.pct)}">${a.pct}%</span></td></tr>`)}
         </table></div>
         ${s === 'planning' && det.rolling ? html`<p class="small muted">Pool ${club.pool}: planning uses a two-year rolling average. Items assessed this year score the average of this year and last year; items not chosen keep last year's score.</p>` : ''}

@@ -47,7 +47,7 @@ export async function createApp(opts = {}) {
     const token = crypto.createHmac('sha256', SITE_PASSWORD).update('site-access-v1').digest('hex');
     const ok = (v) => typeof v === 'string' && v.length === token.length && crypto.timingSafeEqual(Buffer.from(v), Buffer.from(token));
     const page = (error) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Club Assessment</title><link rel="stylesheet" href="/static/style.css"></head><body>
+      <title>Club Assessment</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap"><link rel="stylesheet" href="/static/style.css"></head><body>
       <main class="wrap"><div class="login card"><h1>Club Assessment prototype</h1><p>Enter the access password you were given.</p>
       ${error ? '<div class="flash err">Incorrect password.</div>' : ''}
       <form method="post" action="/site-access"><p><input type="password" name="password" required autofocus style="width:100%"></p>
@@ -158,7 +158,7 @@ export async function createApp(opts = {}) {
         <p class="sub">Stands in for email in the prototype. Send a fresh sign-in link to any demo user, then open it below.
         Sending a new link cancels the previous one, exactly as in production.</p>
         <div class="tablewrap"><table><tr><th>Person</th><th>Role</th><th>Email</th><th></th></tr>
-        ${users.map((u) => html`<tr><td>${u.name}</td><td>${u.role}${u.club ? html` · ${u.club}` : ''}</td><td class="mono">${u.email}</td>
+        ${users.map((u) => html`<tr><td>${u.name}</td><td>${u.role}${u.club ? html`, ${u.club}` : ''}</td><td class="mono">${u.email}</td>
           <td><form method="post" action="/dev/send/${u.id}"><button class="small">Send sign-in link</button></form></td></tr>`)}
         </table></div>
         <div class="card"><strong>Demo shortcut</strong>
@@ -168,7 +168,7 @@ export async function createApp(opts = {}) {
           <form method="post" action="/dev/reset" onsubmit="return confirm('Wipe all data and go back to the starting demo state?')"><button class="small danger">Reset demo data</button></form></div></div>
         <h2>Outbox (latest 30)</h2>
         ${mail.map((m) => html`<div class="card"><div class="row"><strong>${m.subject}</strong><span class="spacer"></span>
-          <span class="muted small">to ${m.to_addr} · ${fmtDate(m.created_at)}</span></div>
+          <span class="muted small">to ${m.to_addr}, ${fmtDate(m.created_at)}</span></div>
           <div class="mail">${linkify(m.body)}</div></div>`)}`, { active: '/dev' });
     });
     app.post('/dev/fast-forward', async (req, res) => {
