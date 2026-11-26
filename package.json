@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/server.js",
     "reset": "rm -rf data/pgdata && echo Database reset. It will be re-seeded on next start.",
-    "test": "node --test test/access.test.js test/scoring.test.js test/staff.test.js test/storage.test.js",
+    "test": "node --test test/access.test.js test/scoring.test.js test/staff.test.js test/storage.test.js test/mirror.test.js",
     "e2e": "node test/e2e.mjs"
   },
   "repository": {
@@ -22,7 +22,8 @@
     "@electric-sql/pglite": "^0.5.17",
     "cookie-parser": "^1.4.7",
     "express": "^5.3.0",
-    "multer": "^2.5.0"
+    "multer": "^2.5.0",
+    "nodemailer": "^10.6.1"
   },
   "engines": {
     "node": "22.x"

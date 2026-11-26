@@ -5,6 +5,7 @@ import { SECTIONS, sectionLabel, applicable, STAFF_POSITIONS, STAFF_TEAMS, QUALI
 import { getReqs, getClub, getItems, getFiles, getStaff, getPhases, submissionProgress } from '../model.js';
 import { issueLink } from '../auth.js';
 import { saveFile, removeFiles } from '../storage.js';
+import { enqueue, processQueue } from '../mirror.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024, files: 10 } });
 const back = (res, target, msg) => {
@@ -158,20 +159,25 @@ export default function clubRoutes() {
       throw e;
     }
   }
-  const insertFile = (tx, { reqId = null, staffRowId = null, f, s: st }, userId, clubId) => tx.query(
+  const insertFile = async (tx, { reqId = null, staffRowId = null, f, s: st }, userId, clubId) => (await tx.query(
     `insert into files(club_id, req_id, staff_row_id, filename, mime, size, data, storage, storage_key, storage_url, uploaded_by)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
-    [clubId, reqId, staffRowId, f.originalname.slice(0, 200), f.mimetype || 'application/octet-stream', f.size, st.data, st.storage, st.key, st.url ?? null, userId]);
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning id`,
+    [clubId, reqId, staffRowId, f.originalname.slice(0, 200), f.mimetype || 'application/octet-stream', f.size, st.data, st.storage, st.key, st.url ?? null, userId])).rows[0].id;
+  // After the upload is recorded: queue the OneDrive copy (Power Automate) if that is switched on.
+  const copyToOneDrive = async (ids) => { await enqueue(ids ?? []); processQueue().catch(() => {}); };
 
   r.post('/item/:req/upload', upload.array('files', 10), async (req, res) => {
     const files = (req.files ?? []).filter((f) => ALLOWED.test(f.originalname));
     if (!files.length) throw new Error('Choose at least one file (PDF, Office, image, CSV, text or video).');
     const q = await req.db(async (tx) => (await tx.query('select id, name, section from requirements where id = $1', [req.params.req])).rows[0]);
     if (!q) throw new Error('Unknown item');
-    await storeAndRecord(req, files, { section: sectionLabel(q.section), item: `${q.id} ${q.name}` }, (saved) => req.db(async (tx) => {
-      for (const x of saved) await insertFile(tx, { reqId: req.params.req, ...x }, req.user.id, req.user.club_id);
+    const ids = await storeAndRecord(req, files, { section: sectionLabel(q.section), item: `${q.id} ${q.name}` }, (saved) => req.db(async (tx) => {
+      const out = [];
+      for (const x of saved) out.push(await insertFile(tx, { reqId: req.params.req, ...x }, req.user.id, req.user.club_id));
       await tx.query(`update club_items set status = 'submitted' where club_id = $1 and req_id = $2`, [req.user.club_id, req.params.req]);
+      return out;
     }, 'Club upload'));
+    await copyToOneDrive(ids);
     back(res, `/club/s/${await sectionOf(req, req.params.req)}#${req.params.req}`, `${files.length} file(s) submitted for ${req.params.req}.`);
   });
 
@@ -266,8 +272,8 @@ export default function clubRoutes() {
       const { rows: [row] } = await tx.query(
         `insert into staff_rows(position, person, gender, team, qualification, qual_expiry, fa_number, blue_card, blue_card_expiry, years_at_club, employment_type, qual_years, club_id)
          values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id`, [...fields, req.user.club_id]);
-      await insertFile(tx, { staffRowId: row.id, ...x }, req.user.id, req.user.club_id);
-    }, 'Club added staff row'));
+      return [await insertFile(tx, { staffRowId: row.id, ...x }, req.user.id, req.user.club_id)];
+    }, 'Club added staff row')).then(copyToOneDrive);
     back(res, '/club/staff', 'Staff row added and submitted.');
   });
 
@@ -278,8 +284,10 @@ export default function clubRoutes() {
         `update staff_rows set position=$1, person=$2, gender=$3, team=$4, qualification=$5, qual_expiry=$6, fa_number=$7, blue_card=$8,
            blue_card_expiry=$9, years_at_club=$10, employment_type=$11, qual_years=$12 where id=$13`, [...fields, Number(req.params.id)]);
       if (!rowCount) throw new Error('Row not found');
-      for (const x of saved) await insertFile(tx, { staffRowId: Number(req.params.id), ...x }, req.user.id, req.user.club_id);
-    }, 'Club edited staff row'));
+      const out = [];
+      for (const x of saved) out.push(await insertFile(tx, { staffRowId: Number(req.params.id), ...x }, req.user.id, req.user.club_id));
+      return out;
+    }, 'Club edited staff row')).then(copyToOneDrive);
     back(res, '/club/staff', 'Row saved and resubmitted.');
   });
 

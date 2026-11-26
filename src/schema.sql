@@ -295,6 +295,18 @@ create table emails (
   created_at timestamptz not null default now()
 );
 
+-- Copies of uploaded evidence emailed to a mailbox, where a Power Automate flow files them in OneDrive.
+create table mirror_queue (
+  id serial primary key,
+  file_id int not null references files(id) on delete cascade,
+  status text not null default 'pending' check (status in ('pending','sent','failed','skipped')),
+  attempts int not null default 0,
+  last_error text,
+  created_at timestamptz not null default now(),
+  sent_at timestamptz,
+  unique (file_id)
+);
+
 -- ================================================================ helper functions
 -- SECURITY DEFINER so policies can consult protected tables without exposing them.
 create function app_uid() returns int language sql stable as
@@ -718,7 +730,7 @@ create trigger audit_highlights after insert or update or delete on lead_highlig
 
 -- ================================================================ grants
 grant usage on all sequences in schema public to app_club, app_assessor, app_admin;
-revoke all on magic_links, login_codes, sessions, emails from public;
+revoke all on magic_links, login_codes, sessions, emails, mirror_queue from public;
 grant select on requirements, phases to app_club, app_assessor, app_admin;
 
 -- Club: own data only, limited columns.

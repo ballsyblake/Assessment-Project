@@ -73,7 +73,30 @@ Only share the address and password with people you are demonstrating to. This d
 | `DEMO_MODE` | `0` removes the demo mailbox (`/dev`); only once real email is connected |
 | `FRAMEWORK_FILE` | Use a framework file kept outside the repo |
 
-## Document storage (OneDrive)
+## OneDrive copy through Power Automate (no Azure needed)
+
+The platform keeps every file. It also emails a copy of each new upload to your mailbox, and a Power Automate flow saves the attachment into the matching OneDrive folder.
+
+- The email subject carries the folder, for example `[ClubAssessment] Club Assessment 2027/Riverside Rovers FC/Delivery/D5 Return To Play Process`.
+- File names get the platform number added, for example `plan (412).pdf`, so nothing is overwritten.
+
+To switch it on:
+1. Set `MIRROR_TO` (your work email).
+2. Set up an email service:
+   - **Resend:** `RESEND_API_KEY`. This works on hosts that block email ports.
+   - **Or SMTP:** `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` and `MAIL_FROM`.
+   - Optional: `MIRROR_MAX_MB`, the largest file to copy (default 20).
+3. Build the flow, following Admin, then Storage, then "Step-by-step":
+   - trigger: Outlook "When a new email arrives (V3)" with Subject Filter `[ClubAssessment]`
+   - a variable with the folder path taken from the subject
+   - "Apply to each" attachment, using OneDrive "Create file"
+4. On the Storage page, use **Send test email**, then **Copy all existing files**.
+
+Notes:
+- The copy is one-way: removals and edits are not copied.
+- Sends retry up to five times. Failed or too-large files are listed on the Storage page.
+
+## Document storage: direct OneDrive connection (needs Azure)
 
 Uploaded evidence is stored in the database until OneDrive is connected. After that, new uploads go to OneDrive, and existing files can be moved across. The database keeps each file's record, so access rules stay in the platform: people always open documents through it, never by a OneDrive link.
 

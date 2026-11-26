@@ -6,6 +6,7 @@ import crypto from 'node:crypto';
 import { openDb, sys, asUser, resetDb, schemaVersion } from './db.js';
 import { seed, autoComplete } from './seed.js';
 import { readFile } from './storage.js';
+import { startMirrorWorker } from './mirror.js';
 import { layout, html, NAV, fmtDate } from './html.js';
 import { linkValid, requestCode, verifyCode, userForSession, endSession, issueLink, secureCookies } from './auth.js';
 import clubRoutes from './routes/club.js';
@@ -247,5 +248,6 @@ function codeForm(token, error) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const port = Number(process.env.PORT ?? 3000);
   const app = await createApp();
+  startMirrorWorker();
   app.listen(port, () => console.log(`Club Assessment prototype on http://localhost:${port}${DEMO ? '  (demo mailbox: /dev)' : ''}`));
 }

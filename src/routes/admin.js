@@ -9,13 +9,18 @@ import {
 import { evidenceBlock, staffTable } from './review.js';
 import { suggestStaffScores, staffTotal } from '../staffCalc.js';
 import crypto from 'node:crypto';
+import { mirrorEnabled, MARKER, status as mirrorStatus, backfill, processQueue, retryFailed, sendTest } from '../mirror.js';
+import { mailerConfigured, mailerName } from '../mailer.js';
 import { onedriveConfigured, readConnection, isConnected, authorizeUrl, completeSignIn, disconnect, redirectUri, saveFile, readFile, removeFiles } from '../storage.js';
 import { resultsView } from './club.js';
 import { issueLink } from '../auth.js';
 import { sendMail } from '../mail.js';
 import { THRESHOLDS, scoreText, thresholdLabel } from '../scoring.js';
 
-const back = (res, path, msg) => res.redirect(`${path}${path.includes('?') ? '&' : '?'}msg=${encodeURIComponent(msg)}`);
+const back = (res, target, msg) => {
+  const [p, hash] = target.split('#');
+  res.redirect(`${p}${p.includes('?') ? '&' : '?'}msg=${encodeURIComponent(msg)}${hash ? `#${hash}` : ''}`);
+};
 const PHASE_IDS = framework.phases.map((p) => p.id);
 const COMMENT_SECTIONS = [...PHASE_IDS, 'overall'];
 const STATE = {
@@ -640,8 +645,10 @@ export default function adminRoutes() {
         ${conn ? html`<dt>Connected account</dt><dd>${conn.name} (${conn.account}), since ${fmtDate(conn.connectedAt)}</dd>
           <dt>Folder</dt><dd>${conn.access === 'folder' ? `OneDrive > ${process.env.ONEDRIVE_FOLDER ?? 'Club Assessment'}` : 'OneDrive > Apps > (the app’s own folder)'}</dd>` : ''}
       </dl></div>
-      ${!onedriveConfigured() ? html`<div class="warnbox"><strong>OneDrive is not set up yet.</strong> Add the app registration details to the hosting environment variables, then reload this page.</div>
-        <div class="card"><h2 style="margin-top:0">Set up (once)</h2><ol>
+      ${await copySection()}
+      <h2>Direct OneDrive connection</h2>
+      <p class="sub">Stores files in OneDrive itself instead of copying them. Needs an Azure app registration, so usually needs IT.</p>
+      ${!onedriveConfigured() ? html`<details class="card"><summary>Set-up steps (needs Azure access)</summary><ol>
           <li>In the Azure portal, open <strong>Microsoft Entra ID</strong>, then <strong>App registrations</strong>, then <strong>New registration</strong>.
             Name it "Club Assessment Prototype", choose <em>Accounts in this organizational directory only</em>, and add a <em>Web</em> redirect URI:<br><code>${redirectUri()}</code></li>
           <li>On the app's <strong>Certificates &amp; secrets</strong> page, create a client secret and copy its value.</li>
@@ -650,7 +657,7 @@ export default function adminRoutes() {
           <li>In the hosting service's variables, set <code>MS_CLIENT_ID</code> (Application ID), <code>MS_CLIENT_SECRET</code> (the secret value),
             <code>MS_TENANT</code> (Directory ID) and <code>SECRET_KEY</code> (any long random text).</li>
           <li>Reload this page and choose <strong>Connect OneDrive</strong>.</li></ol>
-          <p class="small muted">If your organisation does not let staff register apps or approve permissions, ask IT to do steps 1 to 3.</p></div>`
+          <p class="small muted">If your organisation does not let staff register apps or approve permissions, ask IT to do steps 1 to 3.</p></details>`
       : !conn ? html`<div class="card"><p>Sign in with the Microsoft work account whose OneDrive should hold the documents.
           The platform only asks for ${access === 'folder' ? 'access to your files' : 'its own app folder in your OneDrive'}.</p>
           <a class="btn" href="/admin/storage/connect">Connect OneDrive</a></div>`
@@ -660,7 +667,87 @@ export default function adminRoutes() {
           <span class="spacer"></span>
           <form method="post" action="/admin/storage/disconnect" onsubmit="return confirm('Disconnect OneDrive? New uploads will go to the database.')"><button class="secondary" ${n.onedrive ? 'disabled title="Files are stored in OneDrive"' : ''}>Disconnect</button></form></div>
         ${n.onedrive ? html`<p class="small muted">Disconnecting is disabled while files are stored in OneDrive; the platform needs the connection to open them.</p>` : ''}`}
-      <p class="small muted">This prototype stores documents in one person's OneDrive. For real club data, use an FQ-owned SharePoint site: the platform's storage works the same way.</p>`);
+      <p class="small muted">Either way, this prototype puts documents in one person's OneDrive. For real club data, use an FQ-owned SharePoint site.</p>`);
+  });
+
+  // ---------------------------------------------------------------- OneDrive copy through Power Automate
+  async function copySection() {
+    const st = mirrorEnabled() ? await mirrorStatus() : null;
+    const c = st?.counts ?? {};
+    return html`<h2 id="copy">OneDrive copy through Power Automate</h2>
+      <p class="sub">No Azure needed. The platform keeps every file and emails a copy to your mailbox; a Power Automate flow saves the attachment into
+        the matching OneDrive folder. Removals are not copied.</p>
+      <div class="card"><dl class="kv">
+        <dt>Status</dt><dd>${mirrorEnabled() ? html`<span class="badge b-approved">On</span> copies go to ${process.env.MIRROR_TO}` : html`<span class="badge b-muted">Off</span>`}</dd>
+        <dt>Email service</dt><dd>${mailerName()}</dd>
+        ${st ? html`<dt>Copies</dt><dd>${c.sent ?? 0} sent, ${c.pending ?? 0} waiting, ${c.skipped ?? 0} too large, ${c.failed ?? 0} failed</dd>` : ''}
+      </dl></div>
+      ${mirrorEnabled() ? html`<div class="card row">
+          <form method="post" action="/admin/storage/copy/test"><button class="secondary">Send test email</button></form>
+          <form method="post" action="/admin/storage/copy/backfill" onsubmit="return confirm('Email a copy of every file not yet copied?')"><button class="secondary">Copy all existing files</button></form>
+          <form method="post" action="/admin/storage/copy/run"><button class="secondary">Send waiting copies now</button></form>
+          ${c.failed ? html`<form method="post" action="/admin/storage/copy/retry"><button>Retry ${c.failed} failed</button></form>` : ''}
+        </div>
+        ${st.problems.length ? html`<div class="tablewrap"><table><tr><th>Club</th><th>File</th><th>Status</th><th>Reason</th></tr>
+          ${st.problems.map((p2) => html`<tr><td>${p2.club}</td><td>${p2.filename}</td><td>${p2.status}${p2.status === 'pending' ? `, ${p2.attempts} attempt(s)` : ''}</td><td class="small">${p2.last_error}</td></tr>`)}</table></div>` : ''}`
+      : html`<div class="warnbox">To switch this on, set <code>MIRROR_TO</code> (your work email) and an email service
+          (${mailerConfigured() ? 'already set' : html`<code>RESEND_API_KEY</code>, or SMTP settings`}) in the hosting variables.</div>`}
+      <p><a href="/admin/storage/power-automate">Step-by-step: set up the email service and the Power Automate flow</a></p>`;
+  }
+
+  const copyAction = (path2, fn) => r.post(`/storage/copy/${path2}`, async (req, res) => {
+    if (!mirrorEnabled()) throw new Error('The OneDrive copy is not switched on.');
+    back(res, '/admin/storage#copy', await fn());
+  });
+  copyAction('test', async () => { await sendTest(); return `Test email sent to ${process.env.MIRROR_TO}. If the flow is running, test.txt appears in OneDrive within a few minutes.`; });
+  copyAction('backfill', async () => { const n = await backfill(); processQueue().catch(() => {}); return `${n} file(s) queued. Copies are sent in batches every 30 seconds.`; });
+  copyAction('run', async () => `${await processQueue()} copy email(s) sent.`);
+  copyAction('retry', async () => `${await retryFailed()} copy email(s) will be retried.`);
+
+  r.get('/storage/power-automate', (req, res) => {
+    const code = (t) => html`<code>${t}</code>`;
+    res.page('Power Automate setup', html`
+      <p><a href="/admin/storage#copy">&larr; Storage</a></p>
+      <h1>OneDrive copy: setup</h1>
+      <p class="sub">About 15 minutes, no Azure access needed. You need a Microsoft 365 work account with Outlook, OneDrive and Power Automate.</p>
+      <h2>1. Email service (sends the copies)</h2>
+      <ol>
+        <li>Sign up at <strong>resend.com</strong> using the work email address that should receive the copies.</li>
+        <li>Under <strong>API Keys</strong>, create a key with sending access and copy it.</li>
+        <li>In the hosting service's variables (Railway: Variables), set ${code('RESEND_API_KEY')} to the key and ${code('MIRROR_TO')} to that same email address.
+          Optional: ${code('MIRROR_MAX_MB')} (default 20) for the largest file to copy.</li>
+        <li>Until you verify your own domain with Resend, emails come from ${code('onboarding@resend.dev')} and can only go to the address you signed up with, which is all this needs.</li>
+      </ol>
+      <p class="small muted">Any SMTP service works instead (set ${code('SMTP_HOST')}, ${code('SMTP_PORT')}, ${code('SMTP_USER')}, ${code('SMTP_PASS')}, ${code('MAIL_FROM')}). Some hosts, including Railway on lower plans, block SMTP, which is why an HTTPS service like Resend is the default.</p>
+      <h2>2. The flow (saves the attachments)</h2>
+      <ol>
+        <li>Go to <strong>make.powerautomate.com</strong>, choose <strong>Create</strong>, then <strong>Automated cloud flow</strong>.
+          Name it "Club Assessment to OneDrive" and pick the trigger <strong>When a new email arrives (V3)</strong> (Office 365 Outlook).</li>
+        <li>In the trigger's settings: Folder ${code('Inbox')}, Include Attachments ${code('Yes')}, Only with Attachments ${code('Yes')}, Subject Filter ${code(MARKER)}.</li>
+        <li>Add <strong>Initialize variable</strong>: Name ${code('FolderPath')}, Type String, Value (as an expression):<br>
+          ${code(`trim(replace(triggerOutputs()?['body/subject'], '${MARKER}', ''))`)}</li>
+        <li>Add <strong>Apply to each</strong> over the trigger's ${code('Attachments')}. Inside it, add OneDrive for Business <strong>Create file</strong>:
+          <ul><li>Folder Path (expression): ${code(`concat('/', variables('FolderPath'))`)}</li>
+            <li>File Name: the dynamic value ${code('Attachments Name')}</li>
+            <li>File Content (expression): ${code(`base64ToBinary(items('Apply_to_each')?['contentBytes'])`)}</li></ul></li>
+        <li>Optional, after the loop: Outlook <strong>Move email (V2)</strong> to a folder such as "Club Assessment copies", using the trigger's Message Id, to keep your inbox clear.</li>
+        <li><strong>Save</strong>, then come back to Storage and choose <strong>Send test email</strong>. Within a few minutes ${code('Club Assessment 2027 / Connection test / test.txt')} should appear in your OneDrive.</li>
+        <li>Then choose <strong>Copy all existing files</strong> to copy what is already uploaded.</li>
+      </ol>
+      <h2>If it doesn't work</h2>
+      <ul>
+        <li><strong>Nothing arrives:</strong> check Junk Email; mark ${code('onboarding@resend.dev')} as a safe sender. The Storage page lists any failed sends.</li>
+        <li><strong>The flow runs but fails:</strong> open the run in Power Automate. A "folder not found" error means your OneDrive needs the top folder created once by hand: ${code('Club Assessment 2027')}.</li>
+        <li><strong>Files arrive but won't open:</strong> make sure File Content uses the ${code('base64ToBinary(...)')} expression above.</li>
+        <li><strong>The flow is blocked:</strong> your organisation's Power Platform policy may restrict Outlook or OneDrive connectors; ask IT.</li>
+      </ul>
+      <h2>Good to know</h2>
+      <ul>
+        <li>The copy is one-way. Files removed in the platform stay in OneDrive; files changed in OneDrive don't change the platform.</li>
+        <li>Each file is renamed with its platform number, for example ${code('Workload tracking (412).pdf')}, so re-uploads never overwrite each other.</li>
+        <li>Files over the size limit are listed on the Storage page for copying by hand.</li>
+        <li>The copies pass through the email service. That is fine for this prototype's fictional data; for real club data, use FQ's SharePoint with IT's approval instead.</li>
+      </ul>`, { active: '/admin/storage' });
   });
 
   r.get('/storage/connect', (req, res) => {
